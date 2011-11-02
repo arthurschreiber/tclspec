@@ -47,7 +47,7 @@ proc after { {what "each"} block } {
     $::current_group after $what $block
 }
 
-proc expect { actual_expression to matcher args } {
+proc expect { actual to matcher args } {
     set positive true
 
     # Negative Expectation
@@ -66,37 +66,19 @@ proc expect { actual_expression to matcher args } {
         } elseif { $what == "false" } {
             set matcher [BeFalseMatcher new]
         } elseif { $what in [list < <= > >= in ni] } {
-            set expected_expression [lindex $args 0]
-            set rc [catch [list uplevel 1 $expected_expression ] value]
-            if { $rc == 0 || $rc == 2 } {
-                set expected_value $value
-            }
-
-            set matcher [BeComparedToMatcher new $expected_value $what]
+            set expected [lindex $args 0]
+            set matcher [BeComparedToMatcher new $expected $what]
         }
     } elseif { $matcher == "equal" } {
-        set expected_expression [lindex $args 0]
-
-        set rc [catch [list uplevel 1 $expected_expression ] value]
-        if { $rc == 0 || $rc == 2 } {
-            set expected_value $value
-        }
-
-        set matcher [EqualMatcher new $expected_value]
+        set expected [lindex $args 0]
+        set matcher [EqualMatcher new $expected]
     } else {
         error "Unknown Matcher: $matcher"
     }
 
-    set rc [catch [list uplevel 1 $actual_expression ] value]
-    if { $rc == 0 || $rc == 2 } {
-        set actual_value $value
-    } else {
-        error $value
-    }
-
     if { $positive } {
-        PositiveExpectationHandler handle_matcher $actual_value $matcher
+        PositiveExpectationHandler handle_matcher $actual $matcher
     } else {
-        NegativeExpectationHandler handle_matcher $actual_value $matcher
+        NegativeExpectationHandler handle_matcher $actual $matcher
     }
 }
