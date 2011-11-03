@@ -16,7 +16,9 @@ Example instproc after { after } {
 }
 
 Example instproc execute { } {
+    Matcher set eval_level "#[info level]"
     eval [my set before]
     eval [my set block]
     eval [my set after]
+    Matcher set eval_level 1
 }

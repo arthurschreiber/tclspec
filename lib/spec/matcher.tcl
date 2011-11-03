@@ -2,6 +2,11 @@ package require XOTcl
 namespace import xotcl::*
 
 Class Matcher
+
+# Current evaluation level, used to determine the correct
+# level blocks passed to a matcher have to be executed at.
+Matcher set eval_level 1
+
 Matcher instproc init { expected } {
     my set expected $expected
 }
