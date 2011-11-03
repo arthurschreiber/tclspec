@@ -7,10 +7,16 @@ Example instproc init { description block } {
   my set block $block
 }
 
-Example instproc execute { before after } {
-  my instvar block
+Example instproc before { before } {
+    my set before $before
+}
 
-  eval $before
-  eval [my set block]
-  eval $after
+Example instproc after { after } {
+    my set after $after
+}
+
+Example instproc execute { } {
+    eval [my set before]
+    eval [my set block]
+    eval [my set after]
 }

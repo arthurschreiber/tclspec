@@ -25,6 +25,8 @@ ExampleGroup instproc execute {} {
     my instvar before after examples
 
     foreach example $examples {
-        $example execute $before $after
+        $example before $before
+        $example after $after
+        $example execute
     }
 }
