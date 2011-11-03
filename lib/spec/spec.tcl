@@ -72,6 +72,14 @@ proc expect { actual to matcher args } {
     } elseif { $matcher == "equal" } {
         set expected [lindex $args 0]
         set matcher [EqualMatcher new $expected]
+    } elseif { $matcher == "change" } {
+        set expected [lindex $args 0]
+        set matcher [ChangeMatcher new $expected]
+    } elseif { $matcher == "satisfy" } {
+        set expected [lindex $args 0]
+        set matcher [SatisfyMatcher new $expected]
+    } elseif { $matcher == "raise_error"} {
+        set matcher [RaiseErrorMatcher new]
     } else {
         error "Unknown Matcher: $matcher"
     }

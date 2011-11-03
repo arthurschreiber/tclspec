@@ -77,10 +77,84 @@ BeComparedToMatcher instproc negative_failure_message {} {
     return "Expected [my set actual] to not be [my set operator] [my set operand]"
 }
 
-Class SatisfyMatcher -superclass Matcher
-SatisfyMatcher instproc init {} {
+Class ChangeMatcher -superclass Matcher
+ChangeMatcher instproc init { expected args } {
+    next $expected
+
+    if { [dict exists $args by] } {
+        my set expected_delta [dict get $args by]
+    }
+}
+
+ChangeMatcher instproc matches? { actual } {
+    my set actual $actual
+
+    my set actual_before [uplevel [Matcher set eval_level] [my set expected]]
+    uplevel [Matcher set eval_level] $actual
+    my set actual_after [uplevel [Matcher set eval_level] [my set expected]]
+
+    expr { [my changed?] && [my matches_expected_delta?] }
+}
+
+ChangeMatcher instproc does_not_match? { actual } {
+    my set actual $actual
+
+    my set actual_before [uplevel [Matcher set eval_level] [my set expected]]
+    uplevel [Matcher set eval_level] $actual
+    my set actual_after [uplevel [Matcher set eval_level] [my set expected]]
+
+    expr { ![my changed?] || ![my matches_expected_delta?] }
+}
+
+ChangeMatcher instproc matches_expected_delta? { } {
+    expr { [my exists expected_delta] ? [my actual_delta] == [my set expected_delta] : true }
+}
+
+ChangeMatcher instproc actual_delta {} {
+    expr { [my set actual_after] - [my set actual_before] }
+}
+
+ChangeMatcher instproc changed? { } {
+    expr { [my set actual_before] != [my set actual_after] }
+}
+
+ChangeMatcher instproc positive_failure_message {} {
+    if { [my exists expected_delta] } {
+        return "{[my set expected]} should have been changed by <[my set expected_delta]>, but was changed by <[my actual_delta]>"
+    } else {
+        return "{[my set expected]} should have changed, but is still <[my set actual_before]>"
+    }
+}
+
+Class RaiseErrorMatcher -superclass Matcher
+RaiseErrorMatcher instproc init { args } {
 
 }
-SatisfyMatcher instproc matches? { actual } {
 
+RaiseErrorMatcher instproc matches? { actual } {
+    next
+    set rc [catch [list uplevel [Matcher set eval_level] $actual] value]
+    expr { $rc == 1 }
+}
+
+Class SatisfyMatcher -superclass Matcher
+SatisfyMatcher instproc init { block } {
+    my set block $block
+}
+SatisfyMatcher instproc matches? { actual } {
+    my instvar block
+    my set actual $actual
+
+    if { [llength $block] == 2 } {
+        uplevel [Matcher set eval_level] [list set [lindex $block 0] $actual]
+        # TODO: Add correct "return" handling here
+        set return_value [uplevel [Matcher set eval_level] [lindex $block end]]
+        uplevel [Matcher set eval_level] [list unset [lindex $block 0]]
+        return [string is true $return_value]
+    } elseif { [llength $block] == 1 } {
+        # TODO: Add correct "return" handling here
+        uplevel $block
+    } else {
+
+    }
 }
