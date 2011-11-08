@@ -5,6 +5,7 @@ Class ExampleGroup
 
 ExampleGroup instproc init { description } {
     my set description $description
+    my set examples {}
     my set before {}
     my set after {}
 }
