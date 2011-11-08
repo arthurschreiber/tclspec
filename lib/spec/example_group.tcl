@@ -9,6 +9,10 @@ ExampleGroup instproc init { description } {
     my set after {}
 }
 
+ExampleGroup instproc full_description { } {
+    my set description
+}
+
 ExampleGroup instproc before { what block } {
     my set before $block
 }
@@ -21,12 +25,12 @@ ExampleGroup instproc add { example } {
     my lappend examples $example
 }
 
-ExampleGroup instproc execute {} {
+ExampleGroup instproc execute { reporter } {
     my instvar before after examples
 
     foreach example $examples {
         $example before $before
         $example after $after
-        $example execute
+        $example execute $reporter
     }
 }

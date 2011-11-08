@@ -42,10 +42,10 @@ BeTrueMatcher instproc matches? { actual } {
     string is true [next]
 }
 BeTrueMatcher instproc positive_failure_message {} {
-    return "Expected [my set actual] to be true"
+    return "Expected <[my set actual]> to be true"
 }
 BeTrueMatcher instproc negative_failure_message {} {
-    return "Expected [my set actual] to not be true"
+    return "Expected <[my set actual]> to not be true"
 }
 
 Class BeFalseMatcher -superclass Matcher
@@ -56,10 +56,10 @@ BeFalseMatcher instproc matches? { actual } {
     string is false [next]
 }
 BeFalseMatcher instproc positive_failure_message {} {
-    return "Expected [my set actual] to be false"
+    return "Expected <[my set actual]> to be false"
 }
 BeFalseMatcher instproc negative_failure_message {} {
-    return "Expected [my set actual] to not be false"
+    return "Expected <[my set actual]> to not be false"
 }
 
 Class BeComparedToMatcher -superclass Matcher

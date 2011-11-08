@@ -3,7 +3,7 @@ namespace import xotcl::*
 
 Class Expectations
 Expectations proc fail_with { message } {
-    puts "Failing with $message"
+    return -code error -errorcode "EXPECTATION_NOT_MET" $message
 }
 
 Class PositiveExpectationHandler
