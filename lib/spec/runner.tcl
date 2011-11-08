@@ -17,7 +17,7 @@ proc exit { {code 0} } {
     if { [info exists at_exit_handlers] } {
         foreach block $at_exit_handlers {
             if { [catch [list uplevel #0 $block]] } {
-                puts $::errorInfo
+                puts stderr $::errorInfo
             }
         }
     }
