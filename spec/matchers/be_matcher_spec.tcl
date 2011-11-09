@@ -1,12 +1,12 @@
 lappend auto_path [file join [file dirname [info script]] ".." ".." "lib"]
 package require spec/autorun
 
-describe "BeTrueMatcher" {
+describe "Spec::Matchers::BeTrueMatcher" {
     before each {
         set matcher [ Spec::Matchers::BeTrueMatcher new ]
     }
 
-    it "matches when actual is a truthy value" {
+    it "matches when the actual value is truthy" {
         expect [ $matcher matches? true ] to be true
         expect [ $matcher matches? tru ] to be true
         expect [ $matcher matches? tr ] to be true
@@ -21,7 +21,7 @@ describe "BeTrueMatcher" {
         expect [ $matcher matches? 1 ] to be true
     }
 
-    it "does not matches when actual is not a truthy value" {
+    it "does not matches when the actual value is truthy" {
         expect [ $matcher does_not_match? "test" ] to be true
         expect [ $matcher does_not_match? 123 ] to be true
     }
@@ -84,6 +84,140 @@ describe "BeComparedToMatcher, with < as operator" {
     }
 
     it "does not match when actual is not < expected" {
+        expect [ $matcher does_not_match? 10 ] to be true
         expect [ $matcher does_not_match? 11 ] to be true
+    }
+
+    it "provides actual on #positive_failure_message" {
+        $matcher matches? 11
+        expect [ $matcher positive_failure_message ] to equal "Expected '11' to be < '10'"
+    }
+
+    it "provides actual on #negative_failure_message" {
+        $matcher does_not_match? 2
+        expect [ $matcher negative_failure_message ] to equal "Expected '2' to not be < '10'"
+    }
+}
+
+describe "BeComparedToMatcher, with <= as operator" {
+    before each {
+        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 "<=" ]
+    }
+
+    it "matches when actual is <= expected" {
+        expect [ $matcher matches? 3 ] to be true
+        expect [ $matcher matches? 10 ] to be true
+    }
+
+    it "does not match when actual is not <= expected" {
+        expect [ $matcher does_not_match? 11 ] to be true
+    }
+
+    it "provides actual on #positive_failure_message" {
+        $matcher matches? 11
+        expect [ $matcher positive_failure_message ] to equal "Expected '11' to be <= '10'"
+    }
+
+    it "provides actual on #negative_failure_message" {
+        $matcher does_not_match? 2
+        expect [ $matcher negative_failure_message ] to equal "Expected '2' to not be <= '10'"
+    }
+}
+
+describe "BeComparedToMatcher, with == as operator" {
+    before each {
+        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 "==" ]
+    }
+
+    it "matches when actual is == expected" {
+        expect [ $matcher matches? 10 ] to be true
+    }
+
+    it "does not match when actual is not == expected" {
+        expect [ $matcher does_not_match? 3 ] to be true
+        expect [ $matcher does_not_match? 11 ] to be true
+    }
+
+    it "provides actual on #positive_failure_message" {
+        $matcher matches? 11
+        expect [ $matcher positive_failure_message ] to equal "Expected '11' to be == '10'"
+    }
+
+    it "provides actual on #negative_failure_message" {
+        $matcher does_not_match? 10
+        expect [ $matcher negative_failure_message ] to equal "Expected '10' to not be == '10'"
+    }
+}
+
+describe "BeComparedToMatcher, with != as operator" {
+    before each {
+        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 "!=" ]
+    }
+
+    it "matches when actual is != expected" {
+        expect [ $matcher matches? 9 ] to be true
+    }
+
+    it "does not match when actual is not != expected" {
+        expect [ $matcher does_not_match? 10 ] to be true
+    }
+
+    it "provides actual on #positive_failure_message" {
+        $matcher matches? 10
+        expect [ $matcher positive_failure_message ] to equal "Expected '10' to be != '10'"
+    }
+
+    it "provides actual on #negative_failure_message" {
+        $matcher does_not_match? 11
+        expect [ $matcher negative_failure_message ] to equal "Expected '11' to not be != '10'"
+    }
+}
+
+describe "BeComparedToMatcher, with >= as operator" {
+    before each {
+        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 ">=" ]
+    }
+
+    it "matches when actual is >= expected" {
+        expect [ $matcher matches? 11 ] to be true
+        expect [ $matcher matches? 10 ] to be true
+    }
+
+    it "does not match when actual is not >= expected" {
+        expect [ $matcher does_not_match? 3 ] to be true
+    }
+
+    it "provides actual on #positive_failure_message" {
+        $matcher matches? 3
+        expect [ $matcher positive_failure_message ] to equal "Expected '3' to be >= '10'"
+    }
+
+    it "provides actual on #negative_failure_message" {
+        $matcher does_not_match? 11
+        expect [ $matcher negative_failure_message ] to equal "Expected '11' to not be >= '10'"
+    }
+}
+
+describe "BeComparedToMatcher, with > as operator" {
+    before each {
+        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 ">" ]
+    }
+
+    it "matches when actual is > expected" {
+        expect [ $matcher matches? 11 ] to be true
+    }
+
+    it "does not match when actual is not > expected" {
+        expect [ $matcher does_not_match? 10 ] to be true
+    }
+
+    it "provides actual on #positive_failure_message" {
+        $matcher matches? 10
+        expect [ $matcher positive_failure_message ] to equal "Expected '10' to be > '10'"
+    }
+
+    it "provides actual on #negative_failure_message" {
+        $matcher does_not_match? 11
+        expect [ $matcher negative_failure_message ] to equal "Expected '11' to not be > '10'"
     }
 }
