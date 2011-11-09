@@ -28,12 +28,12 @@ describe "BeTrueMatcher" {
 
     it "provides actual on #positive_failure_message" {
         $matcher matches? 2
-        expect [ $matcher positive_failure_message ] to equal "Expected <2> to be true"
+        expect [ $matcher positive_failure_message ] to equal "Expected '2' to be true"
     }
 
     it "provides actual on #negative_failure_message" {
         $matcher does_not_match? 2
-        expect [ $matcher negative_failure_message ] to equal "Expected <2> to not be true"
+        expect [ $matcher negative_failure_message ] to equal "Expected '2' to not be true"
     }
 }
 
@@ -65,12 +65,12 @@ describe "BeFalseMatcher" {
 
     it "provides actual on #positive_failure_message" {
         $matcher matches? 2
-        expect [ $matcher positive_failure_message ] to equal "Expected <2> to be false"
+        expect [ $matcher positive_failure_message ] to equal "Expected '2' to be false"
     }
 
     it "provides actual on #negative_failure_message" {
         $matcher does_not_match? 2
-        expect [ $matcher negative_failure_message ] to equal "Expected <2> to not be false"
+        expect [ $matcher negative_failure_message ] to equal "Expected '2' to not be false"
     }
 }
 

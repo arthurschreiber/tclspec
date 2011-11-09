@@ -8,10 +8,10 @@ namespace eval Spec {
             string is true [next]
         }
         BeTrueMatcher instproc positive_failure_message {} {
-            return "Expected <[my set actual]> to be true"
+            return "Expected '[my set actual]' to be true"
         }
         BeTrueMatcher instproc negative_failure_message {} {
-            return "Expected <[my set actual]> to not be true"
+            return "Expected '[my set actual]' to not be true"
         }
 
         Class BeFalseMatcher -superclass BaseMatcher
@@ -22,10 +22,10 @@ namespace eval Spec {
             string is false [next]
         }
         BeFalseMatcher instproc positive_failure_message {} {
-            return "Expected <[my set actual]> to be false"
+            return "Expected '[my set actual]' to be false"
         }
         BeFalseMatcher instproc negative_failure_message {} {
-            return "Expected <[my set actual]> to not be false"
+            return "Expected '[my set actual]' to not be false"
         }
 
         Class BeComparedToMatcher -superclass BaseMatcher
@@ -37,10 +37,10 @@ namespace eval Spec {
             expr "\{[next]\} [my set operator] \{[my set operand]\}"
         }
         BeComparedToMatcher instproc positive_failure_message {} {
-            return "Expected [my set actual] to be [my set operator] [my set operand]"
+            return "Expected '[my set actual]' to be [my set operator] '[my set operand]'"
         }
         BeComparedToMatcher instproc negative_failure_message {} {
-            return "Expected [my set actual] to not be [my set operator] [my set operand]"
+            return "Expected '[my set actual]' to not be [my set operator] '[my set operand]'"
         }
     }
 }
