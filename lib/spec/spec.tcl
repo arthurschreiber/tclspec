@@ -3,12 +3,18 @@ package provide spec 0.1
 source [file join [file dirname [info script]] "example.tcl"]
 source [file join [file dirname [info script]] "example_group.tcl"]
 source [file join [file dirname [info script]] "expectation_handler.tcl"]
-source [file join [file dirname [info script]] "matcher.tcl"]
 source [file join [file dirname [info script]] "reporter.tcl"]
 source [file join [file dirname [info script]] "world.tcl"]
 source [file join [file dirname [info script]] "runner.tcl"]
 source [file join [file dirname [info script]] "formatters/base_formatter.tcl"]
 source [file join [file dirname [info script]] "formatters/base_text_formatter.tcl"]
+
+source [file join [file dirname [info script]] "matchers/base_matcher.tcl"]
+source [file join [file dirname [info script]] "matchers/be_matcher.tcl"]
+source [file join [file dirname [info script]] "matchers/change_matcher.tcl"]
+source [file join [file dirname [info script]] "matchers/equal_matcher.tcl"]
+source [file join [file dirname [info script]] "matchers/raise_error_matcher.tcl"]
+source [file join [file dirname [info script]] "matchers/satisfy_matcher.tcl"]
 
 set world [Spec::World new]
 
@@ -66,24 +72,24 @@ proc expect { actual to matcher args } {
         set args [lrange $args 1 end]
 
         if { $what == "true" } {
-            set matcher [Spec::BeTrueMatcher new]
+            set matcher [Spec::Matchers::BeTrueMatcher new]
         } elseif { $what == "false" } {
-            set matcher [Spec::BeFalseMatcher new]
+            set matcher [Spec::Matchers::BeFalseMatcher new]
         } elseif { $what in [list < <= > >= in ni] } {
             set expected [lindex $args 0]
-            set matcher [Spec::BeComparedToMatcher new $expected $what]
+            set matcher [Spec::Matchers::BeComparedToMatcher new $expected $what]
         }
     } elseif { $matcher == "equal" } {
         set expected [lindex $args 0]
-        set matcher [Spec::EqualMatcher new $expected]
+        set matcher [Spec::Matchers::EqualMatcher new $expected]
     } elseif { $matcher == "change" } {
         set expected [lindex $args 0]
-        set matcher [Spec::ChangeMatcher new $expected]
+        set matcher [Spec::Matchers::ChangeMatcher new $expected]
     } elseif { $matcher == "satisfy" } {
         set expected [lindex $args 0]
-        set matcher [Spec::SatisfyMatcher new $expected]
+        set matcher [Spec::Matchers::SatisfyMatcher new $expected]
     } elseif { $matcher == "raise_error"} {
-        set matcher [Spec::RaiseErrorMatcher new]
+        set matcher [Spec::Matchers::RaiseErrorMatcher new]
     } else {
         error "Unknown Matcher: $matcher"
     }

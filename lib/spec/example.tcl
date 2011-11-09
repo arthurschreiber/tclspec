@@ -50,7 +50,7 @@ namespace eval Spec {
     Example instproc __execute { } {
         # Store the current stack level, so that blocks passed to
         # matchers are executed in the correct scope.
-        Matcher set eval_level "#[info level]"
+        Matchers::BaseMatcher set eval_level "#[info level]"
 
         uplevel 0 [my set before]
         uplevel 0 [my set block]
@@ -58,6 +58,6 @@ namespace eval Spec {
 
         # Reset the current stack level so that the value reflects
         # the default stack level value of uplevel.
-        Matcher set eval_level 1
+        Matchers::BaseMatcher set eval_level 1
     }
 }
