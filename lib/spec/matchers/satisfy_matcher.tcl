@@ -1,5 +1,9 @@
 namespace eval Spec {
     namespace eval Matchers {
+        ::Spec::Matchers proc satisfy { args } {
+            ::Spec::Matchers::SatisfyMatcher new [list -init {*}$args]
+        }
+
         Class SatisfyMatcher -superclass BaseMatcher
         SatisfyMatcher instproc init { block } {
             my set block $block

@@ -1,5 +1,9 @@
 namespace eval Spec {
     namespace eval Matchers {
+        ::Spec::Matchers proc equal { args } {
+            ::Spec::Matchers::EqualMatcher new [list -init {*}$args]
+        }
+
         Class EqualMatcher -superclass BaseMatcher
         EqualMatcher instproc matches? { actual } {
           expr { [next] == [my set expected] }

@@ -1,5 +1,9 @@
 namespace eval Spec {
     namespace eval Matchers {
+        ::Spec::Matchers proc raise_error { args } {
+            ::Spec::Matchers::RaiseErrorMatcher new [list -init {*}$args]
+        }
+
         Class RaiseErrorMatcher -superclass BaseMatcher
         RaiseErrorMatcher instproc init { {-code NONE} -message } {
             my set expected_code $code

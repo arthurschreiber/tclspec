@@ -62,26 +62,8 @@ proc expect { actual to matcher args } {
         set args [lrange $args 1 end]
     }
 
-    if { $matcher == "be" } {
-        set what [lindex $args 0]
-        set args [lrange $args 1 end]
-
-        if { $what == "true" } {
-            set matcher [Spec::Matchers::BeTrueMatcher new]
-        } elseif { $what == "false" } {
-            set matcher [Spec::Matchers::BeFalseMatcher new]
-        } elseif { $what in { < <= > >= in ni } } {
-            set expected [lindex $args 0]
-            set matcher [Spec::Matchers::BeComparedToMatcher new $expected $what]
-        }
-    } elseif { $matcher == "equal" } {
-        set matcher [Spec::Matchers::EqualMatcher new [list -init {*}$args]]
-    } elseif { $matcher == "change" } {
-        set matcher [Spec::Matchers::ChangeMatcher new [list -init {*}$args]]
-    } elseif { $matcher == "satisfy" } {
-        set matcher [Spec::Matchers::SatisfyMatcher new [list -init {*}$args]]
-    } elseif { $matcher == "raise_error"} {
-        set matcher [Spec::Matchers::RaiseErrorMatcher new [list -init {*}$args]]
+    if { [::Spec::Matchers info procs $matcher] != "" } {
+        set matcher [::Spec::Matchers $matcher {*}$args]
     } else {
         error "Unknown Matcher: $matcher"
     }

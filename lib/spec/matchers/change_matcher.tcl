@@ -1,5 +1,9 @@
 namespace eval Spec {
     namespace eval Matchers {
+        ::Spec::Matchers proc change { args } {
+            ::Spec::Matchers::ChangeMatcher new [list -init {*}$args]
+        }
+
         Class ChangeMatcher -superclass BaseMatcher
         ChangeMatcher instproc init { expected args } {
             next $expected

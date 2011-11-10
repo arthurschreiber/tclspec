@@ -1,5 +1,16 @@
 namespace eval Spec {
     namespace eval Matchers {
+
+        ::Spec::Matchers proc be { args } {
+            switch [lindex $args 0] {
+                true { ::Spec::Matchers::BeTrueMatcher new }
+                false { ::Spec::Matchers::BeFalseMatcher new }
+                < - <= - > - >= - in - ni {
+                    ::Spec::Matchers::BeComparedToMatcher new {*}$args
+                }
+            }
+        }
+
         Class BeTrueMatcher -superclass BaseMatcher
         BeTrueMatcher instproc init {} {
 
