@@ -1,6 +1,8 @@
 lappend auto_path [file join [file dirname [info script]] ".." ".." "lib"]
 package require spec/autorun
 
+source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
+
 describe "expect to change, with a numeric value" {
     before each {
         set value 0
@@ -13,7 +15,7 @@ describe "expect to change, with a numeric value" {
     it "fails if the actual value is not modified by the block" {
         expect {
             expect {} to change { set value }
-        } to raise_error -code EXPECTATION_NOT_MET -message "result should have changed, but is still '0'"
+        } to fail_with "result should have changed, but is still '0'"
     }
 }
 
@@ -29,7 +31,7 @@ describe "expect to not change, with a numeric value" {
     it "fails if the actual value is modified by the block" {
         expect {
             expect { incr value } to not change { set value }
-        } to raise_error -code EXPECTATION_NOT_MET -message "result should not have changed, but did change from '0' to '1'"
+        } to fail_with "result should not have changed, but did change from '0' to '1'"
     }
 }
 
@@ -45,7 +47,7 @@ describe "expect to not change, with a list" {
     it "fails if the actual value is not modified by the block" {
         expect {
             expect {} to change { set value }
-        } to raise_error -code EXPECTATION_NOT_MET -message "result should have changed, but is still ''"
+        } to fail_with "result should have changed, but is still ''"
     }
 }
 
@@ -61,7 +63,7 @@ describe "expect to not change, with a numeric value" {
     it "fails if the actual value is modified by the block" {
         expect {
             expect { lappend value "test" } to not change { set value }
-        } to raise_error -code EXPECTATION_NOT_MET -message "result should not have changed, but did change from '' to 'test'"
+        } to fail_with "result should not have changed, but did change from '' to 'test'"
     }
 }
 
@@ -81,7 +83,7 @@ describe "expect to change by" {
     it "fails if the actual value is changed by an unexpected amount" {
         expect {
             expect { incr value 2 } to change { set value } by 4
-        } to raise_error -code EXPECTATION_NOT_MET -message "result should have been changed by '4', but was changed by '2'"
+        } to fail_with "result should have been changed by '4', but was changed by '2'"
     }
 }
 
@@ -101,7 +103,7 @@ describe "expect to change by_at_most" {
     it "fails if the actual value is changed by more than the expected amount" {
         expect {
             expect { incr value 5 } to change { set value } by_at_most 4
-        } to raise_error -code EXPECTATION_NOT_MET -message "result should have been changed by at most '4', but was changed by '5'"
+        } to fail_with "result should have been changed by at most '4', but was changed by '5'"
     }
 }
 
@@ -121,7 +123,7 @@ describe "expect to change by_at_least" {
     it "fails if the actual value is changed by less than the expected amount" {
         expect {
             expect { incr value 2 } to change { set value } by_at_least 4
-        } to raise_error -code EXPECTATION_NOT_MET -message "result should have been changed by at least '4', but was changed by '2'"
+        } to fail_with "result should have been changed by at least '4', but was changed by '2'"
     }
 }
 
@@ -137,6 +139,6 @@ describe "expect to change from" {
     it "fails when the actual value is not equal to the expected value before executing the block" {
         expect {
             expect { set value "foo" } to change { set value } from "bar"
-        } to raise_error -code EXPECTATION_NOT_MET -message "result should have been initially been 'bar', but was 'string'"
+        } to fail_with "result should have been initially been 'bar', but was 'string'"
     }
 }

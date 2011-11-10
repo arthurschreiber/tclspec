@@ -1,6 +1,8 @@
 lappend auto_path [file join [file dirname [info script]] ".." ".." "lib"]
 package require spec/autorun
 
+source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
+
 describe "expect to be true" {
     it "passes when the actual value is truthy" {
         expect true to be true
@@ -20,11 +22,11 @@ describe "expect to be true" {
     it "fails when the actual value is not truthy" {
         expect {
             expect "test" to be true
-        } to raise_error -code EXPECTATION_NOT_MET -message "Expected 'test' to be true"
+        } to fail_with "Expected 'test' to be true"
 
         expect {
             expect 123 to be true
-        } to raise_error -code EXPECTATION_NOT_MET -message "Expected '123' to be true"
+        } to fail_with "Expected '123' to be true"
     }
 }
 
@@ -48,11 +50,11 @@ describe "expect to be false" {
     it "fails when the actual value is not falsy" {
         expect {
             expect "test" to be false
-        } to raise_error -code EXPECTATION_NOT_MET -message "Expected 'test' to be false"
+        } to fail_with "Expected 'test' to be false"
 
         expect {
             expect 123 to be false
-        } to raise_error -code EXPECTATION_NOT_MET -message "Expected '123' to be false"
+        } to fail_with "Expected '123' to be false"
     }
 }
 
