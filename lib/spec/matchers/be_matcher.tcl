@@ -37,10 +37,15 @@ namespace eval Spec {
             expr "\{[next]\} [my set operator] \{[my set operand]\}"
         }
         BeComparedToMatcher instproc positive_failure_message {} {
-            return "Expected '[my set actual]' to be [my set operator] '[my set operand]'"
+            if { [my set operator] == "==" } {
+                return "expected: '[my set operand]'\n     got: '[my set actual]' (using [my set operator])"
+            } else {
+                return "expected: [my set operator] '[my set operand]'\n     got: [string repeat " " [string length [my set operator]]] '[my set actual]'"
+            }
         }
+
         BeComparedToMatcher instproc negative_failure_message {} {
-            return "Expected '[my set actual]' to not be [my set operator] '[my set operand]'"
+            return "expected not: [my set operator] '[my set operand]'\n         got: [string repeat " " [string length [my set operator]]] '[my set actual]'"
         }
     }
 }
