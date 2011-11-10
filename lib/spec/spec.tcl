@@ -9,12 +9,7 @@ source [file join [file dirname [info script]] "runner.tcl"]
 source [file join [file dirname [info script]] "formatters/base_formatter.tcl"]
 source [file join [file dirname [info script]] "formatters/base_text_formatter.tcl"]
 
-source [file join [file dirname [info script]] "matchers/base_matcher.tcl"]
-source [file join [file dirname [info script]] "matchers/be_matcher.tcl"]
-source [file join [file dirname [info script]] "matchers/change_matcher.tcl"]
-source [file join [file dirname [info script]] "matchers/equal_matcher.tcl"]
-source [file join [file dirname [info script]] "matchers/raise_error_matcher.tcl"]
-source [file join [file dirname [info script]] "matchers/satisfy_matcher.tcl"]
+source [file join [file dirname [info script]] "matchers.tcl"]
 
 set world [Spec::World new]
 
