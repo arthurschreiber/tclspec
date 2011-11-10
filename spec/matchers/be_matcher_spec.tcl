@@ -1,76 +1,58 @@
 lappend auto_path [file join [file dirname [info script]] ".." ".." "lib"]
 package require spec/autorun
 
-describe "Spec::Matchers::BeTrueMatcher" {
-    before each {
-        set matcher [ Spec::Matchers::BeTrueMatcher new ]
+describe "expect to be true" {
+    it "passes when the actual value is truthy" {
+        expect true to be true
+        expect tru to be true
+        expect tr to be true
+        expect t to be true
+
+        expect on to be true
+
+        expect yes to be true
+        expect ye to be true
+        expect y to be true
+
+        expect 1 to be true
     }
 
-    it "matches when the actual value is truthy" {
-        expect [ $matcher matches? true ] to be true
-        expect [ $matcher matches? tru ] to be true
-        expect [ $matcher matches? tr ] to be true
-        expect [ $matcher matches? t ] to be true
+    it "fails when the actual value is not truthy" {
+        expect {
+            expect "test" to be true
+        } to raise_error -code EXPECTATION_NOT_MET -message "Expected 'test' to be true"
 
-        expect [ $matcher matches? on ] to be true
-
-        expect [ $matcher matches? yes ] to be true
-        expect [ $matcher matches? ye ] to be true
-        expect [ $matcher matches? y ] to be true
-
-        expect [ $matcher matches? 1 ] to be true
-    }
-
-    it "does not matches when the actual value is truthy" {
-        expect [ $matcher does_not_match? "test" ] to be true
-        expect [ $matcher does_not_match? 123 ] to be true
-    }
-
-    it "provides actual on #positive_failure_message" {
-        $matcher matches? 2
-        expect [ $matcher positive_failure_message ] to equal "Expected '2' to be true"
-    }
-
-    it "provides actual on #negative_failure_message" {
-        $matcher does_not_match? 2
-        expect [ $matcher negative_failure_message ] to equal "Expected '2' to not be true"
+        expect {
+            expect 123 to be true
+        } to raise_error -code EXPECTATION_NOT_MET -message "Expected '123' to be true"
     }
 }
 
-describe "BeFalseMatcher" {
-    before each {
-        set matcher [ Spec::Matchers::BeFalseMatcher new ]
+describe "expect to be false" {
+    it "passes when the actual value is falsy" {
+        expect false to be false
+        expect fals to be false
+        expect fal to be false
+        expect fa to be false
+        expect f to be false
+
+        expect off to be false
+        expect of to be false
+
+        expect no to be false
+        expect n to be false
+
+        expect 0 to be false
     }
 
-    it "matches when actual is a falsy value" {
-        expect [ $matcher matches? false ] to be true
-        expect [ $matcher matches? fals ] to be true
-        expect [ $matcher matches? fal ] to be true
-        expect [ $matcher matches? fa ] to be true
-        expect [ $matcher matches? f ] to be true
+    it "fails when the actual value is not falsy" {
+        expect {
+            expect "test" to be false
+        } to raise_error -code EXPECTATION_NOT_MET -message "Expected 'test' to be false"
 
-        expect [ $matcher matches? off ] to be true
-        expect [ $matcher matches? of ] to be true
-
-        expect [ $matcher matches? no ] to be true
-        expect [ $matcher matches? n ] to be true
-
-        expect [ $matcher matches? 0 ] to be true
-    }
-
-    it "does not matches when actual is not a falsy value" {
-        expect [ $matcher does_not_match? "test" ] to be true
-        expect [ $matcher does_not_match? 123 ] to be true
-    }
-
-    it "provides actual on #positive_failure_message" {
-        $matcher matches? 2
-        expect [ $matcher positive_failure_message ] to equal "Expected '2' to be false"
-    }
-
-    it "provides actual on #negative_failure_message" {
-        $matcher does_not_match? 2
-        expect [ $matcher negative_failure_message ] to equal "Expected '2' to not be false"
+        expect {
+            expect 123 to be false
+        } to raise_error -code EXPECTATION_NOT_MET -message "Expected '123' to be false"
     }
 }
 
