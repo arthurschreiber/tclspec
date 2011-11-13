@@ -72,9 +72,9 @@ describe "BeComparedToMatcher, with < as operator" {
         expect [ $matcher does_not_match? 11 ] to be true
     }
 
-    it "provides actual on #positive_failure_message" {
+    it "provides actual on #failure_message" {
         $matcher matches? 11
-        expect [ $matcher positive_failure_message ] to equal "expected: < '10'\n     got:   '11'"
+        expect [ $matcher failure_message ] to equal "expected: < '10'\n     got:   '11'"
     }
 
     it "provides actual on #negative_failure_message" {
@@ -97,9 +97,9 @@ describe "BeComparedToMatcher, with <= as operator" {
         expect [ $matcher does_not_match? 11 ] to be true
     }
 
-    it "provides actual on #positive_failure_message" {
+    it "provides actual on #failure_message" {
         $matcher matches? 11
-        expect [ $matcher positive_failure_message ] to equal "expected: <= '10'\n     got:    '11'"
+        expect [ $matcher failure_message ] to equal "expected: <= '10'\n     got:    '11'"
     }
 
     it "provides actual on #negative_failure_message" {
@@ -122,9 +122,9 @@ describe "BeComparedToMatcher, with == as operator" {
         expect [ $matcher does_not_match? 11 ] to be true
     }
 
-    it "provides actual on #positive_failure_message" {
+    it "provides actual on #failure_message" {
         $matcher matches? 11
-        expect [ $matcher positive_failure_message ] to equal "expected: '10'\n     got: '11' (using ==)"
+        expect [ $matcher failure_message ] to equal "expected: '10'\n     got: '11' (using ==)"
     }
 
     it "provides actual on #negative_failure_message" {
@@ -146,9 +146,9 @@ describe "BeComparedToMatcher, with != as operator" {
         expect [ $matcher does_not_match? 10 ] to be true
     }
 
-    it "provides actual on #positive_failure_message" {
+    it "provides actual on #failure_message" {
         $matcher matches? 10
-        expect [ $matcher positive_failure_message ] to equal "expected: != '10'\n     got:    '10'"
+        expect [ $matcher failure_message ] to equal "expected: != '10'\n     got:    '10'"
     }
 
     it "provides actual on #negative_failure_message" {
@@ -171,9 +171,9 @@ describe "BeComparedToMatcher, with >= as operator" {
         expect [ $matcher does_not_match? 3 ] to be true
     }
 
-    it "provides actual on #positive_failure_message" {
+    it "provides actual on #failure_message" {
         $matcher matches? 3
-        expect [ $matcher positive_failure_message ] to equal "expected: >= '10'\n     got:    '3'"
+        expect [ $matcher failure_message ] to equal "expected: >= '10'\n     got:    '3'"
     }
 
     it "provides actual on #negative_failure_message" {
@@ -195,9 +195,9 @@ describe "BeComparedToMatcher, with > as operator" {
         expect [ $matcher does_not_match? 10 ] to be true
     }
 
-    it "provides actual on #positive_failure_message" {
+    it "provides actual on #failure_message" {
         $matcher matches? 10
-        expect [ $matcher positive_failure_message ] to equal "expected: > '10'\n     got:   '10'"
+        expect [ $matcher failure_message ] to equal "expected: > '10'\n     got:   '10'"
     }
 
     it "provides actual on #negative_failure_message" {

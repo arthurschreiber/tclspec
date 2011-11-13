@@ -11,7 +11,7 @@ namespace eval Spec {
         BaseMatcher instproc does_not_match? { actual } {
           expr { ![my matches? $actual] }
         }
-        BaseMatcher instproc positive_failure_message {} {
+        BaseMatcher instproc failure_message {} {
 
         }
         BaseMatcher instproc negative_failure_message {} {

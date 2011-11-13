@@ -10,7 +10,7 @@ namespace eval Spec {
     Class PositiveExpectationHandler
     PositiveExpectationHandler proc handle_matcher { actual matcher } {
         if { [$matcher matches? $actual] } { return }
-        Expectations fail_with [$matcher positive_failure_message]
+        Expectations fail_with [$matcher failure_message]
     }
 
     Class NegativeExpectationHandler

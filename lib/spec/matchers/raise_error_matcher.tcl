@@ -53,7 +53,7 @@ namespace eval Spec {
             }
         }
 
-        RaiseErrorMatcher instproc positive_failure_message { } {
+        RaiseErrorMatcher instproc failure_message { } {
             return "expected [my expected_error][my given_error]"
         }
 

@@ -8,7 +8,7 @@ namespace eval Spec {
         EqualMatcher instproc matches? { actual } {
           expr { [next] == [my set expected] }
         }
-        EqualMatcher instproc positive_failure_message {} {
+        EqualMatcher instproc failure_message {} {
             return "Expected <[my set actual]> to equal <[my set expected]>"
         }
         EqualMatcher instproc negative_failure_message {} {

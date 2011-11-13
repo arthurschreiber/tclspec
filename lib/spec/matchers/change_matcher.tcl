@@ -72,7 +72,7 @@ namespace eval Spec {
             expr { [my set actual_before] != [my set actual_after] }
         }
 
-        ChangeMatcher instproc positive_failure_message {} {
+        ChangeMatcher instproc failure_message {} {
             if { ![my matches_before?] } {
                 return "result should have been initially been '[my set expected_before]', but was '[my set actual_before]'"
             } elseif { ![my matches_after?] } {

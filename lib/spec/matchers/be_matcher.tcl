@@ -18,7 +18,7 @@ namespace eval Spec {
         BeTrueMatcher instproc matches? { actual } {
             string is true [next]
         }
-        BeTrueMatcher instproc positive_failure_message {} {
+        BeTrueMatcher instproc failure_message {} {
             return "Expected '[my set actual]' to be true"
         }
         BeTrueMatcher instproc negative_failure_message {} {
@@ -32,7 +32,7 @@ namespace eval Spec {
         BeFalseMatcher instproc matches? { actual } {
             string is false [next]
         }
-        BeFalseMatcher instproc positive_failure_message {} {
+        BeFalseMatcher instproc failure_message {} {
             return "Expected '[my set actual]' to be false"
         }
         BeFalseMatcher instproc negative_failure_message {} {
@@ -47,7 +47,7 @@ namespace eval Spec {
         BeComparedToMatcher instproc matches? { actual } {
             expr "\{[next]\} [my set operator] \{[my set operand]\}"
         }
-        BeComparedToMatcher instproc positive_failure_message {} {
+        BeComparedToMatcher instproc failure_message {} {
             if { [my set operator] == "==" } {
                 return "expected: '[my set operand]'\n     got: '[my set actual]' (using [my set operator])"
             } else {
