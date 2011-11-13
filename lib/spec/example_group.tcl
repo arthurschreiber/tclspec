@@ -4,7 +4,7 @@ namespace import xotcl::*
 namespace eval Spec {
     Class ExampleGroup
 
-    ExampleGroup instproc init { description } {
+    ExampleGroup instproc init { {description ""} } {
         my set description $description
         my set examples {}
         my set before {}
