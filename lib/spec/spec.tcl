@@ -26,7 +26,7 @@ proc describe { description block } {
 }
 
 proc it { description block } {
-    $::current_group add [Spec::Example new $::current_group $description $block ]
+    $::current_group example $description $block
 }
 
 proc before { what args } {

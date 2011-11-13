@@ -23,8 +23,8 @@ namespace eval Spec {
         my set after $block
     }
 
-    ExampleGroup instproc add { example } {
-        my lappend examples $example
+    ExampleGroup instproc example { description block } {
+        my lappend examples [Spec::Example new [self] $description $block ]
     }
 
     ExampleGroup instproc execute { reporter } {
