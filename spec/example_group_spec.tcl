@@ -55,7 +55,7 @@ describe "before, after, and around hooks" {
 
         $group run [NullObject new]
 
-        expect $::order to equal { 1 2 3 }
+        expect $::order to equal [list 1 2 3]
     }
 
     it "runs the before eachs in order" {
@@ -69,7 +69,7 @@ describe "before, after, and around hooks" {
 
         $group run [NullObject new]
 
-        expect $::order to equal { 1 2 3 }
+        expect $::order to equal [list 1 2 3]
     }
 
     it "runs the after eachs in reverse order" {
@@ -83,7 +83,7 @@ describe "before, after, and around hooks" {
 
         $group run [NullObject new]
 
-        expect $::order to equal { 3 2 1 }
+        expect $::order to equal [list 3 2 1]
     }
 
     it "runs the after alls in order" {
@@ -97,6 +97,6 @@ describe "before, after, and around hooks" {
 
         $group run [NullObject new]
 
-        expect $::order to equal { 3 2 1 }
+        expect $::order to equal [list 3 2 1]
     }
 }

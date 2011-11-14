@@ -13,6 +13,10 @@ namespace eval Spec {
         return "[[my set example_group] full_description] [my set description]"
     }
 
+    Example instproc instance_eval { block } {
+        uplevel 0 $block
+    }
+
     Example instproc before { block } {
         my set before $block
     }
@@ -52,9 +56,7 @@ namespace eval Spec {
         # matchers are executed in the correct scope.
         Matchers set eval_level "#[info level]"
 
-        uplevel 0 [my set before]
         uplevel 0 [my set block]
-        uplevel 0 [my set after]
 
         # Reset the current stack level so that the value reflects
         # the default stack level value of uplevel.
