@@ -19,8 +19,8 @@ namespace eval Spec {
 
         set reporter [Reporter new]
 
-        $reporter report [$::world example_count] {
-            foreach example_group [$::world set example_groups] {
+        $reporter report [[Spec world] example_count] {
+            foreach example_group [[Spec world] set example_groups] {
                 $example_group execute $reporter
             }
         }

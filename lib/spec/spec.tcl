@@ -11,7 +11,14 @@ source [file join [file dirname [info script]] "formatters/base_text_formatter.t
 
 source [file join [file dirname [info script]] "matchers.tcl"]
 
-set world [Spec::World new]
+Class create Spec
+Spec proc world { } {
+    if { ![my exists world ] } {
+        my set world [Spec::World new]
+    }
+
+    my set world
+}
 
 proc describe { description block } {
     set group [Spec::ExampleGroup new $description]
@@ -20,7 +27,7 @@ proc describe { description block } {
 
     uplevel 1 $block
 
-    $::world register $group
+    [Spec world] register $group
 
     unset ::current_group
 }
