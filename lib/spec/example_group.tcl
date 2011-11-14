@@ -27,7 +27,7 @@ namespace eval Spec {
         my lappend examples [Spec::Example new [self] $description $block ]
     }
 
-    ExampleGroup instproc execute { reporter } {
+    ExampleGroup instproc run { reporter } {
         my instvar before after examples
 
         foreach example $examples {
@@ -35,5 +35,9 @@ namespace eval Spec {
             $example after $after
             $example execute $reporter
         }
+    }
+
+    ExampleGroup instproc execute { reporter } {
+        my run $reporter
     }
 }
