@@ -4,44 +4,44 @@ package require spec/autorun
 source [file join [file dirname [info script]] "spec_helper.tcl"]
 
 
-# describe "The top level group" {
-#     it "runs its children" {
-#         set ::examples_run 0
+describe "The top level group" {
+    it "runs its children" {
+        set ::examples_run 0
 
-#         set group [ExampleGroup describe "parent" {
-#             describe "child" {
-#                 it "does something" {
-#                     incr ::examples_run
-#                 }
-#             }
-#         }]
+        set group [ExampleGroup describe "parent" {
+            describe "child" {
+                it "does something" {
+                    incr ::examples_run
+                }
+            }
+        }]
 
-#         $group run
-#         expect $::examples_run to equal 1
-#     }
+        expect [$group run [NullObject new]] to be true
+        expect $::examples_run to equal 1
+    }
 
-#     describe "with a failure" {
-#         it "runs its children" {
-#             set ::examples_run 0
+    describe "with a failure" {
+        it "runs its children" {
+            set ::examples_run 0
 
-#             set group [ExampleGroup describe "parent" {
-#                 it "fails" {
-#                     incr ::examples_run
-#                     error "fail"
-#                 }
+            set group [ExampleGroup describe "parent" {
+                it "fails" {
+                    incr ::examples_run
+                    error "fail"
+                }
 
-#                 describe "child" {
-#                     it "does something" {
-#                         incr ::examples_run
-#                     }
-#                 }
-#             }]
+                describe "child" {
+                    it "does something" {
+                        incr ::examples_run
+                    }
+                }
+            }]
 
-#             $group run
-#             expect $::examples_run to equal 2
-#         }
-#     }
-# }
+            expect [$group run [NullObject new]] to be false
+            expect $::examples_run to equal 2
+        }
+    }
+}
 
 describe "child" {
     it "is known by its parent" {

@@ -103,13 +103,21 @@ namespace eval Spec {
 
     ExampleGroupClass instproc run { reporter } {
         my instvar hooks
-        my instvar before after examples
+        my instvar before after examples children
+
+        set result true
 
         foreach example $examples {
             my run_before_each $example
-            $example execute $reporter
+            set result [expr { [$example execute $reporter] && $result }]
             my run_after_each $example
         }
+
+        foreach child $children {
+            set result [expr { [$children run $reporter] && $result }]
+        }
+
+        return $result
     }
 
     ExampleGroupClass instproc execute { reporter } {

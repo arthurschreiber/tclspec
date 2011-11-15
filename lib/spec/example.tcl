@@ -26,11 +26,16 @@ namespace eval Spec {
     }
 
     Example instproc execute { reporter } {
+        set result true
+
         my start $reporter
         if { [catch { my __execute } message error_options] } {
+            set result false
             my set_error $message $::errorInfo $error_options
         }
         my finish $reporter
+
+        return $result
     }
 
     Example instproc start { reporter } {
