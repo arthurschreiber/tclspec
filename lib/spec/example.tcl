@@ -13,6 +13,10 @@ namespace eval Spec {
         return "[[my set example_group] full_description] [my set description]"
     }
 
+    Example instproc description { } {
+        my set description
+    }
+
     Example instproc instance_eval { block } {
         uplevel 0 $block
     }
