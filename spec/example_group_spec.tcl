@@ -159,7 +159,7 @@ describe "running the examples" {
             }
         }]
 
-        expect [$group run] to be true
+        expect [$group run [NullObject new]] to be true
     }
 
     it "returns false if any of the examples fail" {
@@ -173,7 +173,7 @@ describe "running the examples" {
             }
         }]
 
-        expect [$group run] to be false
+        expect [$group run [NullObject new]] to be false
     }
 
     it "runs all examples, regardless of failing ones" {
@@ -187,10 +187,10 @@ describe "running the examples" {
             }
         }]
 
-        for example [$group examples] {
+        foreach example [$group examples] {
             $example should_receive "run"
         }
 
-        expect [$group run] to be false
+        expect [$group run [NullObject new]] to be false
     }
 }

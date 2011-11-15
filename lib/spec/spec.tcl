@@ -20,43 +20,9 @@ Spec proc world { } {
     my set world
 }
 
-proc describe { description block } {
-    set group [Spec::ExampleGroup new $description]
-
-    set ::current_group $group
-
-    uplevel 1 $block
-
+proc describe { args } {
+    set group [::Spec::ExampleGroup describe {*}$args]
     [Spec world] register $group
-
-    unset ::current_group
-}
-
-proc it { description block } {
-    $::current_group example $description $block
-}
-
-proc before { what args } {
-    if { [llength $args] == 0 } {
-        set block $what
-        set what "each"
-    } else {
-        set block [lindex $args 0]
-    }
-
-    $::current_group before $what $block
-}
-
-proc after { {what "each"} block } {
-    if { [llength $args] == 1 } {
-        set what "each"
-        set block [lindex $args 0]
-    } elseif { [llength $args] == 1 } {
-        set what [lindex $args 0]
-        set block [lindex $args 1]
-    }
-
-    $::current_group after $what $block
 }
 
 proc expect { actual to matcher args } {
