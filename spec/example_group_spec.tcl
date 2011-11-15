@@ -147,6 +147,54 @@ describe "adding examples" {
     }
 }
 
+describe "how instance variables are inherited" {
+    before all {
+        my set before_all_top_level "before_all_top_level"
+    }
+
+    before each {
+        my set before_each_top_level "before_each_top_level"
+    }
+
+    it "can access a before each instvar at the same level" {
+        expect [my set before_each_top_level] to equal "before_each_top_level"
+    }
+
+    it "can access a before all instvar at the same level" {
+        expect [my set before_all_top_level] to equal "before_all_top_level"
+    }
+
+    describe "but now I am nested" {
+        it "can access a parent example groups before each ivar at a nested level" {
+            expect [my set before_each_top_level] to equal "before_each_top_level"
+        }
+
+        it "can access a parent example groups before all ivar at a nested level" {
+            expect [my set before_all_top_level] to equal "before_all_top_level"
+        }
+
+        it "changes to before all ivars from within an example do not persist outside the current describe" {
+            my set before_all_top_level "i've been changed"
+        }
+
+        describe "accessing a before_all ivar that was changed in a parent example_group" {
+            it "does not have access to the modified version" {
+                expect [my set before_all_top_level] to equal "before_all_top_level"
+            }
+        }
+    }
+}
+
+describe "ancestors" {
+    it "returns a list of the current and the parent ExampleGroups" {
+        set top [ExampleGroup describe "top"]
+        set middle [$top describe "middle"]
+        set bottom [$middle describe "bottom"]
+
+        expect [$bottom ancestors] should equal [list $bottom $middle $top]
+    }
+}
+
 describe "running the examples" {
     it "returns true if all examples pass" {
         set group [ExampleGroup describe "group" {
