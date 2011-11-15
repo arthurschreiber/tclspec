@@ -21,6 +21,10 @@ describe "expect to be true" {
 
     it "fails when the actual value is not truthy" {
         expect {
+            expect "" to be true
+        } to fail_with "Expected '' to be true"
+
+        expect {
             expect "test" to be true
         } to fail_with "Expected 'test' to be true"
 
@@ -48,6 +52,10 @@ describe "expect to be false" {
     }
 
     it "fails when the actual value is not falsy" {
+        expect {
+            expect "" to be false
+        } to fail_with "Expected '' to be false"
+
         expect {
             expect "test" to be false
         } to fail_with "Expected 'test' to be false"

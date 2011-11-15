@@ -16,7 +16,7 @@ namespace eval Spec {
 
         }
         BeTrueMatcher instproc matches? { actual } {
-            string is true [next]
+            string is true -strict [next]
         }
         BeTrueMatcher instproc failure_message {} {
             return "Expected '[my set actual]' to be true"
@@ -30,7 +30,7 @@ namespace eval Spec {
 
         }
         BeFalseMatcher instproc matches? { actual } {
-            string is false [next]
+            string is false -strict [next]
         }
         BeFalseMatcher instproc failure_message {} {
             return "Expected '[my set actual]' to be false"
