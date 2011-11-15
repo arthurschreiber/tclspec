@@ -17,19 +17,8 @@ namespace eval Spec {
         my set description
     }
 
-    Example instproc instance_eval { block } {
-        uplevel 0 $block
-    }
-
-    Example instproc before { block } {
-        my set before $block
-    }
-
-    Example instproc after { block } {
-        my set after $block
-    }
-
-    Example instproc execute { reporter } {
+    Example instproc run { example_group_instance reporter } {
+        my set example_group_instance $example_group_instance
         set result true
 
         my start $reporter
@@ -40,6 +29,20 @@ namespace eval Spec {
         my finish $reporter
 
         return $result
+    }
+
+    Example instproc __execute { } {
+        my run_before_each
+        [my set example_group_instance] instance_eval [my set block]
+        my run_after_each
+    }
+
+    Example instproc run_before_each { } {
+        [my set example_group] run_before_each [my set example_group_instance]
+    }
+
+    Example instproc run_after_each { } {
+        [my set example_group] run_after_each [my set example_group_instance]
     }
 
     Example instproc start { reporter } {
@@ -58,17 +61,5 @@ namespace eval Spec {
         my set error_message $error_message
         my set error_info $error_info
         my set error_options $error_options
-    }
-
-    Example instproc __execute { } {
-        # Store the current stack level, so that blocks passed to
-        # matchers are executed in the correct scope.
-        Matchers set eval_level "#[info level]"
-
-        uplevel 0 [my set block]
-
-        # Reset the current stack level so that the value reflects
-        # the default stack level value of uplevel.
-        Matchers set eval_level 1
     }
 }

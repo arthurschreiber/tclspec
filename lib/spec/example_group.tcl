@@ -42,8 +42,6 @@ namespace eval Spec {
         return $child
     }
 
-    ExampleGroupClass proc unknown "" ""
-
     ExampleGroupClass instproc init { } {
         next
         my set examples {}
@@ -89,18 +87,18 @@ namespace eval Spec {
         my set examples
     }
 
-    ExampleGroupClass instproc run_before_each { example } {
+    ExampleGroupClass instproc run_before_each { example_group_instance } {
         foreach ancestor [lreverse [my ancestors]] {
             foreach hook [dict get [$ancestor set hooks] before each] {
-                $example instance_eval $hook
+                $example_group_instance instance_eval $hook
             }
         }
     }
 
-    ExampleGroupClass instproc run_after_each { example } {
+    ExampleGroupClass instproc run_after_each { example_group_instance } {
         foreach ancestor [my ancestors] {
             foreach hook [lreverse [dict get [my set hooks] after each]] {
-                $example instance_eval $hook
+                $example_group_instance instance_eval $hook
             }
         }
     }
@@ -124,9 +122,7 @@ namespace eval Spec {
         set result true
 
         foreach example $examples {
-            my run_before_each $example
-            set result [expr { [$example execute $reporter] && $result }]
-            my run_after_each $example
+            set result [expr { [$example run [my new] $reporter] && $result }]
         }
 
         foreach child $children {
@@ -144,9 +140,12 @@ namespace eval Spec {
 
     }
 
-    ExampleGroupClass create ExampleGroup
-
     ExampleGroupClass instproc unknown { args } {
         return -code error -level 1 "[self]: unable to dispatch method '[lindex $args 0]'"
+    }
+
+    ExampleGroupClass create ExampleGroup
+    ExampleGroup instproc instance_eval { block } {
+        eval $block
     }
 }

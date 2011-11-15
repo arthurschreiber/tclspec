@@ -26,6 +26,10 @@ proc describe { args } {
 }
 
 proc expect { actual to matcher args } {
+    # Store the current stack level, so that blocks passed to
+    # matchers are executed in the correct scope.
+    ::Spec::Matchers set eval_level "#[expr { [info level] - 1 }]"
+
     set positive true
 
     # Negative Expectation
