@@ -8,6 +8,8 @@ source [file join [file dirname [info script]] "world.tcl"]
 source [file join [file dirname [info script]] "runner.tcl"]
 source [file join [file dirname [info script]] "formatters/base_formatter.tcl"]
 source [file join [file dirname [info script]] "formatters/base_text_formatter.tcl"]
+source [file join [file dirname [info script]] "formatters/documentation_formatter.tcl"]
+source [file join [file dirname [info script]] "formatters/progress_formatter.tcl"]
 
 source [file join [file dirname [info script]] "matchers.tcl"]
 
