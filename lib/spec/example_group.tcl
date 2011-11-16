@@ -66,6 +66,10 @@ namespace eval Spec {
         my lappend examples [Spec::Example new [self] $description $block ]
     }
 
+    ExampleGroupClass instproc register { } {
+        [Spec world] register [self]
+    }
+
     ExampleGroupClass instproc full_description {} {
         my set description
     }

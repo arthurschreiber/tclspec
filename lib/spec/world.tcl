@@ -13,6 +13,7 @@ namespace eval Spec {
 
     World instproc register { example_group } {
         my lappend example_groups $example_group
+        return $example_group
     }
 
     World instproc example_count { } {

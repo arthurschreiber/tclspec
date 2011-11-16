@@ -21,8 +21,7 @@ Spec proc world { } {
 }
 
 proc describe { args } {
-    set group [::Spec::ExampleGroup describe {*}$args]
-    [Spec world] register $group
+    [::Spec::ExampleGroup describe {*}$args] register
 }
 
 proc expect { actual to matcher args } {
