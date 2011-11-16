@@ -162,7 +162,7 @@ namespace eval Spec {
         set result [my run_examples $reporter]
 
         foreach child $children {
-            set result [expr { [$children run $reporter] && $result }]
+            set result [expr { [$child run $reporter] && $result }]
         }
 
         my run_after_all [my new]
