@@ -129,6 +129,10 @@ namespace eval Spec {
     }
 
     ExampleGroupClass instproc run_after_all { example_group_instance } {
+        dict for { name value } [my set before_all_ivars] {
+            $instance set $name $value
+        }
+
         foreach ancestor [my ancestors] {
             foreach hook [lreverse [dict get [$ancestor set hooks] after all]] {
                 $example_group_instance eval $hook
