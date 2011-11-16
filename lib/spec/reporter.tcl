@@ -4,7 +4,7 @@ namespace import xotcl::*
 namespace eval Spec {
     Class create Reporter
     Reporter instproc init { } {
-        my lappend formatters [Formatters::BaseTextFormatter new]
+        my lappend formatters [Formatters::ProgressFormatter new]
 
         my set example_count 0
         my set failure_count 0
