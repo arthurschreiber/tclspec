@@ -126,6 +126,8 @@ namespace eval Spec {
 
         set result true
 
+        $reporter example_group_started [self]
+
         foreach example $examples {
             set result [expr { [$example run [my new] $reporter] && $result }]
         }
@@ -133,6 +135,8 @@ namespace eval Spec {
         foreach child $children {
             set result [expr { [$children run $reporter] && $result }]
         }
+
+        $reporter example_group_finished [self]
 
         return $result
     }
