@@ -1,6 +1,8 @@
 package require XOTcl
 namespace import xotcl::*
 
+package require try
+
 namespace eval Spec {
     Class create Example
     Example instproc init { example_group description block } {
@@ -21,24 +23,24 @@ namespace eval Spec {
         my set example_group_instance $example_group_instance
         set result true
 
-        my start $reporter
-        if { [catch { my __execute } message error_options] } {
+        ::try::try {
+            [my set example_group_instance] proc expect { args } {
+                uplevel [list ::Spec::Matchers expect {*}$args]
+            }
+
+            my run_before_each
+            [my set example_group_instance] eval [my set block]
+            my run_after_each
+        } on error { message error_options } {
             set result false
             my set_error $message $::errorInfo $error_options
+        } finally {
+            [my set example_group_instance] proc expect "" ""
+
+            my finish $reporter
         }
-        my finish $reporter
 
         return $result
-    }
-
-    Example instproc __execute { } {
-        [my set example_group_instance] proc expect { args } {
-            uplevel [list ::Spec::Matchers expect {*}$args]
-        }
-
-        my run_before_each
-        [my set example_group_instance] eval [my set block]
-        my run_after_each
     }
 
     Example instproc run_before_each { } {
