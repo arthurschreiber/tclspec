@@ -95,7 +95,7 @@ namespace eval Spec {
     ExampleGroupClass instproc run_before_each { example_group_instance } {
         foreach ancestor [lreverse [my ancestors]] {
             foreach hook [dict get [$ancestor set hooks] before each] {
-                $example_group_instance instance_eval $hook
+                $example_group_instance eval $hook
             }
         }
     }
@@ -103,7 +103,7 @@ namespace eval Spec {
     ExampleGroupClass instproc run_after_each { example_group_instance } {
         foreach ancestor [my ancestors] {
             foreach hook [lreverse [dict get [my set hooks] after each]] {
-                $example_group_instance instance_eval $hook
+                $example_group_instance eval $hook
             }
         }
     }
@@ -150,7 +150,4 @@ namespace eval Spec {
     }
 
     ExampleGroupClass create ExampleGroup
-    ExampleGroup instproc instance_eval { block } {
-        eval $block
-    }
 }

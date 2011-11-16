@@ -33,7 +33,7 @@ namespace eval Spec {
 
     Example instproc __execute { } {
         my run_before_each
-        [my set example_group_instance] instance_eval [my set block]
+        [my set example_group_instance] eval [my set block]
         my run_after_each
     }
 
