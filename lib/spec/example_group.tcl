@@ -56,6 +56,8 @@ namespace eval Spec {
 
         dict set hooks before all { }
         dict set hooks after all { }
+
+        my set before_all_ivars { }
     }
 
     ExampleGroupClass instproc it { description block } {
@@ -108,6 +110,32 @@ namespace eval Spec {
         }
     }
 
+    ExampleGroupClass instproc run_before_all { example_group_instance } {
+        my instvar before_all_ivars
+
+        dict for { name value } $before_all_ivars {
+            $example_group_instance set $name $value
+        }
+
+        foreach ancestor [lreverse [my ancestors]] {
+            foreach hook [dict get [$ancestor set hooks] before all] {
+                $example_group_instance eval $hook
+            }
+        }
+
+        foreach name [$example_group_instance info vars] {
+            dict set before_all_ivars $name [$example_group_instance set $name]
+        }
+    }
+
+    ExampleGroupClass instproc run_after_all { example_group_instance } {
+        foreach ancestor [my ancestors] {
+            foreach hook [lreverse [dict get [$ancestor set hooks] after all]] {
+                $example_group_instance eval $hook
+            }
+        }
+    }
+
     ExampleGroupClass instproc ancestors { } {
         set ancestors {}
         set current_ancestor [self]
@@ -121,24 +149,28 @@ namespace eval Spec {
     }
 
     ExampleGroupClass instproc run { reporter } {
-        my instvar hooks
-        my instvar before after examples children
-
-        set result true
+        my instvar children
 
         $reporter example_group_started [self]
 
-        foreach example $examples {
-            set result [expr { [$example run [my new] $reporter] && $result }]
-        }
+        my run_before_all [my new]
+
+        set result [my run_examples $reporter]
 
         foreach child $children {
             set result [expr { [$children run $reporter] && $result }]
         }
 
+        my run_after_all [my new]
+        my set before_all_ivars { }
+
         $reporter example_group_finished [self]
 
         return $result
+    }
+
+    ExampleGroupClass instproc before_all_ivars { } {
+        my set before_all_ivars
     }
 
     ExampleGroupClass instproc execute { reporter } {
@@ -146,7 +178,17 @@ namespace eval Spec {
     }
 
     ExampleGroupClass instproc run_examples { reporter } {
+        my instvar examples
 
+        set result true
+        foreach example $examples {
+            set instance [my new]
+            dict for { name value } [my set before_all_ivars] {
+                $instance set $name $value
+            }
+            set result [expr { [$example run $instance $reporter] && $result }]
+        }
+        return $result
     }
 
     ExampleGroupClass instproc unknown { args } {
