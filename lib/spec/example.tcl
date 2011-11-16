@@ -32,6 +32,10 @@ namespace eval Spec {
     }
 
     Example instproc __execute { } {
+        [my set example_group_instance] proc expect { args } {
+            uplevel [list ::Spec::Matchers expect {*}$args]
+        }
+
         my run_before_each
         [my set example_group_instance] eval [my set block]
         my run_after_each

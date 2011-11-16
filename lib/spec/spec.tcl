@@ -25,30 +25,3 @@ Spec proc world { } {
 proc describe { args } {
     [::Spec::ExampleGroup describe {*}$args] register
 }
-
-proc expect { actual to matcher args } {
-    # Store the current stack level, so that blocks passed to
-    # matchers are executed in the correct scope.
-    ::Spec::Matchers set eval_level "#[expr { [info level] - 1 }]"
-
-    set positive true
-
-    # Negative Expectation
-    if { $matcher == "not" } {
-        set positive false
-        set matcher [lindex $args 0]
-        set args [lrange $args 1 end]
-    }
-
-    if { [::Spec::Matchers info procs $matcher] != "" } {
-        set matcher [::Spec::Matchers $matcher {*}$args]
-    } else {
-        error "Unknown Matcher: $matcher"
-    }
-
-    if { $positive } {
-        Spec::PositiveExpectationHandler handle_matcher $actual $matcher
-    } else {
-        Spec::NegativeExpectationHandler handle_matcher $actual $matcher
-    }
-}
