@@ -33,6 +33,7 @@ namespace eval Spec {
         $child eval $block
         my lappend children $child
 
+        $child proc describe "" ""
         $child proc it "" ""
         $child proc example "" ""
         $child proc describe "" ""
