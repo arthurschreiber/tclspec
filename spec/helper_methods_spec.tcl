@@ -4,7 +4,7 @@ package require spec/autorun
 source [file join [file dirname [info script]] "spec_helper.tcl"]
 
 describe "an example" {
-    ::xotcl::my instproc help {} {
+    proc help {} {
         return "available"
     }
 
@@ -14,7 +14,7 @@ describe "an example" {
 }
 
 describe "an example" {
-    ::xotcl::my instproc help {} {
+    proc help {} {
         return "available"
     }
 

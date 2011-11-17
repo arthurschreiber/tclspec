@@ -7,6 +7,8 @@ namespace eval Spec {
 
         $child set description $description
 
+        # We have to overwrite these methods here, so we can make sure that
+        # no global method with the same name is called instead.
         $child proc describe { args } {
             ::xotcl::classes::Spec::ExampleGroupClass::describe {*}$args
         }
@@ -27,8 +29,17 @@ namespace eval Spec {
             ::xotcl::classes::Spec::ExampleGroupClass::after {*}$args
         }
 
+        # Overwriting proc allows easy creation of helper methods
+        # without having to expose xotcl functionality.
+        $child proc proc { args } {
+            ::xotcl::my instproc {*}$args
+        }
+
         $child eval $block
         my lappend children $child
+
+        # We can't call proc here as that is what we have overwritten before
+        $child eval { rename proc "" }
 
         $child proc describe "" ""
         $child proc it "" ""
