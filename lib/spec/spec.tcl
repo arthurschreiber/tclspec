@@ -19,10 +19,7 @@ Spec proc world {} {
     ::xotcl::my set world
 }
 
-proc describe { args } {
-    [::Spec::ExampleGroup describe {*}$args] register
-}
-
+source [file join [file dirname [info script]] "dsl.tcl"]
 source [file join [file dirname [info script]] "example.tcl"]
 source [file join [file dirname [info script]] "example_group.tcl"]
 source [file join [file dirname [info script]] "expectation_handler.tcl"]
