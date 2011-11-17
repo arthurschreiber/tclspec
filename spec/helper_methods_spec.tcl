@@ -9,7 +9,7 @@ describe "an example" {
     }
 
     it "has access to methods defined in its group" {
-        expect [::xotcl::my help] to equal "available"
+        expect [help] to equal "available"
     }
 }
 
@@ -20,7 +20,7 @@ describe "an example" {
 
     describe "in a nested group" {
         it "has access to methods defined in its parent group" {
-            expect [::xotcl::my help] to equal "available"
+            expect [help] to equal "available"
         }
     }
 }
@@ -34,6 +34,6 @@ describe "an example" {
     ::xotcl::my instmixin HelpersModule
 
     it "has access to methods defined in mixins included in its group" {
-        expect [::xotcl::my help] to equal "available"
+        expect [help] to equal "available"
     }
 }

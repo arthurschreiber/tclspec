@@ -1,33 +1,31 @@
 namespace eval Spec {
     Class create ExampleGroupClass -superclass Class
 
+    proc stub_for_eval { object methods } {
+        foreach method $methods {
+            $object proc $method { args } {
+                if { [::xotcl::self next] == "" } {
+                    uplevel [list ::xotcl::my [lindex [info level 0] 0] {*}$args]
+                } else {
+                    ::xotcl::next
+                }
+            }
+        }
+    }
+
+    proc unstub_for_eval { object methods } {
+        foreach method $methods {
+            $object proc $method "" ""
+        }
+    }
+
     ExampleGroupClass instproc describe { {description ""} {block {}} } {
         set child [self]::[my autoname Nested_]
         [ExampleGroupClass create $child -superclass [self]]
 
         $child set description $description
 
-        # We have to overwrite these methods here, so we can make sure that
-        # no global method with the same name is called instead.
-        $child proc describe { args } {
-            ::xotcl::classes::Spec::ExampleGroupClass::describe {*}$args
-        }
-
-        $child proc it { args } {
-            ::xotcl::classes::Spec::ExampleGroupClass::it {*}$args
-        }
-
-        $child proc example { args } {
-            ::xotcl::classes::Spec::ExampleGroupClass::example {*}$args
-        }
-
-        $child proc before { args } {
-            ::xotcl::classes::Spec::ExampleGroupClass::before {*}$args
-        }
-
-        $child proc after { args } {
-            ::xotcl::classes::Spec::ExampleGroupClass::after {*}$args
-        }
+        stub_for_eval $child { "describe" "it" "example" "before" "after" }
 
         # Overwriting proc allows easy creation of helper methods
         # without having to expose xotcl functionality.
@@ -41,12 +39,7 @@ namespace eval Spec {
         # We can't call proc here as that is what we have overwritten before
         $child eval { rename proc "" }
 
-        $child proc describe "" ""
-        $child proc it "" ""
-        $child proc example "" ""
-        $child proc describe "" ""
-        $child proc before "" ""
-        $child proc after "" ""
+        unstub_for_eval $child { "describe" "it" "example" "before" "after" }
 
         return $child
     }
@@ -208,4 +201,18 @@ namespace eval Spec {
     }
 
     ExampleGroupClass create ExampleGroup
+
+    ExampleGroup instproc init { } {
+        set instance_methods [my info methods]
+        set xotcl_methods [[Object new] info methods]
+        set methods_to_stub [list]
+
+        foreach method [my info methods] {
+            if { [lsearch -exact $xotcl_methods $method] == -1 } {
+                lappend methods_to_stub $method
+            }
+        }
+
+        stub_for_eval [self] $methods_to_stub
+    }
 }
