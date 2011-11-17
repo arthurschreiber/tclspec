@@ -1,8 +1,3 @@
-package require at_exit
-
-package require XOTcl
-namespace import xotcl::*
-
 namespace eval Spec {
     Class create Runner
     Runner proc autorun {} {
@@ -11,7 +6,7 @@ namespace eval Spec {
         }
 
         my set installed_at_exit true
-        ::at_exit::at_exit { exit [Spec::Runner run] }
+        at_exit { exit [Spec::Runner run] }
     }
 
     Runner proc run {} {

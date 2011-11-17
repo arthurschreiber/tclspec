@@ -1,6 +1,3 @@
-package require XOTcl
-namespace import xotcl::*
-
 namespace eval Spec {
     Class create ExampleGroupClass -superclass Class
 

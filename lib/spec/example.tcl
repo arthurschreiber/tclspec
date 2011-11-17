@@ -1,8 +1,3 @@
-package require XOTcl
-namespace import xotcl::*
-
-package require try
-
 namespace eval Spec {
     Class create Example
     Example instproc init { example_group description block } {
@@ -23,7 +18,7 @@ namespace eval Spec {
         my set example_group_instance $example_group_instance
         set result true
 
-        ::try::try {
+        try {
             [my set example_group_instance] proc expect { args } {
                 uplevel [list ::Spec::Matchers expect {*}$args]
             }

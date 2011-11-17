@@ -1,4 +1,8 @@
 namespace eval Spec {
+    namespace eval Matchers {
+        namespace path ::Spec
+    }
+
     Class create Matchers
 
     # Current evaluation level, used to determine the correct
