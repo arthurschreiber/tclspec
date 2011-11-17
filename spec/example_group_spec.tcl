@@ -185,6 +185,18 @@ describe "how instance variables are inherited" {
     }
 }
 
+describe "variables are not shared across examples" {
+    it "(first example)" {
+        set a 1
+        expect [info exists b] to be false
+    }
+
+    it "(second example)" {
+        set b 1
+        expect [info exists a] to be false
+    }
+}
+
 describe "ancestors" {
     it "returns a list of the current and the parent example groups" {
         set top [::Spec::ExampleGroup describe "top"]
