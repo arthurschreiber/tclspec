@@ -12,7 +12,7 @@ namespace eval Spec {
         #
         # TODO: The return level here is currently hard-coded, but it should be
         #       possible to determine the correct level programmatically.
-        return -level 4 -code error -errorcode "EXPECTATION_NOT_MET" $message
+        return -level 3 -code error -errorcode "EXPECTATION_NOT_MET" $message
     }
 
     Class PositiveExpectationHandler

@@ -9,6 +9,8 @@ namespace eval Spec {
     # level blocks passed to a matcher have to be executed at.
     Matchers set eval_level 1
 
+    Matchers requireNamespace
+
     Matchers proc expect { actual to matcher args } {
         # Store the parent stack level, so that blocks passed to
         # matchers are executed in the correct scope.

@@ -25,21 +25,12 @@ namespace eval Spec {
 
         $child set description $description
 
-        stub_for_eval $child { "describe" "it" "example" "before" "after" }
-
-        # Overwriting proc allows easy creation of helper methods
-        # without having to expose xotcl functionality.
-        $child proc proc { args } {
-            ::xotcl::my instproc {*}$args
-        }
-
+        # Gives access to the dsl methods when evaluation the passed block
+        $child requireNamespace
+        $child eval { namespace path [concat [[::xotcl::my info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers] }
         $child eval $block
+
         my lappend children $child
-
-        # We can't call proc here as that is what we have overwritten before
-        $child eval { rename proc "" }
-
-        unstub_for_eval $child { "describe" "it" "example" "before" "after" }
 
         return $child
     }
@@ -202,17 +193,12 @@ namespace eval Spec {
 
     ExampleGroupClass create ExampleGroup
 
+    stub_for_eval ::Spec::ExampleGroup { "describe" "it" "example" "before" "after" }
+
     ExampleGroup instproc init { } {
-        set instance_methods [my info methods]
-        set xotcl_methods [[Object new] info methods]
-        set methods_to_stub [list]
-
-        foreach method [my info methods] {
-            if { [lsearch -exact $xotcl_methods $method] == -1 } {
-                lappend methods_to_stub $method
-            }
+        my requireNamespace
+        my eval {
+            namespace path [concat [[::xotcl::my info class] ancestors] ::Spec::Matchers]
         }
-
-        stub_for_eval [self] $methods_to_stub
     }
 }

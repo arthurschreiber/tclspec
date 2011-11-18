@@ -19,10 +19,6 @@ namespace eval Spec {
         set result true
 
         try {
-            [my set example_group_instance] proc expect { args } {
-                uplevel [list ::Spec::Matchers expect {*}$args]
-            }
-
             my run_before_each
             [my set example_group_instance] eval [my set block]
             my run_after_each
@@ -30,8 +26,6 @@ namespace eval Spec {
             set result false
             my set_error $message $::errorInfo $error_options
         } finally {
-            [my set example_group_instance] proc expect "" ""
-
             my finish $reporter
         }
 
