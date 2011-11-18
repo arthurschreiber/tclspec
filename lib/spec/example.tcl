@@ -18,6 +18,7 @@ namespace eval Spec {
         my set example_group_instance $example_group_instance
         set result true
 
+        my start $reporter
         try {
             my run_before_each
             [my set example_group_instance] eval [my set block]
