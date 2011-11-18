@@ -68,7 +68,7 @@ describe "expect to be false" {
 
 describe "BeComparedToMatcher, with < as operator" {
     before each {
-        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 "<" ]
+        set matcher [ Spec::Matchers::BeComparedToMatcher new "<"  10 ]
     }
 
     it "matches when actual is < expected" {
@@ -93,7 +93,7 @@ describe "BeComparedToMatcher, with < as operator" {
 
 describe "BeComparedToMatcher, with <= as operator" {
     before each {
-        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 "<=" ]
+        set matcher [ Spec::Matchers::BeComparedToMatcher new "<=" 10 ]
     }
 
     it "matches when actual is <= expected" {
@@ -118,7 +118,7 @@ describe "BeComparedToMatcher, with <= as operator" {
 
 describe "BeComparedToMatcher, with == as operator" {
     before each {
-        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 "==" ]
+        set matcher [ Spec::Matchers::BeComparedToMatcher new "==" 10 ]
     }
 
     it "matches when actual is == expected" {
@@ -143,7 +143,7 @@ describe "BeComparedToMatcher, with == as operator" {
 
 describe "BeComparedToMatcher, with != as operator" {
     before each {
-        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 "!=" ]
+        set matcher [ Spec::Matchers::BeComparedToMatcher new "!=" 10 ]
     }
 
     it "matches when actual is != expected" {
@@ -167,7 +167,7 @@ describe "BeComparedToMatcher, with != as operator" {
 
 describe "BeComparedToMatcher, with >= as operator" {
     before each {
-        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 ">=" ]
+        set matcher [ Spec::Matchers::BeComparedToMatcher new ">=" 10 ]
     }
 
     it "matches when actual is >= expected" {
@@ -192,7 +192,7 @@ describe "BeComparedToMatcher, with >= as operator" {
 
 describe "BeComparedToMatcher, with > as operator" {
     before each {
-        set matcher [ Spec::Matchers::BeComparedToMatcher new 10 ">" ]
+        set matcher [ Spec::Matchers::BeComparedToMatcher new ">" 10 ]
     }
 
     it "matches when actual is > expected" {

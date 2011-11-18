@@ -40,7 +40,7 @@ namespace eval Spec {
         }
 
         Class BeComparedToMatcher -superclass BaseMatcher
-        BeComparedToMatcher instproc init { operand operator } {
+        BeComparedToMatcher instproc init { operator operand } {
             my set operand $operand
             my set operator $operator
         }
