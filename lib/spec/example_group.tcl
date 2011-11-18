@@ -1,21 +1,29 @@
 namespace eval Spec {
     Class create ExampleGroupClass -superclass Class
 
-    proc stub_for_eval { object methods } {
-        foreach method $methods {
-            $object proc $method { args } {
-                if { [::xotcl::self next] == "" } {
-                    uplevel [list ::xotcl::my [lindex [info level 0] 0] {*}$args]
-                } else {
-                    ::xotcl::next
+    if { $::xotcl::version >= 2.0 } {
+        proc stub_for_eval { object methods } {
+            foreach method $methods {
+                $object proc $method { args } {
+                    if { [catch { ::xotcl::self } ]} {
+                        uplevel [list [lindex :[info level 0] 0] {*}$args]
+                    } else {
+                        ::xotcl::next
+                    }
                 }
             }
         }
-    }
-
-    proc unstub_for_eval { object methods } {
-        foreach method $methods {
-            $object proc $method "" ""
+    } else {
+        proc stub_for_eval { object methods } {
+            foreach method $methods {
+                $object proc $method { args } {
+                    if { [::xotcl::self next] == "" } {
+                        uplevel [list ::xotcl::my [lindex [info level 0] 0] {*}$args]
+                    } else {
+                        ::xotcl::next
+                    }
+                }
+            }
         }
     }
 
