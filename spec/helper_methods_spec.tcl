@@ -65,6 +65,42 @@ describe "a helper proc" {
         }
     }
 
+    describe "can be accessed from a before all block" {
+        before all {
+            set result [helper]
+        }
+
+        it "(works)" {
+            expect $result to equal "available"
+        }
+    }
+
+    describe "can be accessed from a before each block" {
+        before each {
+            set result [helper]
+        }
+
+        it "(works)" {
+            expect $result to equal "available"
+        }
+    }
+
+    describe "can be accessed from a after each block" {
+        after each {
+            expect [helper] to equal "available"
+        }
+
+        it "(works)" { }
+    }
+
+    describe "can be accessed from a after all block" {
+        after all {
+            expect [helper] to equal "available"
+        }
+
+        it "(works)" { }
+    }
+
     it "can't be accessed from the outside example group" {
         expect { nested_helper } to raise_error -message "invalid command name \"nested_helper\""
     }
