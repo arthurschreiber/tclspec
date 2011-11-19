@@ -217,3 +217,27 @@ describe "expect to not be >" {
         } to fail_with "expected not: > '10'\n         got:   '11'"
     }
 }
+
+describe "expect to be in" {
+    it "passes when actual is in expected" {
+        expect "foo" to be in { "foo" "bar" "baz" }
+    }
+
+    it "fails when actual is not in expected" {
+        expect {
+            expect "quox" to be in { "foo" "bar" "baz" }
+        } to fail_with "expected 'quox' to be in ' \"foo\" \"bar\" \"baz\" '"
+    }
+}
+
+describe "expect to not be in" {
+    it "passes when actual is in expected" {
+        expect "quox" to not be in { "foo" "bar" "baz" }
+    }
+
+    it "fails when actual is not in expected" {
+        expect {
+            expect "baz" to not be in { "foo" "bar" "baz" }
+        } to fail_with "expected 'baz' to not be in ' \"foo\" \"bar\" \"baz\" '"
+    }
+}

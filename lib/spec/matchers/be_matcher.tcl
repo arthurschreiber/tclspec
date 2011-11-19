@@ -50,12 +50,20 @@ namespace eval Spec {
         BeComparedToMatcher instproc failure_message {} {
             if { [my set operator] == "==" } {
                 return "expected: '[my set operand]'\n     got: '[my set actual]' (using [my set operator])"
-            } else {
-                return "expected: [my set operator] '[my set operand]'\n     got: [string repeat " " [string length [my set operator]]] '[my set actual]'"
             }
+
+            if { [my set operator] == "in" } {
+                return "expected '[my set actual]' to be in '[my set operand]'"
+            }
+
+            return "expected: [my set operator] '[my set operand]'\n     got: [string repeat " " [string length [my set operator]]] '[my set actual]'"
         }
 
         BeComparedToMatcher instproc negative_failure_message {} {
+            if { [my set operator] == "in" } {
+                return "expected '[my set actual]' to not be in '[my set operand]'"
+            }
+
             return "expected not: [my set operator] '[my set operand]'\n         got: [string repeat " " [string length [my set operator]]] '[my set actual]'"
         }
     }
