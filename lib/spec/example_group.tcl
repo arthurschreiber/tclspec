@@ -3,6 +3,7 @@ namespace eval Spec {
 
     if { $::xotcl::version >= 2.0 } {
         proc stub_for_eval { object methods } {
+            $object requireNamespace
             foreach method $methods {
                 $object proc $method { args } {
                     if { [catch { ::xotcl::self } ]} {
@@ -15,13 +16,10 @@ namespace eval Spec {
         }
     } else {
         proc stub_for_eval { object methods } {
+            $object requireNamespace
             foreach method $methods {
                 $object proc $method { args } {
-                    if { [::xotcl::self next] == "" } {
-                        uplevel [list ::xotcl::my [lindex [info level 0] 0] {*}$args]
-                    } else {
-                        ::xotcl::next
-                    }
+                    ::xotcl::classes::Spec::ExampleGroupClass::[lindex [info level 0] 0] {*}$args
                 }
             }
         }
@@ -35,7 +33,9 @@ namespace eval Spec {
 
         # Gives access to the dsl methods when evaluation the passed block
         $child requireNamespace
-        $child eval { namespace path [concat [[::xotcl::my info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers] }
+        $child eval {
+            namespace path [concat [[::xotcl::my info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers]
+        }
         $child eval $block
 
         my lappend children $child
