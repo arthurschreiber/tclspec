@@ -165,51 +165,55 @@ describe "BeComparedToMatcher, with != as operator" {
     }
 }
 
-describe "BeComparedToMatcher, with >= as operator" {
-    before each {
-        set matcher [ Spec::Matchers::BeComparedToMatcher new ">=" 10 ]
+describe "expect to be >=" {
+    it "passes when actual is >= expected" {
+        expect 11 to be >= 10
+        expect 10 to be >= 10
     }
 
-    it "matches when actual is >= expected" {
-        expect [ $matcher matches? 11 ] to be true
-        expect [ $matcher matches? 10 ] to be true
-    }
-
-    it "does not match when actual is not >= expected" {
-        expect [ $matcher does_not_match? 3 ] to be true
-    }
-
-    it "provides actual on #failure_message" {
-        $matcher matches? 3
-        expect [ $matcher failure_message ] to equal "expected: >= '10'\n     got:    '3'"
-    }
-
-    it "provides actual on #negative_failure_message" {
-        $matcher does_not_match? 11
-        expect [ $matcher negative_failure_message ] to equal "expected not: >= '10'\n         got:    '11'"
+    it "fails when actual is not >= expected" {
+        expect {
+            expect 9 to be >= 10
+        } to fail_with "expected: >= '10'\n     got:    '9'"
     }
 }
 
-describe "BeComparedToMatcher, with > as operator" {
-    before each {
-        set matcher [ Spec::Matchers::BeComparedToMatcher new ">" 10 ]
+describe "expect to not be >=" {
+    it "passes when actual is not >= expected" {
+        expect 9 to not be >= 10
     }
 
-    it "matches when actual is > expected" {
-        expect [ $matcher matches? 11 ] to be true
+    it "fails when actual is >= expected" {
+        expect {
+            expect 10 to not be >= 10
+        } to fail_with "expected not: >= '10'\n         got:    '10'"
+
+        expect {
+            expect 11 to not be >= 10
+        } to fail_with "expected not: >= '10'\n         got:    '11'"
+    }
+}
+
+describe "expect to be >" {
+    it "passes when actual is > expected" {
+        expect 11 to be > 10
     }
 
-    it "does not match when actual is not > expected" {
-        expect [ $matcher does_not_match? 10 ] to be true
+    it "fails when actual is not > expected" {
+        expect {
+            expect 10 to be > 10
+        } to fail_with "expected: > '10'\n     got:   '10'"
+    }
+}
+
+describe "expect to not be >" {
+    it "passes when actual is not > expected" {
+        expect 10 to not be > 10
     }
 
-    it "provides actual on #failure_message" {
-        $matcher matches? 10
-        expect [ $matcher failure_message ] to equal "expected: > '10'\n     got:   '10'"
-    }
-
-    it "provides actual on #negative_failure_message" {
-        $matcher does_not_match? 11
-        expect [ $matcher negative_failure_message ] to equal "expected not: > '10'\n         got:   '11'"
+    it "fails when actual is > expected" {
+        expect {
+            expect 11 to not be > 10
+        } to fail_with "expected not: > '10'\n         got:   '11'"
     }
 }
