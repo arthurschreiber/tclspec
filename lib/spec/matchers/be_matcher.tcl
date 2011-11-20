@@ -8,6 +8,9 @@ namespace eval Spec {
                 < - <= - == - != - > - >= - in - ni {
                     ::Spec::Matchers::BeComparedToMatcher new {*}$args
                 }
+                default {
+                    error "Unknown matcher: 'be $args'"
+                }
             }
         }
 
