@@ -41,6 +41,7 @@ namespace eval Spec {
 
 source [file join [file dirname [info script]] "matchers/base_matcher.tcl"]
 source [file join [file dirname [info script]] "matchers/be_matcher.tcl"]
+source [file join [file dirname [info script]] "matchers/be_within_matcher.tcl"]
 source [file join [file dirname [info script]] "matchers/change_matcher.tcl"]
 source [file join [file dirname [info script]] "matchers/equal_matcher.tcl"]
 source [file join [file dirname [info script]] "matchers/raise_error_matcher.tcl"]
