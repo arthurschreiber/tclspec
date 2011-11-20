@@ -5,7 +5,7 @@ namespace eval Spec {
             switch [lindex $args 0] {
                 true { ::Spec::Matchers::BeTrueMatcher new }
                 false { ::Spec::Matchers::BeFalseMatcher new }
-                < - <= - > - >= - in - ni {
+                < - <= - == - != - > - >= - in - ni {
                     ::Spec::Matchers::BeComparedToMatcher new {*}$args
                 }
             }
