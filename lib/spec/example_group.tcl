@@ -86,6 +86,26 @@ namespace eval Spec {
         dict set hooks after $what [concat [dict get $hooks after $what] [list $block]]
     }
 
+    ExampleGroupClass instproc let { name block } {
+        my proc $name {} "
+            if { !\[::xotcl::my exists __memoized] } {
+                ::xotcl::my set __memoized {}
+            }
+
+            ::xotcl::my instvar __memoized
+
+            if { !\[dict exists \$__memoized $name\] } {
+                dict set __memoized $name \[::xotcl::my eval { $block }\]
+            }
+
+            dict get \$__memoized $name "
+    }
+
+    ExampleGroupClass instproc let! { name block } {
+        my let $name $block
+        my before each $name
+    }
+
     ExampleGroupClass instproc children { } {
         my set children
     }
@@ -201,7 +221,7 @@ namespace eval Spec {
 
     ExampleGroupClass create ExampleGroup
 
-    stub_for_eval ::Spec::ExampleGroup { "describe" "it" "example" "before" "after" }
+    stub_for_eval ::Spec::ExampleGroup { "describe" "it" "example" "before" "after" "let" "let!" }
 
     ExampleGroup instproc init { } {
         my requireNamespace
