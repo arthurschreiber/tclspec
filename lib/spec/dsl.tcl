@@ -1,7 +1,7 @@
 namespace eval Spec {
     namespace eval DSL {
         proc describe { args } {
-            [::Spec::ExampleGroup describe {*}$args] register
+            uplevel "\[::Spec::ExampleGroup describe $args] register"
         }
 
         namespace export describe
