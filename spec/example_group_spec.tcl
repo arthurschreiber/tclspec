@@ -3,42 +3,47 @@ package require spec/autorun
 
 source [file join [file dirname [info script]] "spec_helper.tcl"]
 
+namespace eval ::Helper {}
 
 describe "The top level group" {
-    it "runs its children" {
-        set ::examples_run 0
+    before each {
+        set ::Helper::examples_run 0
+    }
 
+    after each {
+        unset ::Helper::examples_run
+    }
+
+    it "runs its children" {
         set group [::Spec::ExampleGroup describe "parent" {
             describe "child" {
                 it "does something" {
-                    incr ::examples_run
+                    incr ::Helper::examples_run
                 }
             }
         }]
 
         expect [$group run [NullObject new]] to be true
-        expect $::examples_run to equal 1
+        expect $::Helper::examples_run to equal 1
     }
 
     describe "with a failure" {
         it "runs its children" {
-            set ::examples_run 0
-
             set group [::Spec::ExampleGroup describe "parent" {
                 it "fails" {
-                    incr ::examples_run
+                    incr ::Helper::examples_run
                     error "fail"
                 }
 
                 describe "child" {
                     it "does something" {
-                        incr ::examples_run
+                        incr ::Helper::examples_run
                     }
                 }
             }]
 
             expect [$group run [NullObject new]] to be false
-            expect $::examples_run to equal 2
+            expect $::Helper::examples_run to equal 2
         }
     }
 }
@@ -63,60 +68,64 @@ describe "child" {
 }
 
 describe "before, after, and around hooks" {
+    before each {
+        set ::Helper::order {}
+    }
+
+    after each {
+        unset ::Helper::order
+    }
+
     it "runs the before alls in order" {
         set group [::Spec::ExampleGroup describe]
-        set ::order {}
 
-        $group before all { lappend ::order 1 }
-        $group before all { lappend ::order 2 }
-        $group before all { lappend ::order 3 }
+        $group before all { lappend ::Helper::order 1 }
+        $group before all { lappend ::Helper::order 2 }
+        $group before all { lappend ::Helper::order 3 }
         $group example "example" { }
 
         $group run [NullObject new]
 
-        expect $::order to equal [list 1 2 3]
+        expect $::Helper::order to equal [list 1 2 3]
     }
 
     it "runs the before eachs in order" {
         set group [::Spec::ExampleGroup describe]
-        set ::order {}
 
-        $group before each { lappend ::order 1 }
-        $group before each { lappend ::order 2 }
-        $group before each { lappend ::order 3 }
+        $group before each { lappend ::Helper::order 1 }
+        $group before each { lappend ::Helper::order 2 }
+        $group before each { lappend ::Helper::order 3 }
         $group example "example" { }
 
         $group run [NullObject new]
 
-        expect $::order to equal [list 1 2 3]
+        expect $::Helper::order to equal [list 1 2 3]
     }
 
     it "runs the after eachs in reverse order" {
         set group [::Spec::ExampleGroup describe]
-        set ::order {}
 
-        $group after each { lappend ::order 1 }
-        $group after each { lappend ::order 2 }
-        $group after each { lappend ::order 3 }
+        $group after each { lappend ::Helper::order 1 }
+        $group after each { lappend ::Helper::order 2 }
+        $group after each { lappend ::Helper::order 3 }
         $group example "example" { }
 
         $group run [NullObject new]
 
-        expect $::order to equal [list 3 2 1]
+        expect $::Helper::order to equal [list 3 2 1]
     }
 
     it "runs the after alls in order" {
         set group [::Spec::ExampleGroup describe]
-        set ::order {}
 
-        $group after all { lappend ::order 1 }
-        $group after all { lappend ::order 2 }
-        $group after all { lappend ::order 3 }
+        $group after all { lappend ::Helper::order 1 }
+        $group after all { lappend ::Helper::order 2 }
+        $group after all { lappend ::Helper::order 3 }
         $group example "example" { }
 
         $group run [NullObject new]
 
-        expect $::order to equal [list 3 2 1]
+        expect $::Helper::order to equal [list 3 2 1]
     }
 }
 
