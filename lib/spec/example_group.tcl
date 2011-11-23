@@ -31,11 +31,27 @@ namespace eval Spec {
 
         $child set description $description
 
+        # When [::Spec::ExampleGroup describe] is called, we need to store the
+        # enclosing namespace, so we can later include it in the namespace path
+        # of the individual ExampleGroup instances.
+        if { [self] == "::Spec::ExampleGroup" } {
+            set enclosing_ns [uplevel 2 { namespace current }]
+
+            if { ![string match ::Spec::* $enclosing_ns] } {
+                $child set enclosing_namespace $enclosing_ns
+            }
+        } else {
+            if { [[self] exists enclosing_namespace] } {
+                $child set enclosing_namespace [[self] set enclosing_namespace]
+            }
+        }
+
         # Gives access to the dsl methods when evaluation the passed block
         $child requireNamespace
         $child eval {
             namespace path [concat [[::xotcl::my info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers]
         }
+
         $child eval $block
 
         my lappend children $child
@@ -124,7 +140,7 @@ namespace eval Spec {
 
     ExampleGroupClass instproc run_after_each { example_group_instance } {
         foreach ancestor [my ancestors] {
-            foreach hook [lreverse [dict get [my set hooks] after each]] {
+            foreach hook [lreverse [dict get [$ancestor set hooks] after each]] {
                 $example_group_instance eval $hook
             }
         }
@@ -227,6 +243,10 @@ namespace eval Spec {
         my requireNamespace
         my eval {
             namespace path [concat [[::xotcl::my info class] ancestors] ::Spec::Matchers]
+        }
+
+        if { [[my info class] exists enclosing_namespace] } {
+            my eval "namespace path \[concat \[namespace path] [[my info class] set enclosing_namespace]]"
         }
     }
 }
