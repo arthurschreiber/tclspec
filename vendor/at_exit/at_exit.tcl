@@ -26,10 +26,12 @@ namespace eval ::at_exit {
         lappend ::at_exit::handlers $handler
     }
 
-    rename ::exit ::at_exit::orig_exit
+    rename ::exit ::exit!
     proc ::exit { {returnCode 0} } {
         rename ::exit ""
-        rename ::at_exit::orig_exit ::exit
+        proc ::exit { {returnCode 0} } {
+            uplevel [list ::exit! $returnCode]
+        }
 
         if { [info exists ::at_exit::handlers] } {
             # Run each of the at_exit handlers, but in reverse order.
