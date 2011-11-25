@@ -1,32 +1,44 @@
 package provide at_exit 1.0
 
 namespace eval ::at_exit {
+    # List of handlers to be executed before the Tcl process exits.
     variable handlers {}
 
-    # Register a handler (block of code or method name)
-    # to be executed before the current tcl process exits.
+    # Register a handler (block of code or method name) to be executed before
+    # the current Tcl process exits.
     #
-    # Handlers are executed in the global scope, and handlers
-    # are executed in reverse registration order, meaning that
-    # handlers that were registered last will be executed first.
-    #
-    # A handler can force an exit by calling tcl's ::exit proc.
-    # No further at_exit handlers will then be executed.
-    #
-    # If an error occurs inside a handler, the error will be printed
-    # out to stderr, and the execution of at_exit handlers will continue.
-    #
-    # Errors inside an exit handler will not affect the return code with
-    # which ::exit was initially called. If an at_exit handler has to change
-    # the current script's exit code, the handler should execute ::exit
-    # with the desired code itself.
+    # See ::exit for more information.
     #
     # @param handler the handler to execute at exit.
     proc at_exit { handler } {
         lappend ::at_exit::handlers $handler
     }
 
+    # Immediately terminate the process, without running any of the at_exit
+    # handlers that have been installed. Returns returnCode to the system as
+    # exit status.
+    #
+    # @param returnCode The code to return to the system as exit status.
     rename ::exit ::exit!
+
+    # Terminate the process, after executing all registered at_exit handlers.
+    #
+    # Registered handlers are executed in the global scope, and handlers are
+    # executed in reverse registration order, meaning that handlers that are
+    # registered last will be executed first.
+    #
+    # Handlers can force an exist by calling either ::exit or ::exit!, which
+    # both will cause an immediate process termination and no further execution
+    # of any remaining at_exit handlers. The returned exit status to the system
+    # will be the exit code that was passed to the last call to ::exit or
+    # ::exit!.
+    #
+    # If an error occurs during the execution of an at_exit handler, the error
+    # will be printed to stderr, and the execution of at_exit handlers will
+    # continue. This will not affect the return code that was passed to the
+    # initial call to ::exit.
+    #
+    # @param returnCode The code to return to the system as exit status.
     proc ::exit { {returnCode 0} } {
         rename ::exit ""
         proc ::exit { {returnCode 0} } {
