@@ -1,160 +1,205 @@
-package provide try 1.0
+# # ## ### ##### ######## ############# ####################
+## -*- tcl -*-
+## (C) 2008-2011 Donal K. Fellows, Andreas Kupries, BSD licensed.
 
-namespace eval ::try {
-    # These are not local, since this allows us to [uplevel] a [catch] rather than
-    # [catch] the [uplevel]ing of something, resulting in a cleaner -errorinfo:
+# The code here is a forward-compatibility implementation of Tcl 8.6's
+# try/finally command (TIP 329), for Tcl 8.5. It was directly pulled
+# from Tcl 8.6 revision ?, when try/finally was implemented as Tcl
+# procedure instead of in C.
+
+# It makes use of the following Tcl 8.5 features:
+# lassign, dict, {*}.
+
+# # ## ### ##### ######## ############# ####################
+
+package provide try 1
+package require Tcl 8.5
+# Do nothing if the "try" command exists already (8.6 and higher).
+if {[llength [info commands try]]} return
+
+# # ## ### ##### ######## ############# ####################
+
+namespace eval ::tcl::control {
+    # These are not local, since this allows us to [uplevel] a [catch] rather
+    # than [catch] the [uplevel]ing of something, resulting in a cleaner
+    # -errorinfo:
     variable em {}
     variable opts {}
 
-    set ON_CODES { ok 0 error 1 return 2 break 3 continue 4 }
+    variable magicCodes { ok 0 error 1 return 2 break 3 continue 4 }
 
-    proc throw {type message} {
-        return -code error -errorcode $type -errorinfo $message -level 2 $message
+    namespace export try
+
+    # ::tcl::control::try --
+    #
+    #   Advanced error handling construct.
+    #
+    # Arguments:
+    #   See try(n) for details
+    proc try {args} {
+    variable magicCodes
+
+    # ----- Parse arguments -----
+
+    set trybody [lindex $args 0]
+    set finallybody {}
+    set handlers [list]
+    set i 1
+
+    while {$i < [llength $args]} {
+        switch -- [lindex $args $i] {
+        "on" {
+            incr i
+            set code [lindex $args $i]
+            if {[dict exists $magicCodes $code]} {
+            set code [dict get $magicCodes $code]
+            } elseif {![string is integer -strict $code]} {
+            set msgPart [join [dict keys $magicCodes] {", "}]
+            error "bad code '[lindex $args $i]': must be\
+                integer or \"$msgPart\""
+            }
+            lappend handlers [lrange $args $i $i] \
+            [format %d $code] {} {*}[lrange $args $i+1 $i+2]
+            incr i 3
+        }
+        "trap" {
+            incr i
+            if {![string is list [lindex $args $i]]} {
+            error "bad prefix '[lindex $args $i]':\
+                must be a list"
+            }
+            lappend handlers [lrange $args $i $i] 1 \
+            {*}[lrange $args $i $i+2]
+            incr i 3
+        }
+        "finally" {
+            incr i
+            set finallybody [lindex $args $i]
+            incr i
+            break
+        }
+        default {
+            error "bad handler '[lindex $args $i]': must be\
+            \"on code varlist body\", or\
+            \"trap prefix varlist body\""
+        }
+        }
     }
 
-    # For future reference: rethrow can be implemented by adding a "-rethrow"
-    # key to the return options dict
-    # proc ::try::rethrow {{type {}} {message {}}} {
-    #   return -code error -errorcode $type -rethrow 1 $message
-    # }
+    if {($i != [llength $args]) || ([lindex $handlers end] eq "-")} {
+        error "wrong # args: should be\
+        \"try body ?handler ...? ?finally body?\""
+    }
 
-    proc try {args} {
-        variable ON_CODES
+    # ----- Execute 'try' body -----
 
-        # Check parameters
-        set try_block [lindex $args 0]
-        set handlers {}
-        set finally {}
-        set as_result {}
-        set as_options {}
-        set i 1
+    variable em
+    variable opts
+    set EMVAR  [namespace which -variable em]
+    set OPTVAR [namespace which -variable opts]
+    set code [uplevel 1 [list ::catch $trybody $EMVAR $OPTVAR]]
 
-        # Optional "as {resultVarName ?optionsVarName?}"
-        if { [lindex $args $i] eq "as" } {
-            lassign [lindex $args $i+1] as_result as_options
-            incr i 2
+    if {$code == 1} {
+        set line [dict get $opts -errorline]
+        dict append opts -errorinfo \
+        "\n    (\"[lindex [info level 0] 0]\" body line $line)"
+    }
+
+    # Keep track of the original error message & options
+    set _em $em
+    set _opts $opts
+
+    # ----- Find and execute handler -----
+
+    set errorcode {}
+    if {[dict exists $opts -errorcode]} {
+        set errorcode [dict get $opts -errorcode]
+    }
+    set found false
+    foreach {descrip oncode pattern varlist body} $handlers {
+        if {!$found} {
+        if {
+            ($code != $oncode) || ([lrange $pattern 0 end] ne
+                       [lrange $errorcode 0 [llength $pattern]-1] )
+        } then {
+            continue
+        }
+        }
+        set found true
+        if {$body eq "-"} {
+        continue
         }
 
-        # Handlers & finally
-        while { $i < [llength $args] } {
-            switch -- [lindex $args $i] {
-                "on" {
-                    # on code variableList body
-                    # translate code to integer
-                    if { [scan [lindex $args $i+1] %d%c code dummy] != 1 } {
-                        # not a number - try the magic keywords
-                        if { [dict exists $ON_CODES [lindex $args $i+1]] } {
-                            set code [dict get $ON_CODES [lindex $args $i+1]]
-                        } else {
-                            # otherwise its an error
-                            break
-                        }
-                    }
-                    # otherwise store the handler for later
-                    lappend handlers "${code},*" [lindex $args $i+2] [lindex $args $i+3]
-                    incr i 4
-                }
-                "trap" {
-                    # trap pattern variableList body
-                    # store the handler for later
-                    lappend handlers "1,[lindex $args $i+1]" [lindex $args $i+2] [lindex $args $i+3]
-                    incr i 4
-                }
-                "finally" {
-                    # finally body (and no further handlers)
-                    set finally [lindex $args $i+1]
-                    incr i 2
-                    break
-                }
-                default {
-                    # unrecognised handler keyword
-                    break
-                }
-            }
+        # Handler found ...
+
+        # Assign trybody results into variables
+        lassign $varlist resultsVarName optionsVarName
+        if {[llength $varlist] >= 1} {
+        upvar 1 $resultsVarName resultsvar
+        set resultsvar $em
+        }
+        if {[llength $varlist] >= 2} {
+        upvar 1 $optionsVarName optsvar
+        set optsvar $opts
         }
 
-        # If we broke out before the last arg (or need more args) then there is a
-        # parameter problem
-        # If the last handler body is a "-" then reject
-        if { $i != [llength $args] || [lindex $handlers end] eq "-" } {
-            error "wrong # args: should be \"try body ?as {resultVar ?optionsVar?}? ?on code body ...? ?trap pattern body ...? ?finally body?\""
+        # Execute the handler
+        set code [uplevel 1 [list ::catch $body $EMVAR $OPTVAR]]
+
+        if {$code == 1} {
+        set line [dict get $opts -errorline]
+        dict append opts -errorinfo \
+            "\n    (\"[lindex [info level 0] 0] ... $descrip\"\
+            body line $line)"
+        # On error chain to original outcome
+        dict set opts -during $_opts
         }
 
-        # Execute the try_block, catching errors
-        variable em
-        variable opts
-        set code [uplevel 1 [list ::catch $try_block \
-            [namespace which -variable em] [namespace which -variable opts] ]]
-
-
-        # Keep track of the original error message & options
+        # Handler result replaces the original result (whether success or
+        # failure); capture context of original exception for reference.
         set _em $em
         set _opts $opts
 
-        # Find and execute handler
-        set errorcode {}
-        if { [dict exists $_opts -errorcode] } {
-            set errorcode [dict get $_opts -errorcode]
-        }
-        set exception "$code,$errorcode"
-
-        set found false
-        foreach {pattern variable_list body} $handlers {
-            if { ! $found && ! [string match $pattern $exception] } continue
-            set found true
-            if { $body eq "-" } continue
-
-            # Assign try body result to caller's variables
-            if { [llength $variable_list] > 0 } {
-                upvar [lindex $variable_list 0] _as_em
-                set _as_em $em
-
-                if { [llength $variable_list] > 1 } {
-                    upvar [lindex $variable_list 1] _as_opt
-                    set _as_opt $opts
-                }
-            }
-
-            # Handler found - execute it
-            set code [uplevel 1 [list ::catch $body \
-                [namespace which -variable em] [namespace which -variable opts] ]]
-
-            # Handler result replaces the original result (whether success or
-            # failure); capture context of original exception for reference
-            dict set opts -during $_opts
-            set _em $em
-            set _opts $opts
-
-            # Handler has been executed - stop looking for more
-            break
-        }
-
-        # No catch handler found -- error falls through to caller
-        # OR catch handler executed -- result falls through to caller
-
-        # If we have a finally block then execute it
-        if { $finally ne {} } {
-            set code [uplevel 1 [list ::catch $finally \
-                [namespace which -variable em] [namespace which -variable opts] ]]
-
-            # Finally result takes precedence except on success
-            if { $code != 0 } {
-                dict set opts -during $_opts
-                set _em $em
-                set _opts $opts
-            }
-
-            # Otherwise our result is not affected
-        }
-
-        # Propegate the error or the result of the executed catch body to the caller
-
-        #FIXME -level 2 will hide the try...catch itself from errorInfo, but it
-        #  breaks nested 'try { try ... catch } catch'
-        dict incr _opts -level 1
-
-        return -options $_opts $_em
+        # Handler has been executed - stop looking for more
+        break
     }
 
-    namespace export try throw
+    # No catch handler found -- error falls through to caller
+    # OR catch handler executed -- result falls through to caller
+
+    # ----- If we have a finally block then execute it -----
+
+    if {$finallybody ne {}} {
+        set code [uplevel 1 [list ::catch $finallybody $EMVAR $OPTVAR]]
+
+        # Finally result takes precedence except on success
+
+        if {$code == 1} {
+        set line [dict get $opts -errorline]
+        dict append opts -errorinfo \
+            "\n    (\"[lindex [info level 0] 0] ... finally\"\
+            body line $line)"
+        # On error chain to original outcome
+        dict set opts -during $_opts
+        }
+        if {$code != 0} {
+        set _em $em
+        set _opts $opts
+        }
+
+        # Otherwise our result is not affected
+    }
+
+    # Propagate the error or the result of the executed catch body to the
+    # caller.
+    dict incr _opts -level
+    return -options $_opts $_em
+    }
 }
+
+# # ## ### ##### ######## ############# ####################
+
+namespace import ::tcl::control::try
+
+# # ## ### ##### ######## ############# ####################
+## Ready

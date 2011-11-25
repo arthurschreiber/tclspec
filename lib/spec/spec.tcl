@@ -6,7 +6,7 @@ package require try
 
 namespace eval Spec {
     namespace import ::xotcl::*
-    namespace import ::try::*
+    namespace import ::tcl::control::*
     namespace import ::at_exit::*
 }
 
