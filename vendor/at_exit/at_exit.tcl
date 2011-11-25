@@ -20,6 +20,8 @@ namespace eval ::at_exit {
     # which ::exit was initially called. If an at_exit handler has to change
     # the current script's exit code, the handler should execute ::exit
     # with the desired code itself.
+    #
+    # @param handler the handler to execute at exit.
     proc at_exit { handler } {
         lappend ::at_exit::handlers $handler
     }
