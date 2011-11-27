@@ -10,73 +10,70 @@ source [file join [file dirname [info script]] "formatters/documentation_formatt
 source [file join [file dirname [info script]] "formatters/progress_formatter.tcl"]
 
 namespace eval Spec {
-    Class create Reporter
-    Reporter instproc init { } {
-        my lappend formatters [Formatters::ProgressFormatter new]
+    nx::Class create Reporter {
+        :variable formatters [list [Formatters::ProgressFormatter new]]
+        :variable example_count 0
+        :variable failure_count 0
+        :variable start 0
+        :variable duration 0
 
-        my set example_count 0
-        my set failure_count 0
+        :public method report { expected_example_count block } {
+            :start $expected_example_count
 
-        my set start 0
-        my set duration 0
-    }
+            # yield self?
+            uplevel $block
 
-    Reporter instproc report { expected_example_count block } {
-        my start $expected_example_count
+            :finish
+        }
 
-        # yield self?
-        uplevel $block
+        :public method start { expected_example_count } {
+            set :start [clock clicks -milliseconds]
+            :notify start $expected_example_count
+        }
 
-        my finish
-    }
+        :public method message { message } {
+            :notify message $message
+        }
 
-    Reporter instproc start { expected_example_count } {
-        my set start [clock clicks -milliseconds]
-        my notify start $expected_example_count
-    }
+        :public method example_group_started { example_group } {
+            :notify example_group_started $example_group
+        }
 
-    Reporter instproc message { message } {
-        my notify message $message
-    }
+        :public method example_group_finished { example_group } {
+            :notify example_group_finished $example_group
+        }
 
-    Reporter instproc example_group_started { example_group } {
-        my notify example_group_started $example_group
-    }
+        :public method example_started { example } {
+            incr :example_count
+            :notify example_started $example
+        }
 
-    Reporter instproc example_group_finished { example_group } {
-        my notify example_group_finished $example_group
-    }
+        :public method example_passed { example } {
+            :notify example_passed $example
+        }
 
-    Reporter instproc example_started { example } {
-        my incr example_count
-        my notify example_started $example
-    }
+        :public method example_failed { example } {
+            incr failure_count
+            :notify example_failed $example
+        }
 
-    Reporter instproc example_passed { example } {
-        my notify example_passed $example
-    }
+        :public method finish {} {
+            :stop
 
-    Reporter instproc example_failed { example } {
-        my incr failure_count
-        my notify example_failed $example
-    }
+            :notify start_dump
+            :notify dump_failures
+            :notify dump_summary ${:duration} ${:example_count} ${:failure_count}
+        }
 
-    Reporter instproc finish {} {
-        my stop
+        :public method stop {} {
+            set :duration [ expr { [clock clicks -milliseconds] - ${:start} } ]
+            :notify stop
+        }
 
-        my notify start_dump
-        my notify dump_failures
-        my notify dump_summary [my set duration] [my set example_count] [my set failure_count]
-    }
-
-    Reporter instproc stop {} {
-        my set duration [ expr { [clock clicks -milliseconds] - [my set start] } ]
-        my notify stop
-    }
-
-    Reporter instproc notify { method args } {
-        foreach formatter [my set formatters] {
-            $formatter $method {*}$args
+        :public method notify { method args } {
+            foreach formatter ${:formatters} {
+                $formatter $method {*}$args
+            }
         }
     }
 }
