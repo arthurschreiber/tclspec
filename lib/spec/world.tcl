@@ -1,25 +1,26 @@
+package require nx
+
 namespace eval Spec {
-    Class create World
-    World instproc init { } {
-        my set example_groups {}
-    }
+    nx::Class create World {
+        :variable example_groups [list]
 
-    World instproc example_groups { } {
-        my set example_groups
-    }
-
-    World instproc register { example_group } {
-        my lappend example_groups $example_group
-        return $example_group
-    }
-
-    World instproc example_count { } {
-        set count 0
-
-        foreach group [my set example_groups] {
-            incr count [llength [$group set examples]]
+        :public method example_groups {} {
+            set :example_groups
         }
 
-        return $count
+        :public method register { example_group } {
+            lappend :example_groups $example_group
+            return $example_group
+        }
+
+        :public method example_count { } {
+            set count 0
+
+            foreach group ${:example_groups} {
+                incr count [llength [$group set examples]]
+            }
+
+            return $count
+        }
     }
 }
