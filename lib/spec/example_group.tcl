@@ -81,7 +81,7 @@ namespace eval Spec {
     }
 
     ExampleGroupClass instproc example { description block } {
-        my lappend examples [Spec::Example new [self] $description $block ]
+        my lappend examples [::Spec::Example new -example_group [self] -description $description -block $block ]
     }
 
     ExampleGroupClass instproc register { } {
