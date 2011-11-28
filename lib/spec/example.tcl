@@ -58,4 +58,8 @@ namespace eval Spec {
         my set error_info $error_info
         my set error_options $error_options
     }
+
+    Example instproc error_info {} {
+        my set error_info
+    }
 }

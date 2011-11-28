@@ -27,7 +27,7 @@ namespace eval Spec {
         }
 
         BaseTextFormatter instproc dump_backtrace { example } {
-            foreach line [split [$example set error_info] "\n"] {
+            foreach line [split [$example error_info] "\n"] {
                 puts "     $line"
             }
         }
