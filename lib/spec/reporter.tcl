@@ -11,8 +11,8 @@ source [file join [file dirname [info script]] "formatters/progress_formatter.tc
 
 namespace eval Spec {
     Class create Reporter
-    Reporter instproc init { } {
-        my lappend formatters [Formatters::ProgressFormatter new]
+    Reporter instproc init { formatters } {
+        my set formatters $formatters
 
         my set example_count 0
         my set failure_count 0

@@ -19,6 +19,21 @@ Spec proc world {} {
     ::xotcl::my set world
 }
 
+Spec proc configuration {} {
+    if { ![::xotcl::my exists configuration ] } {
+        ::xotcl::my set configuration [Spec::Configuration new]
+    }
+
+    ::xotcl::my set configuration
+}
+
+Spec proc configure { block } {
+    uplevel [list set [lindex $block 0] [::xotcl::my configuration]]
+    uplevel [lindex $block 1]
+    uplevel [list unset [lindex $block 0]]
+}
+
+source [file join [file dirname [info script]] "configuration.tcl"]
 source [file join [file dirname [info script]] "dsl.tcl"]
 source [file join [file dirname [info script]] "example.tcl"]
 source [file join [file dirname [info script]] "example_group.tcl"]
