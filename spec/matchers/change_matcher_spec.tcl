@@ -67,78 +67,78 @@ describe "expect to not change, with a numeric value" {
     }
 }
 
-describe "expect to change by" {
+describe "expect to change -by" {
     before each {
         set value 0
     }
 
     it "passes if the actual value is changed by the expected amount" {
-        expect { incr value 4 } to change { set value } by 4
+        expect { incr value 4 } to change { set value } -by 4
     }
 
     it "passes if the actual value is not changed and the expected amount is 0" {
-        expect { incr value 0 } to change { set value } by 0
+        expect { incr value 0 } to change { set value } -by 0
     }
 
     it "fails if the actual value is changed by an unexpected amount" {
         expect {
-            expect { incr value 2 } to change { set value } by 4
+            expect { incr value 2 } to change { set value } -by 4
         } to fail_with "result should have been changed by '4', but was changed by '2'"
     }
 }
 
-describe "expect to change by_at_most" {
+describe "expect to change -by_at_most" {
     before each {
         set value 0
     }
 
     it "passes if the actual value is changed by less than the expected amount" {
-        expect { incr value 2 } to change { set value } by_at_most 4
+        expect { incr value 2 } to change { set value } -by_at_most 4
     }
 
     it "passes if the actual value is changed by the expected amount" {
-        expect { incr value 4 } to change { set value } by_at_most 4
+        expect { incr value 4 } to change { set value } -by_at_most 4
     }
 
     it "fails if the actual value is changed by more than the expected amount" {
         expect {
-            expect { incr value 5 } to change { set value } by_at_most 4
+            expect { incr value 5 } to change { set value } -by_at_most 4
         } to fail_with "result should have been changed by at most '4', but was changed by '5'"
     }
 }
 
-describe "expect to change by_at_least" {
+describe "expect to change -by_at_least" {
     before each {
         set value 0
     }
 
     it "passes if the actual value is changed by less than the expected amount" {
-        expect { incr value 5 } to change { set value } by_at_least 4
+        expect { incr value 5 } to change { set value } -by_at_least 4
     }
 
     it "passes if the actual value is changed by the expected amount" {
-        expect { incr value 4 } to change { set value } by_at_least 4
+        expect { incr value 4 } to change { set value } -by_at_least 4
     }
 
     it "fails if the actual value is changed by less than the expected amount" {
         expect {
-            expect { incr value 2 } to change { set value } by_at_least 4
+            expect { incr value 2 } to change { set value } -by_at_least 4
         } to fail_with "result should have been changed by at least '4', but was changed by '2'"
     }
 }
 
-describe "expect to change from" {
+describe "expect to change -from" {
     before each {
         set value "string"
     }
 
     it "passes when the actual value is equal to the expected value before executing the block" {
-        expect { set value "other string" } to change { set value } from "string"
+        expect { set value "other string" } to change { set value } -from "string"
     }
 
     it "fails when the actual value is not equal to the expected value before executing the block" {
         expect {
-            expect { set value "foo" } to change { set value } from "bar"
+            expect { set value "foo" } to change { set value } -from "bar"
         } to fail_with "result should have been initially been 'bar', but was 'string'"
     }
 }

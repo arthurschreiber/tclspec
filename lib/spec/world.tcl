@@ -17,7 +17,7 @@ namespace eval Spec {
             set count 0
 
             foreach group ${:example_groups} {
-                incr count [llength [$group set examples]]
+                incr count [llength [$group examples]]
             }
 
             return $count

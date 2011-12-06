@@ -1,31 +1,27 @@
 namespace eval Spec {
     namespace eval Matchers {
 
-        ::Spec::Matchers proc be_within { args } {
-            ::Spec::Matchers::BeWithinMatcher new {*}$args
+        ::Spec::Matchers public class method be_within { delta of expected } {
+            ::Spec::Matchers::BeWithinMatcher new -delta $delta -expected $expected
         }
 
-        Class BeWithinMatcher -superclass BaseMatcher
+        nx::Class create BeWithinMatcher -superclass BaseMatcher {
+            :property delta:required
+            :property expected:required
 
-        BeWithinMatcher instproc init { delta of expected } {
-            my set delta $delta
-            next $expected
-        }
+            :public method matches? { actual } {
+                next
 
-        BeWithinMatcher instproc matches? { actual } {
-            my instvar expected delta
+                expr { ${:actual} == ${:expected} || (${:actual} < ${:expected} + ${:delta} && ${:actual} > ${:expected} - ${:delta})}
+            }
 
-            next
+            :public method failure_message {} {
+                return "expected '${:actual}' to be within '${:delta}' of '${:expected}'"
+            }
 
-            expr { $actual == $expected || ($actual < $expected + $delta && $actual > $expected - $delta) }
-        }
-
-        BeWithinMatcher instproc failure_message {} {
-            return "expected [my set actual] to be within [my set delta] of [my set expected]"
-        }
-
-        BeWithinMatcher instproc negative_failure_message {} {
-            return "expected [my set actual] to not be within [my set delta] of [my set expected]"
+            :public method negative_failure_message {} {
+                return "expected '${:actual}' to not be within '${:delta}' of '${:expected}'"
+            }
         }
     }
 }

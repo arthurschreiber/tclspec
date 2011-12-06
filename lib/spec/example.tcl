@@ -21,7 +21,7 @@ namespace eval Spec {
             :start $reporter
             try {
                 :run_before_each
-                ${:example_group_instance} eval ${:block}
+                ${:example_group_instance} instance_eval ${:block}
                 :run_after_each
             } on error { message error_options } {
                 set result false

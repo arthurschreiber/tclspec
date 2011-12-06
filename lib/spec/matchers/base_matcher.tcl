@@ -1,21 +1,23 @@
 namespace eval Spec {
     namespace eval Matchers {
-        Class BaseMatcher
+        nx::Class create BaseMatcher {
+            :property expected
 
-        BaseMatcher instproc init { expected } {
-            my set expected $expected
-        }
-        BaseMatcher instproc matches? { actual } {
-            my set actual $actual
-        }
-        BaseMatcher instproc does_not_match? { actual } {
-          expr { ![my matches? $actual] }
-        }
-        BaseMatcher instproc failure_message {} {
+            :public method matches? { actual } {
+                set :actual $actual
+            }
 
-        }
-        BaseMatcher instproc negative_failure_message {} {
+            :public method does_not_match? { actual } {
+                expr { ![:matches? $actual] }
+            }
 
+            :public method failure_message {} {
+                
+            }
+
+            :public method negative_failure_message {} {
+                
+            }
         }
     }
 }

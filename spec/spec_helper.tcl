@@ -1,12 +1,12 @@
 package require XOTcl
 
-::xotcl::Class create NullObject
-NullObject instproc unknown { args } { }
+nx::Class create NullObject
+NullObject method unknown { args } { }
 
-::Spec::Matchers proc fail {} {
-    my raise_error -code EXPECTATION_NOT_MET
+::Spec::Matchers public class method fail {} {
+    :raise_error -code EXPECTATION_NOT_MET
 }
 
-::Spec::Matchers proc fail_with { message } {
-    my raise_error -code EXPECTATION_NOT_MET -message $message
+::Spec::Matchers public class method fail_with { message } {
+    :raise_error -code EXPECTATION_NOT_MET -message $message
 }

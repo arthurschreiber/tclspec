@@ -1,252 +1,238 @@
 namespace eval Spec {
-    Class create ExampleGroupClass -superclass Class
+    namespace eval NamespaceMethods {
+        proc describe { args } {
+            uplevel [list :describe {*}$args]
+        }
 
-    if { $::xotcl::version >= 2.0 } {
-        proc stub_for_eval { object methods } {
-            $object requireNamespace
-            foreach method $methods {
-                $object proc $method { args } {
-                    if { [catch { ::xotcl::self } ]} {
-                        uplevel [list [lindex :[info level 0] 0] {*}$args]
-                    } else {
-                        ::xotcl::next
-                    }
+        proc context { args } {
+            uplevel [list :describe {*}$args]
+        }
+
+        proc before { args } {
+            uplevel [list :before {*}$args]
+        }
+
+        proc after { args } {
+            uplevel [list :after {*}$args]
+        }
+
+        proc it { args } {
+            uplevel [list :example {*}$args]
+        }
+
+        proc example { args } {
+            uplevel [list :example {*}$args]
+        }
+
+        proc let { args } {
+            uplevel [list :let {*}$args]
+        }
+
+        proc let! { args } {
+            uplevel [list :let! {*}$args]
+        }
+    }
+
+    nx::Class create ExampleGroupClass -superclass Class {
+        :require method autoname
+
+        :property {description ""}
+        :property {children {}}
+        :property {examples {}}
+        :property {hooks {}}
+        :property {before_all_ivars {}}
+
+        :property enclosing_namespace
+
+        :public method init {} {
+            :require namespace
+
+            dict set :hooks before each { }
+            dict set :hooks after each { }
+
+            dict set :hooks before all { }
+            dict set :hooks after all { }
+        }
+
+        :public alias instance_eval -frame object ::eval
+
+        :public method describe { {description ""} {block {}} } {
+            set child [:]::[:autoname Nested_]
+            ExampleGroupClass create $child -superclass [self] -description $description
+
+            # When [::Spec::ExampleGroup describe] is called, we need to store the
+            # enclosing namespace, so we can later include it in the namespace path
+            # of the individual ExampleGroup instances.
+            if { [:] == "::Spec::ExampleGroup" } {
+                set enclosing_ns [uplevel { namespace current }]
+                if { ![string match ::Spec::* $enclosing_ns] } {
+                    $child enclosing_namespace $enclosing_ns
+                }
+            } else {
+                if { [info exists :enclosing_namespace] } {
+                    $child enclosing_namespace ${:enclosing_namespace}
+                }
+            }
+
+            $child instance_eval {
+                namespace path [concat [[::xotcl::my info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers ::Spec::NamespaceMethods]
+            }
+
+            $child instance_eval $block
+
+            lappend :children $child
+            return $child
+        }
+
+        :public method it { description block } {
+            :example $description $block
+        }
+
+        :public method example { description block } {
+            lappend :examples [::Spec::Example new -example_group [:] -description $description -block $block ]
+        }
+
+        :public method register { } {
+            [Spec world] register [:]
+        }
+
+        :public method full_description {} {
+            set :description
+        }
+
+        :public method before { what block } {
+            dict set :hooks before $what [concat [dict get ${:hooks} before $what] [list $block]]
+        }
+
+        :public method after { what block } {
+            dict set :hooks after $what [concat [dict get ${:hooks} after $what] [list $block]]
+        }
+
+        :public method let { name block } {
+            :class method $name {} [list uplevel "
+                if { !\[info exists :__memoized] } {
+                    set :__memoized {}
+                }
+
+                if { !\[dict exists \${:__memoized} $name\] } {
+                    dict set :__memoized $name \[uplevel { :instance_eval { $block } }\]
+                }
+
+                dict get \${:__memoized} $name "]
+        }
+
+        :public method let! { name block } {
+            :let $name $block
+            :before each $name
+        }
+
+        :public method run_before_each { example_group_instance } {
+            foreach ancestor [lreverse [:ancestors]] {
+                foreach hook [dict get [$ancestor hooks] before each] {
+                    $example_group_instance instance_eval $hook
                 }
             }
         }
-    } else {
-        proc stub_for_eval { object methods } {
-            $object requireNamespace
-            foreach method $methods {
-                $object proc $method { args } {
-                    ::xotcl::classes::Spec::ExampleGroupClass::[lindex [info level 0] 0] {*}$args
+
+        :public method run_after_each { example_group_instance } {
+            foreach ancestor [:ancestors] {
+                foreach hook [lreverse [dict get [$ancestor hooks] after each]] {
+                    $example_group_instance instance_eval $hook
                 }
             }
         }
-    }
 
-    ExampleGroupClass instproc describe { {description ""} {block {}} } {
-        set child [self]::[my autoname Nested_]
-        [ExampleGroupClass create $child -superclass [self]]
-
-        $child set description $description
-
-        # When [::Spec::ExampleGroup describe] is called, we need to store the
-        # enclosing namespace, so we can later include it in the namespace path
-        # of the individual ExampleGroup instances.
-        if { [self] == "::Spec::ExampleGroup" } {
-            set enclosing_ns [uplevel 2 { namespace current }]
-
-            if { ![string match ::Spec::* $enclosing_ns] } {
-                $child set enclosing_namespace $enclosing_ns
+        :public method run_before_all { example_group_instance } {
+            dict for { name value } ${:before_all_ivars} {
+                $example_group_instance instance_eval [list set $name $value]
             }
-        } else {
-            if { [[self] exists enclosing_namespace] } {
-                $child set enclosing_namespace [[self] set enclosing_namespace]
+
+            foreach ancestor [lreverse [:ancestors]] {
+                foreach hook [dict get [$ancestor hooks] before all] {
+                    $example_group_instance instance_eval $hook
+                }
+            }
+
+            foreach name [$example_group_instance info vars] {
+                dict set :before_all_ivars $name [$example_group_instance instance_eval [list set $name]]
             }
         }
 
-        # Gives access to the dsl methods when evaluation the passed block
-        $child requireNamespace
-        $child eval {
-            namespace path [concat [[::xotcl::my info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers]
-        }
-
-        $child eval $block
-
-        my lappend children $child
-
-        return $child
-    }
-
-    ExampleGroupClass instproc init { } {
-        next
-        my set examples {}
-        my set children {}
-
-        my set description ""
-
-        my instvar hooks
-        dict set hooks before each { }
-        dict set hooks after each { }
-
-        dict set hooks before all { }
-        dict set hooks after all { }
-
-        my set before_all_ivars { }
-    }
-
-    ExampleGroupClass instproc it { description block } {
-        my example $description $block
-    }
-
-    ExampleGroupClass instproc example { description block } {
-        my lappend examples [::Spec::Example new -example_group [self] -description $description -block $block ]
-    }
-
-    ExampleGroupClass instproc register { } {
-        [Spec world] register [self]
-    }
-
-    ExampleGroupClass instproc full_description {} {
-        my set description
-    }
-
-    ExampleGroupClass instproc before { what block } {
-        my instvar hooks
-        dict set hooks before $what [concat [dict get $hooks before $what] [list $block]]
-    }
-
-    ExampleGroupClass instproc after { what block } {
-        my instvar hooks
-        dict set hooks after $what [concat [dict get $hooks after $what] [list $block]]
-    }
-
-    ExampleGroupClass instproc let { name block } {
-        my proc $name {} "
-            if { !\[::xotcl::my exists __memoized] } {
-                ::xotcl::my set __memoized {}
+        :public method run_after_all { example_group_instance } {
+            dict for { name value } ${:before_all_ivars} {
+                $example_group_instance instance_eval [list set $name $value]
             }
 
-            ::xotcl::my instvar __memoized
-
-            if { !\[dict exists \$__memoized $name\] } {
-                dict set __memoized $name \[::xotcl::my eval { $block }\]
-            }
-
-            dict get \$__memoized $name "
-    }
-
-    ExampleGroupClass instproc let! { name block } {
-        my let $name $block
-        my before each $name
-    }
-
-    ExampleGroupClass instproc children { } {
-        my set children
-    }
-
-    ExampleGroupClass instproc examples { } {
-        my set examples
-    }
-
-    ExampleGroupClass instproc run_before_each { example_group_instance } {
-        foreach ancestor [lreverse [my ancestors]] {
-            foreach hook [dict get [$ancestor set hooks] before each] {
-                $example_group_instance eval $hook
-            }
-        }
-    }
-
-    ExampleGroupClass instproc run_after_each { example_group_instance } {
-        foreach ancestor [my ancestors] {
-            foreach hook [lreverse [dict get [$ancestor set hooks] after each]] {
-                $example_group_instance eval $hook
-            }
-        }
-    }
-
-    ExampleGroupClass instproc run_before_all { example_group_instance } {
-        my instvar before_all_ivars
-
-        dict for { name value } $before_all_ivars {
-            $example_group_instance set $name $value
-        }
-
-        foreach ancestor [lreverse [my ancestors]] {
-            foreach hook [dict get [$ancestor set hooks] before all] {
-                $example_group_instance eval $hook
+            foreach ancestor [:ancestors] {
+                foreach hook [lreverse [dict get [$ancestor hooks] after all]] {
+                    $example_group_instance instance_eval $hook
+                }
             }
         }
 
-        foreach name [$example_group_instance info vars] {
-            dict set before_all_ivars $name [$example_group_instance set $name]
-        }
-    }
+        :public method ancestors { } {
+            set ancestors {}
+            set current_ancestor [:]
 
-    ExampleGroupClass instproc run_after_all { example_group_instance } {
-        dict for { name value } [my set before_all_ivars] {
-            $example_group_instance set $name $value
-        }
-
-        foreach ancestor [my ancestors] {
-            foreach hook [lreverse [dict get [$ancestor set hooks] after all]] {
-                $example_group_instance eval $hook
+            while { $current_ancestor != "::Spec::ExampleGroup" } {
+                lappend ancestors $current_ancestor
+                set current_ancestor [$current_ancestor info superclass]
             }
-        }
-    }
 
-    ExampleGroupClass instproc ancestors { } {
-        set ancestors {}
-        set current_ancestor [self]
-
-        while { $current_ancestor != "::Spec::ExampleGroup" } {
-            lappend ancestors $current_ancestor
-            set current_ancestor [$current_ancestor superclass]
+            return $ancestors
         }
 
-        return $ancestors
-    }
+        :public method run { reporter } {
+            $reporter example_group_started [:]
 
-    ExampleGroupClass instproc run { reporter } {
-        my instvar children
+            :run_before_all [:new]
 
-        $reporter example_group_started [self]
+            set result [:run_examples $reporter]
 
-        my run_before_all [my new]
-
-        set result [my run_examples $reporter]
-
-        foreach child $children {
-            set result [expr { [$child run $reporter] && $result }]
-        }
-
-        my run_after_all [my new]
-        my set before_all_ivars { }
-
-        $reporter example_group_finished [self]
-
-        return $result
-    }
-
-    ExampleGroupClass instproc before_all_ivars { } {
-        my set before_all_ivars
-    }
-
-    ExampleGroupClass instproc execute { reporter } {
-        my run $reporter
-    }
-
-    ExampleGroupClass instproc run_examples { reporter } {
-        my instvar examples
-
-        set result true
-        foreach example $examples {
-            set instance [my new]
-            dict for { name value } [my set before_all_ivars] {
-                $instance set $name $value
+            foreach child ${:children} {
+                set result [expr { [$child run $reporter] && $result }]
             }
-            set result [expr { [$example run $instance $reporter] && $result }]
-        }
-        return $result
-    }
 
-    ExampleGroupClass instproc unknown { args } {
-        return -code error -level 1 "[self]: unable to dispatch method '[lindex $args 0]'"
-    }
+            :run_after_all [:new]
+            set :before_all_ivars { }
 
-    ExampleGroupClass create ExampleGroup
+            $reporter example_group_finished [:]
 
-    stub_for_eval ::Spec::ExampleGroup { "describe" "it" "example" "before" "after" "let" "let!" }
-
-    ExampleGroup instproc init { } {
-        my requireNamespace
-        my eval {
-            namespace path [concat [[::xotcl::my info class] ancestors] ::Spec::Matchers]
+            return $result
         }
 
-        if { [[my info class] exists enclosing_namespace] } {
-            my eval "namespace path \[concat \[namespace path] [[my info class] set enclosing_namespace]]"
+        :public method execute { reporter } {
+            :run $reporter
+        }
+
+        :public method run_examples { reporter } {
+            set result true
+            foreach example ${:examples} {
+                set instance [:new]
+                dict for { name value } [set :before_all_ivars] {
+                    $instance instance_eval [list set $name $value]
+                }
+                set result [expr { [$example run $instance $reporter] && $result }]
+            }
+            return $result
+        }
+    }
+
+    ExampleGroupClass create ExampleGroup {
+        :public alias instance_eval -frame object ::eval
+
+        :method init {} {
+            :require namespace
+
+            :instance_eval {
+                namespace path [concat [[:info class] ancestors] ::Spec::Matchers]
+            }
+
+            if { [::nx::var exists [:info class] enclosing_namespace] } {
+                :instance_eval {
+                    namespace path [concat [namespace path] [[:info class] enclosing_namespace]]
+                }
+            }
         }
     }
 }
