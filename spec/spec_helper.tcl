@@ -1,4 +1,6 @@
-Class create NullObject
+package require XOTcl
+
+::xotcl::Class create NullObject
 NullObject instproc unknown { args } { }
 
 ::Spec::Matchers proc fail {} {

@@ -1,8 +1,3 @@
-package require at_exit
-
-package require XOTcl
-namespace import xotcl::*
-
 namespace eval Spec {
     Class create Runner
     Runner proc autorun {} {
@@ -11,16 +6,16 @@ namespace eval Spec {
         }
 
         my set installed_at_exit true
-        ::at_exit::at_exit { exit [Spec::Runner run] }
+        at_exit { exit [Spec::Runner run] }
     }
 
     Runner proc run {} {
         set exit_code 0
 
-        set reporter [Reporter new]
+        set reporter [[::Spec configuration] reporter]
 
         $reporter report [[Spec world] example_count] {
-            foreach example_group [[Spec world] set example_groups] {
+            foreach example_group [[Spec world] example_groups] {
                 $example_group execute $reporter
             }
         }

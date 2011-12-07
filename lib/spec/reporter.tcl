@@ -1,10 +1,18 @@
-package require XOTcl
-namespace import xotcl::*
+namespace eval Spec {
+    namespace eval Formatters {
+        namespace path ::Spec
+    }
+}
+
+source [file join [file dirname [info script]] "formatters/base_formatter.tcl"]
+source [file join [file dirname [info script]] "formatters/base_text_formatter.tcl"]
+source [file join [file dirname [info script]] "formatters/documentation_formatter.tcl"]
+source [file join [file dirname [info script]] "formatters/progress_formatter.tcl"]
 
 namespace eval Spec {
     Class create Reporter
-    Reporter instproc init { } {
-        my lappend formatters [Formatters::BaseTextFormatter new]
+    Reporter instproc init { formatters } {
+        my set formatters $formatters
 
         my set example_count 0
         my set failure_count 0

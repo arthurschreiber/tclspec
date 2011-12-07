@@ -1,6 +1,3 @@
-package require XOTcl
-namespace import xotcl::*
-
 namespace eval Spec {
     Class create Example
     Example instproc init { example_group description block } {
@@ -17,29 +14,31 @@ namespace eval Spec {
         my set description
     }
 
-    Example instproc instance_eval { block } {
-        uplevel 0 $block
-    }
-
-    Example instproc before { block } {
-        my set before $block
-    }
-
-    Example instproc after { block } {
-        my set after $block
-    }
-
-    Example instproc execute { reporter } {
+    Example instproc run { example_group_instance reporter } {
+        my set example_group_instance $example_group_instance
         set result true
 
         my start $reporter
-        if { [catch { my __execute } message error_options] } {
+        try {
+            my run_before_each
+            [my set example_group_instance] eval [my set block]
+            my run_after_each
+        } on error { message error_options } {
             set result false
             my set_error $message $::errorInfo $error_options
+        } finally {
+            my finish $reporter
         }
-        my finish $reporter
 
         return $result
+    }
+
+    Example instproc run_before_each { } {
+        [my set example_group] run_before_each [my set example_group_instance]
+    }
+
+    Example instproc run_after_each { } {
+        [my set example_group] run_after_each [my set example_group_instance]
     }
 
     Example instproc start { reporter } {
@@ -60,15 +59,7 @@ namespace eval Spec {
         my set error_options $error_options
     }
 
-    Example instproc __execute { } {
-        # Store the current stack level, so that blocks passed to
-        # matchers are executed in the correct scope.
-        Matchers set eval_level "#[info level]"
-
-        uplevel 0 [my set block]
-
-        # Reset the current stack level so that the value reflects
-        # the default stack level value of uplevel.
-        Matchers set eval_level 1
+    Example instproc error_info {} {
+        my set error_info
     }
 }
