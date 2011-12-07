@@ -1,6 +1,6 @@
 package provide spec 0.1
 
-package require XOTcl
+package require XOTcl 2.0
 package require at_exit
 package require try
 
