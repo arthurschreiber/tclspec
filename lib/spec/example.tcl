@@ -20,16 +20,20 @@ namespace eval Spec {
 
         my start $reporter
         try {
-            my run_before_each
-            [my set example_group_instance] eval [my set block]
-            my run_after_each
+            try {
+                my run_before_each
+                [my set example_group_instance] eval [my set block]
+            } on error { message error_options } {
+                my set_error $message [dict get $error_options -errorinfo] $error_options
+            } finally {
+                my run_after_each
+            }
         } on error { message error_options } {
             set result false
-            my set_error $message $::errorInfo $error_options
-        } finally {
-            my finish $reporter
+            my set_error $message [dict get $error_options -errorinfo] $error_options
         }
 
+        my finish $reporter
         return $result
     }
 
@@ -54,9 +58,11 @@ namespace eval Spec {
     }
 
     Example instproc set_error { error_message error_info error_options } {
-        my set error_message $error_message
-        my set error_info $error_info
-        my set error_options $error_options
+        if { ![my exists error_message] } {
+            my set error_message $error_message
+            my set error_info $error_info
+            my set error_options $error_options
+        }
     }
 
     Example instproc error_info {} {
