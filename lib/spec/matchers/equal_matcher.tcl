@@ -1,18 +1,23 @@
 namespace eval Spec {
     namespace eval Matchers {
-        ::Spec::Matchers proc equal { args } {
-            ::Spec::Matchers::EqualMatcher new [list -init {*}$args]
+        ::Spec::Matchers public class method equal { expected } {
+            ::Spec::Matchers::EqualMatcher new -expected $expected
         }
 
-        Class EqualMatcher -superclass BaseMatcher
-        EqualMatcher instproc matches? { actual } {
-          expr { [next] == [my set expected] }
-        }
-        EqualMatcher instproc failure_message {} {
-            return "Expected <[my set actual]> to equal <[my set expected]>"
-        }
-        EqualMatcher instproc negative_failure_message {} {
-            return "Expected <[my set actual]> to not equal <[my set expected]>"
+        nx::Class create EqualMatcher -superclass BaseMatcher {
+            :property expected:required
+
+            :public method matches? { actual } {
+                expr { [next] == ${:expected} }
+            }
+
+            :public method failure_message {} {
+                return "Expected '${:actual}' to equal '${:expected}"
+            }
+
+            :public method negative_failure_message {} {
+                return "Expected '${:actual}' to not equal '${:expected}'"
+            }
         }
     }
 }

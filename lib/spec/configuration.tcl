@@ -1,34 +1,27 @@
 namespace eval Spec {
-    Class create Configuration
-    Configuration instproc init {} {
+    nx::Class create Configuration {
+        :property {formatters [list]}
 
-    }
+        :variable reporter
 
-    Configuration instproc formatters {} {
-        if { ![my exists formatters] } {
-            my set formatters {}
+        :public method add_formatter { name } {
+            if { $name == "doc" } {
+                lappend :formatters [::Spec::Formatters::DocumentationFormatter new]
+            } elseif { $name == "progress" } {
+                lappend :formatters [::Spec::Formatters::ProgressFormatter new]
+            }
         }
 
-        my set formatters
-    }
+        :public method reporter { } {
+            if { ![info exists :reporter] } {
+                if { [llength ${:formatters}] == 0 } {
+                    :add_formatter "progress"
+                }
 
-    Configuration instproc add_formatter { name } {
-        if { $name == "doc" } {
-            my lappend formatters [::Spec::Formatters::DocumentationFormatter new]
-        } elseif { $name == "progress" } {
-            my lappend formatters [::Spec::Formatters::ProgressFormatter new]
-        }
-    }
-
-    Configuration instproc reporter { } {
-        if { ![my exists reporter] } {
-            if { [llength [my formatters]] == 0 } {
-                my add_formatter "progress"
+                set :reporter [::Spec::Reporter new -formatters ${:formatters}]
             }
 
-            my set reporter [::Spec::Reporter new [my formatters]]
+            return ${:reporter}
         }
-
-        my set reporter
     }
 }
