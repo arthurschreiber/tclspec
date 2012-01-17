@@ -1,11 +1,10 @@
 package provide spec 0.1
 
-package require XOTcl 2.0
+package require nx
 package require at_exit
 package require try
 
 namespace eval Spec {
-    namespace import ::xotcl::*
     namespace import ::tcl::control::*
     namespace import ::at_exit::*
 }
