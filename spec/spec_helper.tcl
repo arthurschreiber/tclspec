@@ -1,5 +1,3 @@
-package require XOTcl
-
 nx::Class create NullObject
 NullObject method unknown { args } { }
 
