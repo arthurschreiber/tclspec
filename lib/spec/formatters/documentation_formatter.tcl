@@ -1,58 +1,54 @@
 namespace eval Spec {
     namespace eval Formatters {
-        Class create DocumentationFormatter -superclass BaseTextFormatter
-        DocumentationFormatter instproc init {} {
-            next
+        nx::Class create DocumentationFormatter -superclass BaseTextFormatter {
+            :property {group_level 0}
+            :property {failure_index 0}
 
-            my set group_level 0
-            my set failure_index 0
-        }
+            :public method example_group_started { example_group } {
+                next
 
-        DocumentationFormatter instproc example_group_started { example_group } {
-            next
+                if { ${:group_level} == 0 } {
+                    puts ""
+                }
+                puts "[:current_indentation][$example_group description]"
 
-            if { [my set group_level] == 0 } {
-                puts ""
+                incr :group_level
             }
-            puts "[my current_indentation][$example_group set description]"
 
-            my incr group_level
+            :public method example_group_finished { example_group } {
+                next
+
+                incr :group_level -1
+            }
+
+            :public method example_passed { example } {
+                next
+
+                puts [:passed_output $example]
+            }
+
+            :public method example_failed { example } {
+                next
+
+                puts [:failure_output $example]
+            }
+
+            :public method passed_output { example } {
+                return "[:current_indentation][$example description]"
+            }
+
+            :public method failure_output { example } {
+                return "[:current_indentation][$example description] (FAILED - [:next_failure_index])"
+            }
+
+            :public method next_failure_index {} {
+                incr :failure_index
+            }
+
+            :public method current_indentation {} {
+                string repeat "  " ${:group_level}
+            }
         }
-
-        DocumentationFormatter instproc example_group_finished { example_group } {
-            next
-
-            my incr group_level -1
-        }
-
-        DocumentationFormatter instproc example_passed { example } {
-            next
-
-            puts [my passed_output $example]
-        }
-
-        DocumentationFormatter instproc example_failed { example } {
-            next
-
-            puts [my failure_output $example]
-        }
-
-        DocumentationFormatter instproc passed_output { example } {
-            return "[my current_indentation][$example set description]"
-        }
-
-        DocumentationFormatter instproc failure_output { example } {
-            return "[my current_indentation][$example set description] (FAILED - [my next_failure_index])"
-        }
-
-        DocumentationFormatter instproc next_failure_index {} {
-            my incr failure_index
-        }
-
-        DocumentationFormatter instproc current_indentation {} {
-            string repeat "  " [my set group_level]
-        }
-
 
     }
 }

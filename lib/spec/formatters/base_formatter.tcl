@@ -1,64 +1,66 @@
 namespace eval Spec {
     namespace eval Formatters {
-        Class create BaseFormatter
-        BaseFormatter instproc init { {output stdout} } {
-            my set outpout $output
+        nx::Class create BaseFormatter {
+            :property {output stdout}
 
-            my set example_count 0
-            my set failure_count 0
+            :property {example_count 0}
+            :property {failure_count 0}
 
-            my set examples {}
-            my set failed_examples {}
-        }
+            :property {duration 0}
 
-        BaseFormatter instproc start { example_count } {
-            my set example_count $example_count
-        }
+            :property {examples [list]}
+            :property {failed_examples [list]}
 
-        BaseFormatter instproc example_group_started { example_group } {
+            :public method start { example_count } {
+                set :example_count $example_count
+            }
 
-        }
+            :public method example_group_started { example_group } {
+                
+            }
 
-        BaseFormatter instproc example_group_finished { example_group } {
+            :public method example_group_finished { example_group } {
 
-        }
+            }
 
-        BaseFormatter instproc example_started { example } {
-            my lappend examples $example
-        }
+            :public method example_started { example } {
+                lappend :examples $example
+            }
 
-        BaseFormatter instproc example_passed { example } {
+            :public method example_passed { example } {
 
-        }
+            }
 
-        BaseFormatter instproc example_failed { example } {
-            my lappend failed_examples $example
-        }
+            :public method example_failed { example } {
+                lappend :failed_examples $example
+            }
 
-        BaseFormatter instproc message { message } {
+            :public method message { message } {
 
-        }
+            }
 
-        BaseFormatter instproc stop { } {
+            :public method stop { } {
 
-        }
+            }
 
-        BaseFormatter instproc start_dump { } {
+            :public method start_dump { } {
 
-        }
+            }
 
-        BaseFormatter instproc dump_failures { } {
+            :public method dump_failures { } {
 
-        }
+            }
 
-        BaseFormatter instproc dump_summary { duration example_count failure_count } {
-            my set duration      $duration
-            my set example_count $example_count
-            my set failure_count $failure_count
-        }
+            :public method dump_summary { duration example_count failure_count } {
+                set :duration      $duration
+                set :example_count $example_count
+                set :failure_count $failure_count
+            }
 
-        BaseFormatter instproc format_backtrace { $error_info $example } {
-            set cleaned_error_info {}
+            :public method format_backtrace { $error_info $example } {
+
+            }
+
         }
     }
 }

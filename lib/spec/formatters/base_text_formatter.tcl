@@ -1,55 +1,53 @@
 namespace eval Spec {
     namespace eval Formatters {
-        Class create BaseTextFormatter -superclass BaseFormatter
+        nx::Class create BaseTextFormatter -superclass BaseFormatter {
+            :public method message { message } {
+                puts $message
+            }
 
-        BaseTextFormatter instproc message { message } {
-            puts $message
-        }
-
-        BaseTextFormatter instproc dump_failures { } {
-            if { [llength [my set failed_examples]] > 0 } {
-                puts ""
-                puts "Failures:"
-
-                set index 0
-                foreach example [my set failed_examples] {
+           :public method dump_failures { } {
+                if { [llength ${:failed_examples}] > 0 } {
                     puts ""
-                    my dump_failure $example $index
-                    my dump_backtrace $example
+                    puts "Failures:"
 
-                    incr index
+                    set index 0
+                    foreach example ${:failed_examples} {
+                        puts ""
+                        :dump_failure $example $index
+                        :dump_backtrace $example
+
+                        incr index
+                    }
                 }
             }
-        }
 
-        BaseTextFormatter instproc dump_failure { example index } {
-            puts "  [expr {$index + 1}]) [$example full_description]"
-        }
-
-        BaseTextFormatter instproc dump_backtrace { example } {
-            foreach line [split [$example error_info] "\n"] {
-                puts "     $line"
+            :public method dump_failure { example index } {
+                puts "  [expr {$index + 1}]) [$example full_description]"
             }
-        }
 
-        BaseTextFormatter instproc dump_summary { duration example_count failure_count } {
-            next
+            :public method dump_backtrace { example } {
+                foreach line [split [$example error_info] "\n"] {
+                    puts "     $line"
+                }
+            }
 
-            puts ""
-            puts "Finished in $duration milliseconds"
-            puts ""
-            puts [my summary_line $example_count $failure_count]
-        }
+            :public method dump_summary { duration example_count failure_count } {
+                next
 
-        BaseTextFormatter instproc summary_line { example_count failure_count } {
-            set summary [my pluralize $example_count "example"]
-            append summary ", [my pluralize $failure_count "failure"]"
+                puts ""
+                puts "Finished in $duration milliseconds"
+                puts ""
+                puts [:summary_line $example_count $failure_count]
+            }
 
-            set summary
-        }
+            :public method summary_line { example_count failure_count } {
+                set summary [:pluralize $example_count "example"]
+                append summary ", [:pluralize $failure_count "failure"]"
+            }
 
-        BaseTextFormatter instproc pluralize { count string } {
-            return "$count $string[expr { $count != 1 ? "s" : "" }]"
+            :public method pluralize { count string } {
+                return "$count $string[expr { $count != 1 ? "s" : "" }]"
+            }
         }
     }
 }
