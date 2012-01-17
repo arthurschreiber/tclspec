@@ -2,34 +2,33 @@ namespace eval Spec {
     namespace eval Mocks {
         namespace path ::Spec
 
-        Class create Space
-        Space instproc init {} {
-            my set mocks [list]
-        }
+        nx::Class create Space {
+            :variable mocks [list]
 
-        Space instproc empty? {} {
-            expr { [llength [my set mocks]] == 0 }
-        }
-
-        Space instproc add { mock } {
-            my lappend mocks $mock
-        }
-
-        Space instproc verify_all {} {
-            foreach mock [my set mocks] {
-                $mock spec_verify
+            :public method empty? {} {
+                expr { [llength ${:mocks}] == 0 }
             }
-        }
 
-        Space instproc reset {} {
-            foreach mock [my set mocks] {
-                $mock spec_reset
+            :public method add { mock } {
+                lappend :mocks $mock
             }
-        }
 
-        Space instproc reset_all {} {
-            my reset
-            my set mocks [list]
+            :public method verify_all {} {
+                foreach mock ${:mocks} {
+                    $mock spec_verify
+                }
+            }
+
+            :public method reset {} {
+                foreach mock ${:mocks} {
+                    $mock spec_reset
+                }
+            }
+
+            :public method reset_all {} {
+                :reset
+                set :mocks [list]
+            }
         }
     }
 }

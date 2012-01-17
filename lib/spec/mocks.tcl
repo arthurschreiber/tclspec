@@ -1,28 +1,24 @@
+source [file join [file dirname [info script]] "mocks/mock.tcl"]
+source [file join [file dirname [info script]] "mocks/space.tcl"]
+
 namespace eval Spec {
     namespace eval Mocks {
         namespace path ::Spec
     }
 
-    Class create Mocks
-    Mocks proc setup { host_namespace } {
-        
-    }
+    nx::Class create Mocks {
+        :property [list space [::Spec::Mocks::Space new]]
 
-    Mocks proc space {} {
-        if { ![my exists space] } {
-            my set space [::Spec::Mocks::Space new]
+        :public method setup { host_namespace } {
+
         }
-        my set space
-    }
 
-    Mocks proc verify {} {
-        [my space] verify_all
-    }
+        :public method verify {} {
+            :space verify_all
+        }
 
-    Mocks proc teardown {} {
-        [my space] reset_all
+        :public method teardown {} {
+            :space reset_all
+        }
     }
 }
-
-source [file join [file dirname [info script]] "mocks/mock.tcl"]
-source [file join [file dirname [info script]] "mocks/space.tcl"]

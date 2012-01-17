@@ -7,19 +7,20 @@ describe "::Spec::Mocks::Space" {
     before each {
         set space [Spec::Mocks::Space new]
 
-        set class [xotcl::Class new]
-        $class instproc spec_verify {} {
-            my incr verified 1
-        }
-        $class instproc spec_reset {} {
-            my set reset true
-        }
-        $class instproc verified? {} {
-            expr { [my exists verified] && [my set verified] }
-        }
-        $class instproc reset? {} {
-            expr { [my exists reset] && [my set reset] }
-        }
+        set class [nx::Class new {
+            :public method spec_verify {} {
+                incr :verified 1
+            }
+            :public method spec_reset {} {
+                set :reset true
+            }
+            :public method verified? {} {
+                expr { [info exists :verified] && ${:verified} > 0 }
+            }
+            :public method reset? {} {
+                expr { [info exists :reset] && ${:reset} }
+            }
+        }]
 
         set m1 [$class new]
         set m2 [$class new]

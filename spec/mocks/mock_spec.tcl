@@ -5,7 +5,7 @@ source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
 
 describe "::Spec::Mocks::Mock" {
     before each {
-        set mock [::Spec::Mocks::Mock new "test double"]
+        set mock [::Spec::Mocks::Mock new -name "test double"]
     }
 
     after each {
@@ -31,7 +31,7 @@ describe "::Spec::Mocks::Mock" {
     }
 
     it "fails when receiving message specified as not to be received with args" {
-        $mock should_not_receive "not_expected" -with "unexpected text"
+        $mock should_not_receive "not_expected" -with {"unexpected text"}
         expect {
             $mock not_expected "unexpected text"
         } to raise_error -code MockExpectationError
