@@ -75,7 +75,7 @@ namespace eval Spec {
             }
 
             $child instance_eval {
-                namespace path [concat [[::xotcl::my info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers ::Spec::NamespaceMethods]
+                namespace path [concat [[:info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers ::Spec::NamespaceMethods]
             }
 
             $child instance_eval $block
