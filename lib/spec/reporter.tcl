@@ -11,7 +11,7 @@ source [file join [file dirname [info script]] "formatters/progress_formatter.tc
 
 namespace eval Spec {
     nx::Class create Reporter {
-        :variable formatters [list [Formatters::ProgressFormatter new]]
+        :property formatters
         :variable example_count 0
         :variable failure_count 0
         :variable start 0

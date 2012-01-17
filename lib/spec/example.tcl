@@ -16,21 +16,22 @@ namespace eval Spec {
 
         :public method run { example_group_instance reporter } {
             set :example_group_instance $example_group_instance
-            set result true
 
             :start $reporter
             try {
-                :run_before_each
-                ${:example_group_instance} instance_eval ${:block}
-                :run_after_each
+                try {
+                    :run_before_each
+                    ${:example_group_instance} instance_eval ${:block}
+                } on error { message error_options } {
+                    :set_error $message $::errorInfo $error_options
+                } finally {
+                    :run_after_each
+                }
             } on error { message error_options } {
-                set result false
                 :set_error $message $::errorInfo $error_options
-            } finally {
-                :finish $reporter
             }
 
-            return $result
+            :finish $reporter
         }
 
         :public method run_before_each { } {
@@ -48,15 +49,19 @@ namespace eval Spec {
         :public method finish { reporter } {
             if { [info exists :error_message] } {
                 $reporter example_failed [self]
+                return false
             } else {
                 $reporter example_passed [self]
+                return true
             }
         }
 
         :public method set_error { error_message error_info error_options } {
-            set :error_message $error_message
-            set :error_info $error_info
-            set :error_options $error_options
+            if { ![info exists :error_message] } {
+                set :error_message $error_message
+                set :error_info $error_info
+                set :error_options $error_options
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace eval Spec {
         :public class method run {} {
             set exit_code 0
 
-            set reporter [Reporter new]
+            set reporter [[::Spec configuration] reporter]
             $reporter report [[Spec world] example_count] {
                 foreach example_group [[Spec world] example_groups] {
                     $example_group execute $reporter
