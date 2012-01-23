@@ -1,4 +1,8 @@
+source [file join [file dirname [info script]] "mocks/methods_mixin.tcl"]
+source [file join [file dirname [info script]] "mocks/method_double.tcl"]
+source [file join [file dirname [info script]] "mocks/proxy.tcl"]
 source [file join [file dirname [info script]] "mocks/mock.tcl"]
+source [file join [file dirname [info script]] "mocks/example_methods.tcl"]
 source [file join [file dirname [info script]] "mocks/space.tcl"]
 
 namespace eval Spec {
@@ -7,17 +11,17 @@ namespace eval Spec {
     }
 
     nx::Class create Mocks {
-        :property [list space [::Spec::Mocks::Space new]]
+        :class property [list space [::Spec::Mocks::Space new]]
 
-        :public method setup { host_namespace } {
+        :public class method setup { host_namespace } {
 
         }
 
-        :public method verify {} {
+        :public class method verify {} {
             :space verify_all
         }
 
-        :public method teardown {} {
+        :public class method teardown {} {
             :space reset_all
         }
     }

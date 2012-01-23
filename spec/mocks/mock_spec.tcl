@@ -18,7 +18,7 @@ describe "::Spec::Mocks::Mock" {
     }
 
     it "passes when not receiving message specified as not to be received with different args" {
-        $mock should_not_receive "message" -with {"unwanted text"}
+        $mock should_not_receive "message" -with [list "unwanted text"]
         $mock message "other text"
         $mock spec_verify
     }
@@ -31,14 +31,14 @@ describe "::Spec::Mocks::Mock" {
     }
 
     it "fails when receiving message specified as not to be received with args" {
-        $mock should_not_receive "not_expected" -with {"unexpected text"}
+        $mock should_not_receive "not_expected" -with [list "unexpected text"]
         expect {
             $mock not_expected "unexpected text"
         } to raise_error -code MockExpectationError
     }
 
     it "allows blocks to calculate return values" {
-        $mock should_receive "something" -with {"a" "b" "c"} -and_return { {a b c} {
+        $mock should_receive "something" -with [list "a" "b" "c"] { {a b c} {
             join [list $a $b $c] ""
         } }
 
@@ -47,7 +47,7 @@ describe "::Spec::Mocks::Mock" {
     }
 
     it "returns the previously stubbed value if no return value was set" {
-        $mock stub "something" -with "a" "b" "c" -and_return { {a b c} {
+        $mock stub "something" -with [list "a" "b" "c"] { {a b c} {
             join [list $a $b $c] ""
         } }
         $mock should_receive "something" -with {"a" "b" "c"}
@@ -57,9 +57,15 @@ describe "::Spec::Mocks::Mock" {
     }
 
     it "returns nothing if no return value is set and there is no previously stubbed value" {
-        $mock should_receive "something" -with {"a" "b" "c"}
+        $mock should_receive "something" -with [list "a" "b" "c"]
 
         expect [$mock something "a" "b" "c"] to equal ""
+        $mock spec_verify
+    }
+
+    it "allows setting expectations on method ensembles" {
+        $mock should_receive "parent sub"
+        expect [$mock parent sub] to equal ""
         $mock spec_verify
     }
 }
