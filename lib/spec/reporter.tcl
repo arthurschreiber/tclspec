@@ -53,7 +53,7 @@ namespace eval Spec {
         }
 
         :public method example_failed { example } {
-            incr failure_count
+            incr :failure_count
             :notify example_failed $example
         }
 
