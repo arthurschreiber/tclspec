@@ -35,12 +35,12 @@ describe "::Spec::Configuration" {
             it "initializes a new Reporter with the previously registered formatters" {
                 $configuration add_formatter "doc"
                 set reporter [$configuration reporter]
-                expect [$reporter set formatters] to equal [$configuration formatters]
+                expect [$reporter formatters] to equal [$configuration formatters]
             }
 
             it "initializes a new Reporter with a progress formatter if no formatter is registered" {
                 set reporter [$configuration reporter]
-                set formatter [lindex [$reporter set formatters] 0]
+                set formatter [lindex [$reporter formatters] 0]
                 expect [$formatter info class] to equal ::Spec::Formatters::ProgressFormatter
             }
         }
