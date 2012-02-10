@@ -70,8 +70,6 @@ namespace eval Spec {
                 ${:object} [:visibility] method ${:method_name} { args } "
                     \[:__mock_proxy] message_received {${:method_name}} {*}\$args
                 "
-
-                puts "[${:object} info method definition ${:method_name}]"
             }
 
             :public method undefine_proxy_method {} {
