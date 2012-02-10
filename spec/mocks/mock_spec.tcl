@@ -37,6 +37,10 @@ describe "::Spec::Mocks::Mock" {
         } to raise_error -code MockExpectationError
     }
 
+    it "passes when receiving messages specified as not to be received with wrong args" {
+
+    }
+
     it "allows blocks to calculate return values" {
         $mock should_receive "something" -with [list "a" "b" "c"] { {a b c} {
             join [list $a $b $c] ""
@@ -44,6 +48,10 @@ describe "::Spec::Mocks::Mock" {
 
         expect [$mock something "a" "b" "c"] to equal "abc"
         $mock spec_verify
+    }
+
+    it "allows parameter as return value" {
+
     }
 
     it "returns the previously stubbed value if no return value was set" {
@@ -60,6 +68,63 @@ describe "::Spec::Mocks::Mock" {
         $mock should_receive "something" -with [list "a" "b" "c"]
 
         expect [$mock something "a" "b" "c"] to equal ""
+        $mock spec_verify
+    }
+
+    it "raises an exception if args don't match when method called" {
+
+    }
+
+    describe "even when a similar expectation with different arguments exist" {
+        it "raises an exception if args don't match when method called, correctly reporting offending arguments" {
+            $mock should_receive "something" -with [list "a" "b" "c"] -once
+            $mock should_receive "something" -with [list "z" "x" "c"] -once
+
+            # TODO: Check error message
+            expect {
+                $mock something "a" "b" "c"
+                $mock something "z" "x" "g"
+            } to raise_error -code MockExpectationError
+        }
+    }
+
+    it "raises exception if args don't match when method called even when the method is stubbed" {
+        $mock stub "something"
+        $mock should_receive "something" -with [list "a" "b" "c"]
+
+        # TODO: Check error message
+        expect {
+            $mock something "a" "d" "c"
+            $mock spec_verify
+        } to raise_error -code MockExpectationError
+    }
+
+    it "raises exception if args don't match when method called even when using null_object" {
+        $mock as_null_object
+        $mock should_receive "something" -with [list "a" "b" "c"]
+
+        # TODO: Check error message
+        expect {
+            $mock something "a" "d" "c"
+            $mock spec_verify
+        } to raise_error -code MockExpectationError
+    }
+
+    it "fails if unexpected method is called" {
+        # TODO: Check error message
+        expect {
+            $mock something "a" "b" "c"
+        } to raise_error -code MockExpectationError
+    }
+
+    it "uses the passed block for expectation if provided" {
+        $mock should_receive something {{a b} {
+            expect $a to equal "a"
+            expect $b to equal "b"
+            return "done"
+        }}
+
+        expect [$mock something "a" "b"] to equal "done"
         $mock spec_verify
     }
 
