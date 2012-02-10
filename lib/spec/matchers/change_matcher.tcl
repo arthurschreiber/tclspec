@@ -54,9 +54,9 @@ namespace eval Spec {
             }
 
             :public method failure_message {} {
-                if { ![my matches_before?] } {
+                if { ![:matches_before?] } {
                     return "result should have been initially been '[set :from]', but was '[set :actual_before]'"
-                } elseif { ![my matches_after?] } {
+                } elseif { ![:matches_after?] } {
                     return "result should have been changed to '[set :to]', but is now '[set :actual_after]'"
                 } elseif { [info exists :by] } {
                     return "result should have been changed by '[set :by]', but was changed by '[:actual_delta]'"
