@@ -1,0 +1,18 @@
+#!/usr/bin/env tclsh
+lappend auto_path [file join [file dirname [info script]] ".."]
+
+package require spec/autorun
+
+set example_files [list]
+
+if { $argc > 0 } {
+    foreach pattern $argv {
+        lappend example_files {*}[glob -nocomplain $pattern]
+    }
+} else {
+    lappend example_files {*}[glob -nocomplain "spec/**/*_spec.tcl"]
+}
+
+foreach example_file $example_files {
+    source $example_file
+}
