@@ -43,20 +43,22 @@ describe "Spec::Mocks::MethodDouble" {
 
     describe "#configure_method" {
         it "should replace the passed method with a stub method on the original object" {
-            $method_double configure_method
-
-            expect [$object info method body example_method] to equal "
-                    \[:__mock_proxy] message_received example_method {*}\$args
-                "
+            expect {
+                $method_double configure_method
+            } to change {
+                $object info method body example_method
+            }
         }
     }
 
     describe "#restore_original_method" {
         it "should restore the original method" {
-            $method_double configure_method
-            $method_double restore_original_method
-
-            expect [$object example_method] to equal "original"
+            expect {
+                $method_double configure_method
+                $method_double restore_original_method
+            } to not change {
+                $object info method body example_method
+            }
         }
     }
 }
