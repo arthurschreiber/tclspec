@@ -99,7 +99,9 @@ namespace eval Spec {
             :property {name ""}
 
             :protected method unknown { method_name args } {
-                return -code error -errorcode MockExpectationError "Received unexpected call to $method_name"
+                if { ![:null_object?] } {
+                    return -code error -errorcode MockExpectationError "Received unexpected call to $method_name"
+                }
             }
         }
     }

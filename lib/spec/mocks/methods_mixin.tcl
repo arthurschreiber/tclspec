@@ -49,11 +49,11 @@ namespace eval Spec {
             }
 
             :public method as_null_object {} {
-                error "Not implemented"
+                [:__mock_proxy] as_null_object
             }
 
             :public method null_object? {} {
-                error "Not implemented"
+                [:__mock_proxy] null_object?
             }
 
             # @api private

@@ -14,6 +14,18 @@ namespace eval Spec {
                 [:method_double_for $message] add_negative_expectation
             }
 
+
+            :variable null_object false
+
+            :public method null_object? {} {
+                expr { ${:null_object} }
+            }
+
+            :public method as_null_object {} {
+                set :null_object true
+                return ${:object}
+            }
+
             :public method has_negative_expectation? { method_name } {
                 foreach expectation [[:method_double_for $method_name] expectations] {
                     if { [$expectation negative_expectation_for? $method_name] } {
@@ -29,7 +41,7 @@ namespace eval Spec {
                 if { [set expectation [:find_matching_expectation $method_name {*}$args]] != false } {
                     $expectation invoke {*}$args
                 } elseif { [set expectation [:find_almost_matching_expectation $method_name {*}$args]] != false } {
-                    if { ![:has_negative_expectation? $method_name] } {
+                    if { ![:has_negative_expectation? $method_name] && ![:null_object?] } {
                         return -code error -errorcode MockExpectationError "Received unexpected call to $method_name"
                     }
                 }
