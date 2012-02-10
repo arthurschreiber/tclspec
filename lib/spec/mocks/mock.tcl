@@ -81,6 +81,10 @@ namespace eval Spec {
 
         nx::Class create Mock -mixin MethodsMixin {
             :property {name ""}
+
+            :protected method unknown { method_name args } {
+                return -code error -errorcode MockExpectationError "Received unexpected call to $method_name"
+            }
         }
     }
 }
