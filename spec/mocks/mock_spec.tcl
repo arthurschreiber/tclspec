@@ -118,6 +118,9 @@ describe "::Spec::Mocks::Mock" {
     }
 
     it "uses the passed block for expectation if provided" {
+        # TODO: save the _namespace_ in which a method double is called.
+        # Then apply the method double inside that namespace when it is
+        # actually invoked.
         $mock should_receive something {{a b} {
             expect $a to equal "a"
             expect $b to equal "b"
