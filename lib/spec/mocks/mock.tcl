@@ -29,6 +29,18 @@ namespace eval Spec {
                 }
             }
 
+            :public method once {} {
+                set :expected_receive_count 1
+            }
+
+            :public method twice {} {
+                set :expected_receive_count 2
+            }
+
+            :public method never {} {
+                set :expected_receive_count 0
+            }
+
             :public method with { arguments } {
                 set :expected_args $arguments
             }

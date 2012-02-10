@@ -10,11 +10,23 @@ namespace eval Spec {
             #
             #   $logger should_receive "log"
             #   $thing_that_logs do_something_that_logs_a_message
-            :public method should_receive { method_name -with {block {}} } {
+            :public method should_receive { method_name -with {-once:switch false} {-twice:switch false} {-never:switch false} {block {}} } {
                 set expectation [[:__mock_proxy] add_message_expectation $method_name $block]
 
                 if { [info exists with] } {
                     $expectation with $with
+                }
+
+                if { $once } {
+                    $expectation once
+                }
+
+                if { $twice } {
+                    $expectation twice
+                }
+
+                if { $never } {
+                    $expectation never
                 }
             }
 
