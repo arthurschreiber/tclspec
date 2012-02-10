@@ -19,8 +19,20 @@ namespace eval Spec {
                 }
             }
 
+            :public method negative_expectation_for? { name } {
+                return false
+            }
+
             :public method has_method_block? {} {
                 expr { [info exists :method_block] && ${:method_block} != {} }
+            }
+
+            :public method called_max_times? {} {
+                expr { ${:expected_receive_count} > 0 && ${:actual_receive_count} >= ${:expected_receive_count} }
+            }
+
+            :public method matches_name_but_not_args? { name args } {
+                expr { $name == ${:method_name} && $args != ${:expected_args} }
             }
 
             :public method verify_messages_received {} {
@@ -76,6 +88,10 @@ namespace eval Spec {
         nx::Class create NegativeMessageExpectation -superclass MessageExpectation {
             :public method init {} {
                 set :expected_receive_count 0
+            }
+
+            :public method negative_expectation_for? { name } {
+                expr { $name == ${:method_name}}
             }
         }
 
