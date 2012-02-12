@@ -27,14 +27,14 @@ describe "::Spec::Mocks::Mock" {
         $mock should_not_receive "not_expected"
         expect {
             $mock not_expected
-        } to raise_error -code MockExpectationError
+        } to raise_error -code ::Spec::Mocks::ExpectationError
     }
 
     it "fails when receiving message specified as not to be received with args" {
         $mock should_not_receive "not_expected" -with [list "unexpected text"]
         expect {
             $mock not_expected "unexpected text"
-        } to raise_error -code MockExpectationError
+        } to raise_error -code ::Spec::Mocks::ExpectationError
     }
 
     it "passes when receiving messages specified as not to be received with wrong args" {
@@ -58,7 +58,7 @@ describe "::Spec::Mocks::Mock" {
         $mock stub "something" -with [list "a" "b" "c"] { {a b c} {
             join [list $a $b $c] ""
         } }
-        $mock should_receive "something" -with {"a" "b" "c"}
+        $mock should_receive "something" -with [list "a" "b" "c"]
 
         expect [$mock something "a" "b" "c"] to equal "abc"
         $mock spec_verify
@@ -84,7 +84,7 @@ describe "::Spec::Mocks::Mock" {
             expect {
                 $mock something "a" "b" "c"
                 $mock something "z" "x" "g"
-            } to raise_error -code MockExpectationError
+            } to raise_error -code ::Spec::Mocks::ExpectationError
         }
     }
 
@@ -96,7 +96,7 @@ describe "::Spec::Mocks::Mock" {
         expect {
             $mock something "a" "d" "c"
             $mock spec_verify
-        } to raise_error -code MockExpectationError
+        } to raise_error -code ::Spec::Mocks::ExpectationError
     }
 
     it "raises exception if args don't match when method called even when using null_object" {
@@ -107,14 +107,14 @@ describe "::Spec::Mocks::Mock" {
         expect {
             $mock something "a" "d" "c"
             $mock spec_verify
-        } to raise_error -code MockExpectationError
+        } to raise_error -code ::Spec::Mocks::ExpectationError
     }
 
     it "fails if unexpected method is called" {
         # TODO: Check error message
         expect {
             $mock something "a" "b" "c"
-        } to raise_error -code MockExpectationError
+        } to raise_error -code ::Spec::Mocks::ExpectationError
     }
 
     it "uses the passed block for expectation if provided" {

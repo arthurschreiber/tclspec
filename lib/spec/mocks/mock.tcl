@@ -11,11 +11,11 @@ namespace eval Spec {
 
             :variable actual_receive_count 0
 
-            :public method matches? { name args } {
+            :public method matches_args? { args } {
                 if { [info exists :expected_args] } {
-                    expr { $name == ${:method_name} && $args == ${:expected_args} }
+                    expr { $args == ${:expected_args} }
                 } else {
-                    expr { $name == ${:method_name} }
+                    return true
                 }
             }
 
@@ -29,10 +29,6 @@ namespace eval Spec {
 
             :public method called_max_times? {} {
                 expr { ${:expected_receive_count} > 0 && ${:actual_receive_count} >= ${:expected_receive_count} }
-            }
-
-            :public method matches_name_but_not_args? { name args } {
-                expr { $name == ${:method_name} && $args != ${:expected_args} }
             }
 
             :public method verify_messages_received {} {
@@ -69,11 +65,15 @@ namespace eval Spec {
                 expr { ${:expected_receive_count} == ${:actual_receive_count}}
             }
 
-            :public method invoke { args } {
+            :public method increase_actual_receive_count {} {
                 incr :actual_receive_count
+            }
+
+            :public method invoke { args } {
+                :increase_actual_receive_count
 
                 if { ${:expected_receive_count} == 0 } {
-                    return -code error -errorcode MockExpectationError "Expected ${:method_name} not to be called"
+                    return -code error -errorcode ::Spec::Mocks::ExpectationError "Expected ${:method_name} not to be called"
                 }
 
                 set result ""
@@ -100,7 +100,7 @@ namespace eval Spec {
 
             :protected method unknown { method_name args } {
                 if { ![:null_object?] } {
-                    return -code error -errorcode MockExpectationError "Received unexpected call to $method_name"
+                    return -code error -errorcode ::Spec::Mocks::ExpectationError "Received unexpected call to $method_name"
                 }
             }
         }

@@ -14,6 +14,13 @@ namespace eval Spec {
                 [:method_double_for $message] add_negative_expectation
             }
 
+            :public method add_stub { method_name {implementation {}} } {
+                [:method_double_for $method_name] add_stub $implementation
+            }
+
+            :public method remove_stub { method_name } {
+                [:method_double_for $method_name] remove_stub
+            }
 
             :variable null_object false
 
@@ -37,48 +44,34 @@ namespace eval Spec {
             }
 
             :public method message_received { method_name args } {
-                
-                if { [set expectation [:find_matching_expectation $method_name {*}$args]] != false } {
+                set expectation [:find_matching_expectation $method_name {*}$args]
+                set stub [:find_matching_method_stub $method_name {*}$args]
+
+                if { $stub != false && ($expectation == false || [$expectation called_max_times?]) } {
+                    if { $expectation != false } {
+                        $expectation increase_actual_receive_count
+                    }
+
+                    $stub invoke {*}$args
+                } elseif { $expectation != false } {
                     $expectation invoke {*}$args
                 } elseif { [set expectation [:find_almost_matching_expectation $method_name {*}$args]] != false } {
                     if { ![:has_negative_expectation? $method_name] && ![:null_object?] } {
-                        return -code error -errorcode MockExpectationError "Received unexpected call to $method_name"
+                        return -code error -errorcode ::Spec::Mocks::ExpectationError "Received unexpected call to $method_name"
                     }
                 }
             }
 
             :public method find_matching_expectation { method_name args } {
-                foreach expectation [[:method_double_for $method_name] expectations] {
-                    if { [$expectation matches? $method_name {*}$args] } {
-                        if { ![$expectation called_max_times?] } {
-                            return $expectation
-                        }
-                    }
-                }
-
-                return false
+                [:method_double_for $method_name] find_matching_expectation {*}$args
             }
 
             :protected method find_almost_matching_expectation { method_name args } {
-                foreach expectation [[:method_double_for $method_name] expectations] {
-                    if { [$expectation matches_name_but_not_args? $method_name {*}$args] } {
-                        if { ![$expectation called_max_times?] } {
-                            return $expectation
-                        }
-                    }
-                }
-
-                return false
+                [:method_double_for $method_name] find_almost_matching_expectation {*}$args
             }
 
-            :private method find_matching_stub_method { method_name args } {
-                foreach stub [[:method_double_for $method_name] stubs] {
-                    if { [$stub matches? $method_name {*}$args] } {
-                        return $stub
-                    }
-                }
-
-                return false
+            :protected method find_matching_method_stub { method_name args } {
+                [:method_double_for $method_name] find_matching_method_stub {*}$args
             }
 
             :public method method_double_for { message } {
@@ -100,7 +93,7 @@ namespace eval Spec {
             }
 
             :public method reset {} {
-                
+
             }
         }
     }

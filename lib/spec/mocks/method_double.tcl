@@ -13,16 +13,78 @@ namespace eval Spec {
 
             :public method add_expectation { {block {}} } {
                 :configure_method
-                set expectation [MessageExpectation new -method_name ${:method_name} -method_block $block]
+
+                if { [llength ${:stubs}] > 0 } {
+                    set expectation [MessageExpectation new -method_name ${:method_name} -method_block [[lindex ${:stubs} 0] method_block]]
+                } else {
+                    set expectation [MessageExpectation new -method_name ${:method_name} -method_block $block]
+                }
+
+                # TODO: unshift
                 lappend :expectations $expectation
                 return $expectation
             }
 
             :public method add_negative_expectation { } {
                 :configure_method
+
                 set expectation [NegativeMessageExpectation new -method_name ${:method_name}]
+                # TODO: unshift
                 lappend :expectations $expectation
                 return $expectation
+            }
+
+            :public method add_stub { {implementation {}} } {
+                :configure_method
+
+                set stub [MessageExpectation new -method_name ${:method_name} -method_block $implementation]
+                set :stubs [concat [list $stub] ${:stubs}]
+                return $stub
+            }
+
+            :public method remove_stub {} {
+                set :stubs [list]
+            }
+
+
+            :public method find_matching_expectation { args } {
+                foreach expectation ${:expectations} {
+                    if { [$expectation matches_args? {*}$args] } {
+                        if { ![$expectation called_max_times?] } {
+                            return $expectation
+                        }
+                    }
+                }
+
+                foreach expectation ${:expectations} {
+                    if { [$expectation matches_args? {*}$args] } {
+                        return $expectation
+                    }
+                }
+
+                return false
+            }
+
+            :public method find_almost_matching_expectation { args } {
+                foreach expectation ${:expectations} {
+                    if { ![$expectation matches_args? {*}$args] } {
+                        if { ![$expectation called_max_times?] } {
+                            return $expectation
+                        }
+                    }
+                }
+
+                return false
+            }
+
+            :public method find_matching_method_stub { args } {
+                foreach stub ${:stubs} {
+                    if { [$stub matches_args? {*}$args] } {
+                        return $stub
+                    }
+                }
+
+                return false
             }
 
             :public method configure_method { } {
@@ -53,7 +115,7 @@ namespace eval Spec {
                     return "public"
                 } else {
                     set definition [${:object} info method definition ${:method_name}]
-                    
+
                     if { $definition == "" } {
                         set definition [[${:object} info class] info method definition ${:method_name}]
                     }

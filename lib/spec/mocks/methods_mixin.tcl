@@ -40,12 +40,19 @@ namespace eval Spec {
                 }
             }
 
-            :public method stub {} {
-                error "Not implemented"
+            :public method stub { method_name -with -and_return {block {}} } {
+                set stub [[:__mock_proxy] add_stub $method_name $block]
+
+                if { [info exists with] } {
+                    $stub with $with
+                }
+                # if { [info exists and_return] } {
+                #     $stub and_return $and_return
+                # }
             }
 
-            :public method unstub {} {
-                error "Not implemented"
+            :public method unstub { method_name } {
+                [:__mock_proxy] remove_stub $method_name
             }
 
             :public method as_null_object {} {
