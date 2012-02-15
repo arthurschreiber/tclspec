@@ -50,51 +50,51 @@ namespace eval Spec {
             }
 
             :public method matches_expected_delta? { } {
-                expr { [info exists :by] ? [:actual_delta] == [set :by] : true }
+                expr { [info exists :by] ? ${:actual_delta} == ${:by} : true }
             }
 
             :public method matches_max? { } {
-                expr { [info exists :by_at_most] ? [:actual_delta] <= [set :by_at_most] : true }
+                expr { [info exists :by_at_most] ? ${:actual_delta} <= ${:by_at_most} : true }
             }
 
             :public method matches_min? { } {
-                expr { [info exists :by_at_least] ? [:actual_delta] >= [set :by_at_least] : true }
+                expr { [info exists :by_at_least] ? ${:actual_delta} >= ${:by_at_least} : true }
             }
 
             :public method matches_before? { } {
-                expr { [info exists :from] ? [set :actual_before] == [set :from] : true}
+                expr { [info exists :from] ? ${:actual_before} == ${:from} : true}
             }
 
             :public method matches_after? { } {
-                expr { [info exists :to] ? [set :actual_after] == [set :to] : true}
+                expr { [info exists :to] ? ${:actual_after} == ${:to} : true}
             }
 
             :public method actual_delta {} {
-                expr { [set :actual_after] - [set :actual_before] }
+                expr { ${:actual_after} - ${:actual_before} }
             }
 
             :public method changed? { } {
-                expr { [set :actual_before] != [set :actual_after] }
+                expr { ${:actual_before} != ${:actual_after} }
             }
 
             :public method failure_message {} {
                 if { ![:matches_before?] } {
-                    return "result should have been initially been '[set :from]', but was '[set :actual_before]'"
+                    return "result should have been initially been '${:from}', but was '${:actual_before}'"
                 } elseif { ![:matches_after?] } {
-                    return "result should have been changed to '[set :to]', but is now '[set :actual_after]'"
+                    return "result should have been changed to '${:to}', but is now '${:actual_after}'"
                 } elseif { [info exists :by] } {
-                    return "result should have been changed by '[set :by]', but was changed by '[:actual_delta]'"
+                    return "result should have been changed by '${:by}', but was changed by '${:actual_delta}'"
                 } elseif { [info exists :by_at_most] } {
-                    return "result should have been changed by at most '[set :by_at_most]', but was changed by '[:actual_delta]'"
+                    return "result should have been changed by at most '${:by_at_most}', but was changed by '${:actual_delta}'"
                 } elseif { [info exists :by_at_least] } {
-                    return "result should have been changed by at least '[set :by_at_least]', but was changed by '[:actual_delta]'"
+                    return "result should have been changed by at least '${:by_at_least}', but was changed by '${:actual_delta}'"
                 } else {
-                    return "result should have changed, but is still '[set :actual_before]'"
+                    return "result should have changed, but is still '${:actual_before}'"
                 }
             }
 
             :public method negative_failure_message {} {
-                return "result should not have changed, but did change from '[set :actual_before]' to '[set :actual_after]'"
+                return "result should not have changed, but did change from '${:actual_before}' to '${:actual_after}'"
             }
         }
     }
