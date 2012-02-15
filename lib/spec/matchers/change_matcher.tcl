@@ -18,9 +18,33 @@ namespace eval Spec {
             :public method matches? { actual } {
                 next
 
-                set :actual_before [uplevel [::Spec::Matchers eval_level] ${:expected}]
-                uplevel [::Spec::Matchers eval_level] $actual
-                set :actual_after [uplevel [::Spec::Matchers eval_level] ${:expected}]
+                set rc [catch {
+                    uplevel [::Spec::Matchers eval_level] ${:expected}
+                } result options]
+
+                if { $rc in {0 2} } {
+                   set :actual_before $result
+                } else {
+                    return {*}$options $result
+                }
+
+                set rc [catch {
+                    uplevel [::Spec::Matchers eval_level] $actual
+                } result options]
+
+                if { !($rc in {0 2}) } {
+                    return {*}$options $result
+                }
+
+                set rc [catch {
+                    uplevel [::Spec::Matchers eval_level] ${:expected}
+                } result options]
+
+                if { $rc in {0 2} } {
+                   set :actual_after $result
+                } else {
+                    return {*}$options $result
+                }
 
                 expr { (![:change_expected?] || [:changed?]) && [:matches_expected_delta?] && [:matches_max?] && [:matches_min?] && [:matches_before?] && [:matches_after?] }
             }
