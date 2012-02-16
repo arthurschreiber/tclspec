@@ -10,16 +10,18 @@ namespace eval Spec {
         }
 
         :public class method run {} {
-            set exit_code 0
+            set failure_exit_code 1
+
+            set success true
 
             set reporter [[::Spec configuration] reporter]
             $reporter report [[Spec world] example_count] {
                 foreach example_group [[Spec world] example_groups] {
-                    $example_group execute $reporter
+                    set success [expr { [$example_group execute $reporter] && $success }]
                 }
             }
 
-            return $exit_code
+            expr { $success ? 0 : $failure_exit_code }
         }
 
         :public class method installed_at_exit? {} {
