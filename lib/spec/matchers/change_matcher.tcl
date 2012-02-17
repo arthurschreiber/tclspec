@@ -50,15 +50,15 @@ namespace eval Spec {
             }
 
             :public method matches_expected_delta? { } {
-                expr { [info exists :by] ? ${:actual_delta} == ${:by} : true }
+                expr { [info exists :by] ? [:actual_delta] == ${:by} : true }
             }
 
             :public method matches_max? { } {
-                expr { [info exists :by_at_most] ? ${:actual_delta} <= ${:by_at_most} : true }
+                expr { [info exists :by_at_most] ? [:actual_delta] <= ${:by_at_most} : true }
             }
 
             :public method matches_min? { } {
-                expr { [info exists :by_at_least] ? ${:actual_delta} >= ${:by_at_least} : true }
+                expr { [info exists :by_at_least] ? [:actual_delta] >= ${:by_at_least} : true }
             }
 
             :public method matches_before? { } {
@@ -83,11 +83,11 @@ namespace eval Spec {
                 } elseif { ![:matches_after?] } {
                     return "result should have been changed to '${:to}', but is now '${:actual_after}'"
                 } elseif { [info exists :by] } {
-                    return "result should have been changed by '${:by}', but was changed by '${:actual_delta}'"
+                    return "result should have been changed by '${:by}', but was changed by '[:actual_delta]'"
                 } elseif { [info exists :by_at_most] } {
-                    return "result should have been changed by at most '${:by_at_most}', but was changed by '${:actual_delta}'"
+                    return "result should have been changed by at most '${:by_at_most}', but was changed by '[:actual_delta]'"
                 } elseif { [info exists :by_at_least] } {
-                    return "result should have been changed by at least '${:by_at_least}', but was changed by '${:actual_delta}'"
+                    return "result should have been changed by at least '${:by_at_least}', but was changed by '[:actual_delta]'"
                 } else {
                     return "result should have changed, but is still '${:actual_before}'"
                 }
