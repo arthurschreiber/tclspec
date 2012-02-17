@@ -9,13 +9,13 @@ Feature: arbitrary helper procs
     Given a file named "example_spec.tcl" with:
       """
       describe "an example" {
-        proc help { } {
-          return "available"
-        }
+          proc help { } {
+              return "available"
+          }
 
-        it "has access to methods defined in its group" {
-          expect [help] to equal "available"
-        }
+          it "has access to methods defined in its group" {
+              expect [help] to equal "available"
+          }
       }
       """
     When I run `tclspec example_spec.tcl`
@@ -25,15 +25,15 @@ Feature: arbitrary helper procs
     Given a file named "example_spec.tcl" with:
       """
       describe "an example" {
-        proc help { } {
-          return "available"
-        }
-
-        describe "in a nested group" {
-          it "has access to methods defined in its parent group" {
-            expect [help] to equal "available"
+          proc help { } {
+              return "available"
           }
-        }
+
+          describe "in a nested group" {
+              it "has access to methods defined in its parent group" {
+                  expect [help] to equal "available"
+              }
+          }
       }
       """
     When I run `tclspec example_spec.tcl`
