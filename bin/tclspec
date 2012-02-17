@@ -5,11 +5,20 @@ package require spec/autorun
 
 set example_files [list]
 
-if { $argc > 0 } {
-    foreach pattern $argv {
-        lappend example_files {*}[glob -nocomplain $pattern]
+if { [llength $argv] > 0 } {
+    for {set i 0} {$i < [llength $argv]} {incr i} {
+        set pattern [lindex $argv $i]
+
+        if { $pattern == "-f" } {
+            incr i
+            [Spec configuration] add_formatter [lindex $argv $i]
+        } else {
+            lappend example_files {*}[glob -nocomplain $pattern]
+        }
     }
-} else {
+}
+
+if { [llength $example_files] == 0 } {
     lappend example_files {*}[glob -nocomplain "spec/**/*_spec.tcl"]
 }
 
