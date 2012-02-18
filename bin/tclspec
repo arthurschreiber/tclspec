@@ -19,7 +19,7 @@ if { [llength $argv] > 0 } {
 }
 
 if { [llength $example_files] == 0 } {
-    lappend example_files {*}[glob -nocomplain "spec/**/*_spec.tcl"]
+    lappend example_files {*}[glob -nocomplain "spec/{**,.}/*_spec.tcl"]
 }
 
 foreach example_file $example_files {
