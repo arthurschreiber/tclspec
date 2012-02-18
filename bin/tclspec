@@ -10,7 +10,7 @@ if { $argc > 0 } {
         lappend example_files {*}[glob -nocomplain $pattern]
     }
 } else {
-    lappend example_files {*}[glob -nocomplain "spec/**/*_spec.tcl"]
+    lappend example_files {*}[glob -nocomplain "spec/{**,.}/*_spec.tcl"]
 }
 
 foreach example_file $example_files {

@@ -8,8 +8,9 @@ describe "::Spec.configure" {
         set called false
 
         Spec configure { c {
+            upvar called called
             set called true
-            expect [::Spec::Configuration info instances $c] to equal $c
+            uplevel [list expect [$c info class] to equal "::Spec::Configuration"]
         } }
 
         expect $called to be true
@@ -17,23 +18,23 @@ describe "::Spec.configure" {
 
     it "always calls the block with the same configuration instance" {
         Spec configure { c {
+            upvar previous_config previous_config
             set previous_config $c
         } }
 
         Spec configure { c {
-            expect $c to equal $previous_config
+            upvar previous_config previous_config
+            uplevel [list expect $c to equal $previous_config]
         } }
     }
 }
 
 describe "::Spec.configuration" {
     it "returns a configuration instance" {
-        set c [Spec configuration]
-        expect [::Spec::Configuration info instances $c] to equal $c
+        expect [[Spec configuration] info class] to equal "::Spec::Configuration"
     }
 
     it "always returns the same configuration instance" {
-        set c [Spec configuration]
-        expect [Spec configuration] to equal $c
+        expect [Spec configuration] to equal [Spec configuration]
     }
 }
