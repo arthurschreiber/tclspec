@@ -25,8 +25,6 @@ nx::Class create Spec {
     :class property [list configuration [Spec::Configuration new]]
 
     :public class method configure { block } {
-        uplevel [list set [lindex $block 0] ${:configuration}]
-        uplevel [lindex $block 1]
-        uplevel [list unset [lindex $block 0]]
+        uplevel [list apply $block ${:configuration}]
     }
 }
