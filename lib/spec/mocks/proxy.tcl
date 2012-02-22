@@ -61,9 +61,17 @@ namespace eval Spec {
                     $expectation invoke {*}$args
                 } elseif { [set expectation [:find_almost_matching_expectation $method_name {*}$args]] != false } {
                     if { ![:has_negative_expectation? $method_name] && ![:null_object?] } {
-                        return -code error -errorcode ::Spec::Mocks::ExpectationError "Received unexpected call to $method_name"
+                        [:raise_unexpected_message_args_error $expectation {*}$args]
                     }
                 }
+            }
+
+            :public method raise_unexpected_message_args_error { expectation args } {
+                ${:error_generator} raise_unexpected_message_args_error $expectation {*}$args
+            }
+
+            :public method raise_unexpected_message_error { method_name args } {
+                ${:error_generator} raise_unexpected_message_error $method_name {*}$args
             }
 
             :public method find_matching_expectation { method_name args } {

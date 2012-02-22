@@ -9,7 +9,7 @@ namespace eval Spec {
 
             :protected method unknown { method_name args } {
                 if { ![:null_object?] } {
-                    return -code error -errorcode ::Spec::Mocks::ExpectationError "Received unexpected call to $method_name"
+                    [:__mock_proxy] raise_unexpected_message_error $method_name {*}$args
                 }
             }
         }

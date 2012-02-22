@@ -5,6 +5,7 @@ namespace eval Spec {
             :property method_block
             :property {expected_receive_count 1}
             :property error_generator:required
+            :property expected_args
 
             :variable at_least false
             :variable at_most false

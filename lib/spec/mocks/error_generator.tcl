@@ -9,6 +9,32 @@ namespace eval Spec {
                 set message "([:intro]).${method}[:format_args {*}${args}]"
                 append message "\n    expected: [:count_message ${expected_received_count}]"
                 append message "\n    received: [:count_message ${actual_received_count}]"
+
+                :__raise $message
+            }
+
+            :public method raise_unexpected_message_error { method_name args } {
+                set message "[:intro] received unexpected message: $method_name with [:format_args {*}$args]"
+
+                :__raise $message
+            }
+
+            :public method raise_unexpected_message_args_error { expectation args } {
+                if { "expected_args" in [$expectation info vars] } {
+                    set expected_args [:format_args {*}[$expectation expected_args]]
+                } else {
+                    set expected_args "(no args)"                    
+                }
+                set actual_args [:format_args {*}$args]
+
+                set message "[:intro] received [$expectation method_name] with unexpected arguments"
+                lappend message "\n  expected: $expected_args"
+                lappend message "\n       got: $actual_args"
+
+                :__raise $message
+            }
+
+            :protected method __raise { message } {
                 return -code error -errorcode ::Spec::Mocks::ExpectationError $message
             }
 
