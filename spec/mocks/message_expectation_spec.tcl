@@ -7,6 +7,7 @@ describe "Spec::Mocks::MessageExpectation" {
     describe "with a method block" {
         before each {
             set message_expectation [::Spec::Mocks::MessageExpectation new \
+                -error_generator [double "ErrorGenerator"] \
                 -method_name "example_method" \
                 -method_block {{ a b } {
                     expr { $a + $b }
@@ -22,6 +23,7 @@ describe "Spec::Mocks::MessageExpectation" {
     describe "without a method block" {
         before each {
             set message_expectation [::Spec::Mocks::MessageExpectation new \
+                -error_generator [double "ErrorGenerator"] \
                 -method_name "example_method" \
             ]
         }
@@ -33,7 +35,10 @@ describe "Spec::Mocks::MessageExpectation" {
 
     describe "when expecting an exact count of invocations" {
         before each {
-            set message_expectation [::Spec::Mocks::MessageExpectation new -method_name "example_method"]
+            set message_expectation [::Spec::Mocks::MessageExpectation new \
+                -error_generator [double "ErrorGenerator"] \
+                -method_name "example_method"
+            ]
             $message_expectation expected_receive_count 2
         }
 

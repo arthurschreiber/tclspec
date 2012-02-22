@@ -11,13 +11,13 @@ namespace eval Spec {
             :variable stashed false
             :variable stashed_definition
 
-            :public method add_expectation { {block {}} } {
+            :public method add_expectation { error_generator {block {}} } {
                 :configure_method
 
                 if { [llength ${:stubs}] > 0 } {
-                    set expectation [MessageExpectation new -method_name ${:method_name} -method_block [[lindex ${:stubs} 0] method_block]]
+                    set expectation [MessageExpectation new -error_generator $error_generator -method_name ${:method_name} -method_block [[lindex ${:stubs} 0] method_block]]
                 } else {
-                    set expectation [MessageExpectation new -method_name ${:method_name} -method_block $block]
+                    set expectation [MessageExpectation new -error_generator $error_generator -method_name ${:method_name} -method_block $block]
                 }
 
                 # TODO: unshift
@@ -25,19 +25,19 @@ namespace eval Spec {
                 return $expectation
             }
 
-            :public method add_negative_expectation { } {
+            :public method add_negative_expectation { error_generator } {
                 :configure_method
 
-                set expectation [NegativeMessageExpectation new -method_name ${:method_name}]
+                set expectation [NegativeMessageExpectation new -error_generator $error_generator -method_name ${:method_name}]
                 # TODO: unshift
                 lappend :expectations $expectation
                 return $expectation
             }
 
-            :public method add_stub { {implementation {}} } {
+            :public method add_stub { error_generator {implementation {}} } {
                 :configure_method
 
-                set stub [MessageExpectation new -method_name ${:method_name} -method_block $implementation]
+                set stub [MessageExpectation new -error_generator $error_generator -method_name ${:method_name} -method_block $implementation]
                 set :stubs [concat [list $stub] ${:stubs}]
                 return $stub
             }

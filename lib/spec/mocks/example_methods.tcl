@@ -15,8 +15,8 @@ namespace eval Spec {
 
             namespace export double mock stub
 
-            proc declare_double { declared_as args } {
-                Spec::Mocks::Mock new
+            proc declare_double { declared_as {name ""} args } {
+                Spec::Mocks::Mock new -name $name
             }
         }
     }

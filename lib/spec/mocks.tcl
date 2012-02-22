@@ -3,6 +3,7 @@ source [file join [file dirname [info script]] "mocks/method_double.tcl"]
 source [file join [file dirname [info script]] "mocks/proxy.tcl"]
 source [file join [file dirname [info script]] "mocks/mock.tcl"]
 source [file join [file dirname [info script]] "mocks/example_methods.tcl"]
+source [file join [file dirname [info script]] "mocks/error_generator.tcl"]
 source [file join [file dirname [info script]] "mocks/space.tcl"]
 
 namespace eval Spec {

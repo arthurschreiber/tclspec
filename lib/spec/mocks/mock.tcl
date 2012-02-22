@@ -8,8 +8,14 @@ namespace eval Spec {
             :property method_name:required
             :property method_block
             :property {expected_receive_count 1}
+            :property error_generator:required
+
+            :variable at_least false
+            :variable at_most false
+            :variable exactly false
 
             :variable actual_receive_count 0
+            :variable consecutive false
 
             :public method matches_args? { args } {
                 if { [info exists :expected_args] } {
@@ -53,8 +59,38 @@ namespace eval Spec {
                 set :expected_args $arguments
             }
 
+            :public method actual_received_count_matters? {} {
+                expr { ${:at_least} || ${:at_most} || ${:exactly} }
+            }
+
+            :public method and_return { values } {
+                if { ${:method_block} != {} } {
+                    error "AmbigousReturnError"
+                }
+
+                switch { [llength $values] } {
+                    0 {
+                        set value {}
+                    }
+                    1 {
+                        set value [lindex $values 0]
+                    }
+                    default {
+                        set :consecutive true
+                        if { ${:expected_receive_count} < [llength $values] } {
+                            set :expected_receive_count [llength $values]
+                        }
+                        set value $values
+                    }
+                }
+
+                set :method_block [list [list] [list return $value]]
+            }
+
             :public method generate_error {} {
-                return -code error -errorcode ::Spec::Mocks::ExpectationError "Message Expectation failed"
+                ${:error_generator} raise_expectation_error ${:method_name} \
+                    ${:expected_receive_count} ${:actual_receive_count} \
+                    {*}[expr { [info exists :expected_args] ? ${:expected_args} : {}}]
             }
 
             :public method expected_messages_received? {} {
@@ -70,18 +106,32 @@ namespace eval Spec {
             }
 
             :public method invoke { args } {
-                :increase_actual_receive_count
-
                 if { ${:expected_receive_count} == 0 } {
+                    :increase_actual_receive_count
                     return -code error -errorcode ::Spec::Mocks::ExpectationError "Expected ${:method_name} not to be called"
                 }
 
                 set result ""
                 if { [:has_method_block?] } {
-                    set result [apply ${:method_block} {*}$args]
+                    if { ${:consecutive} } {
+                        set result [:invoke_consecutive_method_block {*}$args]
+                    } else {
+                        set result [:invoke_method_block {*}$args]
+                    }
                 }
 
+                :increase_actual_receive_count
                 return $result
+            }
+
+            :protected method invoke_method_block { args } {
+                apply ${:method_block} {*}$args
+            }
+
+            :protected method invoke_consecutive_method_block { args } {
+                set value [:invoke_method_block {*}$args]
+                set index [tcl::mathfunc::min ${:actual_receive_count} [expr { [llength $value] - 1 }]]
+                return [lindex $value $index]
             }
         }
 

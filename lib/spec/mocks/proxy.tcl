@@ -6,16 +6,20 @@ namespace eval Spec {
 
             :property [list method_doubles [dict create]]
 
+            :protected method init {} {
+                set :error_generator [ErrorGenerator new -object ${:object} -name ${:name}]
+            }
+
             :public method add_message_expectation { message {block {}} } {
-                [:method_double_for $message] add_expectation $block
+                [:method_double_for $message] add_expectation ${:error_generator} $block
             }
 
             :public method add_negative_message_expectation { message } {
-                [:method_double_for $message] add_negative_expectation
+                [:method_double_for $message] add_negative_expectation  ${:error_generator}
             }
 
             :public method add_stub { method_name {implementation {}} } {
-                [:method_double_for $method_name] add_stub $implementation
+                [:method_double_for $method_name] add_stub ${:error_generator} $implementation
             }
 
             :public method remove_stub { method_name } {
@@ -48,7 +52,7 @@ namespace eval Spec {
                 set stub [:find_matching_method_stub $method_name {*}$args]
 
                 if { $stub != false && ($expectation == false || [$expectation called_max_times?]) } {
-                    if { $expectation != false } {
+                    if { $expectation != false && [$expectation actual_received_count_matters?] } {
                         $expectation increase_actual_receive_count
                     }
 
