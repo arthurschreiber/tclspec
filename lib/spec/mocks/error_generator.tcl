@@ -64,11 +64,23 @@ namespace eval Spec {
                 return "$count time[expr { $count == 1 ? "" : "s" }]"
             }
 
+            :protected method arg_list { args } {
+                set result [list]
+                foreach arg $args {
+                    if { [::nsf::is object $arg] && "description" in [$arg info lookup methods] } {
+                        lappend result [$arg description]
+                    } else {
+                        lappend result $arg
+                    }
+                }
+                join $result " "
+            }
+
             :protected method format_args { args } {
                 if { [llength $args] == 0 } {
                     return "(no args)"
                 } else {
-                    return "([join $args " "])"
+                    return "([:arg_list $args])"
                 }
             }
         }

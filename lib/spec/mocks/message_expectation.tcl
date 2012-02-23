@@ -5,21 +5,24 @@ namespace eval Spec {
             :property method_block
             :property {expected_receive_count 1}
             :property error_generator:required
-            :property expected_args
 
             :variable at_least false
             :variable at_most false
             :variable exactly false
 
+            :variable argument_expectation
+
             :variable actual_receive_count 0
             :variable consecutive false
 
+            :public method init {} {
+                set :argument_expectation [
+                    ArgumentExpectation new -args [AnyArgsMatcher new]
+                ]
+            }
+
             :public method matches_args? { args } {
-                if { [info exists :expected_args] } {
-                    expr { $args == ${:expected_args} }
-                } else {
-                    return true
-                }
+                ${:argument_expectation} args_match? {*}$args
             }
 
             :public method negative_expectation_for? { name } {
@@ -40,6 +43,10 @@ namespace eval Spec {
                 }
             }
 
+            :public method expected_args {} {
+                ${:argument_expectation} args
+            }
+
             :public method once {} {
                 set :expected_receive_count 1
             }
@@ -53,7 +60,7 @@ namespace eval Spec {
             }
 
             :public method with { arguments } {
-                set :expected_args $arguments
+                set :argument_expectation [ArgumentExpectation new -args $arguments]
             }
 
             :public method actual_received_count_matters? {} {
@@ -87,7 +94,7 @@ namespace eval Spec {
             :public method generate_error {} {
                 ${:error_generator} raise_expectation_error ${:method_name} \
                     ${:expected_receive_count} ${:actual_receive_count} \
-                    {*}[expr { [info exists :expected_args] ? ${:expected_args} : {}}]
+                    {*}[:expected_args]
             }
 
             :public method expected_messages_received? {} {
@@ -133,9 +140,7 @@ namespace eval Spec {
         }
 
         nx::Class create NegativeMessageExpectation -superclass MessageExpectation {
-            :public method init {} {
-                set :expected_receive_count 0
-            }
+            :property {expected_receive_count 0}
 
             :public method negative_expectation_for? { name } {
                 expr { $name == ${:method_name}}
