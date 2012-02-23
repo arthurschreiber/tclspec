@@ -226,7 +226,7 @@ namespace eval Spec {
 
             :instance_eval {
                 namespace path [concat [[:info class] ancestors] ::Spec::Matchers]
-                namespace import ::Spec::Mocks::ExampleMethods::*
+                ::Spec::Mocks setup [namespace current]
             }
 
             if { [::nx::var exists [:info class] enclosing_namespace] } {

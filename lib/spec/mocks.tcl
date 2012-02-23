@@ -18,7 +18,11 @@ namespace eval Spec {
         :class property [list space [::Spec::Mocks::Space new]]
 
         :public class method setup { host_namespace } {
+            namespace eval $host_namespace {
+                namespace import ::Spec::Mocks::ExampleMethods::*
+            }
 
+            nx::Object require trait ::Spec::Mocks::Methods
         }
 
         :public class method verify {} {
