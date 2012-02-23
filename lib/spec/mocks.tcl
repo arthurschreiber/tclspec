@@ -1,4 +1,4 @@
-source [file join [file dirname [info script]] "mocks/methods_mixin.tcl"]
+source [file join [file dirname [info script]] "mocks/methods.tcl"]
 source [file join [file dirname [info script]] "mocks/method_double.tcl"]
 source [file join [file dirname [info script]] "mocks/argument_expectation.tcl"]
 source [file join [file dirname [info script]] "mocks/message_expectation.tcl"]

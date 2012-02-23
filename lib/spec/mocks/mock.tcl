@@ -1,10 +1,12 @@
-source [file join [file dirname [info script]] "methods_mixin.tcl"]
+source [file join [file dirname [info script]] "methods.tcl"]
 
 namespace eval Spec {
     namespace eval Mocks {
         namespace path ::Spec
 
-        nx::Class create Mock -mixin MethodsMixin {
+        nx::Class create Mock {
+            :require trait ::Spec::Mocks::Methods
+
             :property {name ""}
             :property {options {}}
 

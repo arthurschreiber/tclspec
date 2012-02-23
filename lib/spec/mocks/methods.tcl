@@ -1,6 +1,6 @@
 namespace eval Spec {
     namespace eval Mocks {
-        nx::Class create MethodsMixin {
+        nx::Trait create Methods {
             # Set an expectation that this object should receive a call to the
             # given method.
             #

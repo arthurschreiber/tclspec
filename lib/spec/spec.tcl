@@ -1,6 +1,7 @@
 package provide spec 0.1
 
 package require nx
+package require nx::trait
 package require at_exit
 package require try
 
