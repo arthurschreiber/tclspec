@@ -81,7 +81,7 @@ namespace eval Spec {
             :protected method __mock_proxy { } {
                 if { ![info exists :mock_proxy] } {
                     if { [:info class] == "::Spec::Mocks::Mock" } {
-                        set :mock_proxy [::Spec::Mocks::Proxy new -object [:] -name ${:name}]
+                        set :mock_proxy [::Spec::Mocks::Proxy new -object [:] -name ${:name} -options ${:options}]
                     } else {
                         set :mock_proxy [::Spec::Mocks::Proxy new -object [:]]
                     }

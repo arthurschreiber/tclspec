@@ -5,7 +5,7 @@ source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
 
 describe "a mock expectation with multiple return values and no specified count" {
     before each {
-        set mock [double "mock"]
+        set mock [mock "mock"]
         set return_values [list 1 "2" [nx::Object new]]
         $mock should_receive "message" -and_return $return_values
     }

@@ -6,6 +6,7 @@ namespace eval Spec {
 
         nx::Class create Mock -mixin MethodsMixin {
             :property {name ""}
+            :property {options {}}
 
             :protected method unknown { method_name args } {
                 if { ![:null_object?] } {

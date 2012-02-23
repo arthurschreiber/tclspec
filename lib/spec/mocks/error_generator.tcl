@@ -3,7 +3,15 @@ namespace eval Spec {
         nx::Class create ErrorGenerator {
             :property object:required
             :property {name ""}
-            :property {declared_as "Mock"}
+            :property {options {}}
+
+            :public method init {} {
+                if { [dict exists ${:options} __declared_as] } {
+                    set :declared_as [dict get ${:options} __declared_as]
+                } else {
+                    set :declared_as "Mock"
+                }
+            }
 
             :public method raise_expectation_error { method expected_received_count actual_received_count args } {
                 set message "([:intro]).${method}[:format_args {*}${args}]"
@@ -28,8 +36,8 @@ namespace eval Spec {
                 set actual_args [:format_args {*}$args]
 
                 set message "[:intro] received [$expectation method_name] with unexpected arguments"
-                lappend message "\n  expected: $expected_args"
-                lappend message "\n       got: $actual_args"
+                append message "\n  expected: $expected_args"
+                append message "\n       got: $actual_args"
 
                 :__raise $message
             }

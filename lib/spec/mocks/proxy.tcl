@@ -3,11 +3,12 @@ namespace eval Spec {
         nx::Class create Proxy {
             :property object:required
             :property {name ""}
+            :property {options {}}
 
             :property [list method_doubles [dict create]]
 
             :protected method init {} {
-                set :error_generator [ErrorGenerator new -object ${:object} -name ${:name}]
+                set :error_generator [ErrorGenerator new -object ${:object} -name ${:name} -options ${:options}]
             }
 
             :public method add_message_expectation { message {block {}} } {
