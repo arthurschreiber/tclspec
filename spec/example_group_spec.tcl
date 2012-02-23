@@ -257,7 +257,7 @@ describe "running the examples" {
         }]
 
         foreach example [$group examples] {
-            $example should_receive "run"
+            $example should_receive "run" -and_return [list false]
         }
 
         expect [$group run [NullObject new]] to be false

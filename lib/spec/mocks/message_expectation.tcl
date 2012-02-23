@@ -88,7 +88,7 @@ namespace eval Spec {
                     }
                 }
 
-                set :method_block [list [list] [list return $value]]
+                set :method_block [list [list args] [list return $value]]
             }
 
             :public method generate_error {} {
