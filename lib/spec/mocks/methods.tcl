@@ -10,7 +10,7 @@ namespace eval Spec {
             #
             #   $logger should_receive "log"
             #   $thing_that_logs do_something_that_logs_a_message
-            :public method should_receive { method_name -with -and_return {-once:switch false} {-twice:switch false} {-never:switch false} {block {}} } {
+            :public method should_receive { method_name -with -and_return {-once:switch false} {-any_number_of_times:switch false} {-twice:switch false} {-never:switch false} {block {}} } {
                 set expectation [[:__mock_proxy] add_message_expectation $method_name $block]
 
                 if { [info exists with] } {
@@ -27,6 +27,10 @@ namespace eval Spec {
 
                 if { $never } {
                     $expectation never
+                }
+
+                if { $any_number_of_times } {
+                    $expectation any_number_of_times
                 }
 
                 if { [info exists and_return] } {

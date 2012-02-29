@@ -37,7 +37,7 @@ namespace eval Spec {
             :public method add_stub { error_generator {implementation {}} } {
                 :configure_method
 
-                set stub [MessageExpectation new -error_generator $error_generator -method_name ${:method_name} -method_block $implementation]
+                set stub [MessageExpectation new -error_generator $error_generator -method_name ${:method_name} -method_block $implementation -expected_receive_count any]
                 set :stubs [concat [list $stub] ${:stubs}]
                 return $stub
             }

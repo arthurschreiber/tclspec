@@ -2,7 +2,10 @@ namespace eval Spec {
     namespace eval Mocks {
         nx::Class create MessageExpectation {
             :property method_name:required
+
             :property method_block
+            :property return_block
+
             :property {expected_receive_count 1}
             :property error_generator:required
 
@@ -33,8 +36,13 @@ namespace eval Spec {
                 expr { [info exists :method_block] && ${:method_block} != {} }
             }
 
+            :public method has_return_block? {} {
+                expr { [info exists :return_block] && ${:return_block} != {} }
+            }
+
             :public method called_max_times? {} {
-                expr { ${:expected_receive_count} > 0 && ${:actual_receive_count} >= ${:expected_receive_count} }
+                expr { ![:ignoring_receive_count?] && ${:expected_receive_count} > 0 &&
+                    ${:actual_receive_count} >= ${:expected_receive_count} }
             }
 
             :public method verify_messages_received {} {
@@ -59,6 +67,10 @@ namespace eval Spec {
                 set :expected_receive_count 0
             }
 
+            :public method any_number_of_times {} {
+                set :expected_receive_count any
+            }
+
             :public method with { arguments } {
                 set :argument_expectation [ArgumentExpectation new -args $arguments]
             }
@@ -81,14 +93,14 @@ namespace eval Spec {
                     }
                     default {
                         set :consecutive true
-                        if { ${:expected_receive_count} < [llength $values] } {
+                        if { ![:ignoring_receive_count?] && ${:expected_receive_count} < [llength $values] } {
                             set :expected_receive_count [llength $values]
                         }
                         set value $values
                     }
                 }
 
-                set :method_block [list [list args] [list return $value]]
+                set :return_block [list [list args] [list return $value]]
             }
 
             :public method generate_error {} {
@@ -98,7 +110,11 @@ namespace eval Spec {
             }
 
             :public method expected_messages_received? {} {
-                expr { [:matches_exact_count?] }
+                expr { [:ignoring_receive_count?] || [:matches_exact_count?] }
+            }
+
+            :public method ignoring_receive_count? {} {
+                expr { ${:expected_receive_count} == "any" }
             }
 
             :public method matches_exact_count? {} {
@@ -116,12 +132,14 @@ namespace eval Spec {
                 }
 
                 set result ""
-                if { [:has_method_block?] } {
-                    if { ${:consecutive} } {
-                        set result [:invoke_consecutive_method_block {*}$args]
+                if { [:has_return_block?]} {
+                    if {${:consecutive} } {
+                        set result [:invoke_consecutive_return_block {*}$args]
                     } else {
-                        set result [:invoke_method_block {*}$args]
+                        set result [:invoke_return_block {*}$args]
                     }
+                } elseif { [:has_method_block?] } {
+                    set result [:invoke_method_block {*}$args]
                 }
 
                 :increase_actual_receive_count
@@ -132,8 +150,12 @@ namespace eval Spec {
                 apply ${:method_block} {*}$args
             }
 
-            :protected method invoke_consecutive_method_block { args } {
-                set value [:invoke_method_block {*}$args]
+            :protected method invoke_return_block { args } {
+                apply ${:return_block} {*}$args
+            }
+
+            :protected method invoke_consecutive_return_block { args } {
+                set value [:invoke_return_block {*}$args]
                 set index [tcl::mathfunc::min ${:actual_receive_count} [expr { [llength $value] - 1 }]]
                 return [lindex $value $index]
             }
