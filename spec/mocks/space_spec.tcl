@@ -40,7 +40,7 @@ describe "::Spec::Mocks::Space" {
         $space add $m1
         $space add $m2
 
-        $space reset
+        $space reset_all
 
         expect [$m1 reset?] to be true
         expect [$m2 reset?] to be true

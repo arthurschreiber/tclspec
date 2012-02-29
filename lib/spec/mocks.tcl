@@ -26,11 +26,11 @@ namespace eval Spec {
         }
 
         :public class method verify {} {
-            :space verify_all
+            [:space] verify_all
         }
 
         :public class method teardown {} {
-            :space reset_all
+            [:space] reset_all
         }
     }
 }

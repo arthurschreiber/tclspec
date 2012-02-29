@@ -106,7 +106,9 @@ namespace eval Spec {
             }
 
             :public method reset {} {
-
+                dict for {_ method_double} ${:method_doubles} {
+                    $method_double reset
+                }
             }
         }
     }

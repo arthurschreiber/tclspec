@@ -106,6 +106,11 @@ namespace eval Spec {
                 }
             }
 
+            :public method reset {} {
+                :restore_original_method
+                # TODO destroy all message expectations
+            }
+
             :public method original_method_definition {} {
                 ${:object} info method definition ${:method_name}
             }

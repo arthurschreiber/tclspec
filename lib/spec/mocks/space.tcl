@@ -3,31 +3,28 @@ namespace eval Spec {
         namespace path ::Spec
 
         nx::Class create Space {
-            :variable mocks [list]
+            :variable receivers [list]
 
-            :public method empty? {} {
-                expr { [llength ${:mocks}] == 0 }
+            :public method add { receiver } {
+                lappend :receivers $receiver
             }
 
-            :public method add { mock } {
-                lappend :mocks $mock
+            :public method empty? {} {
+                expr { [llength ${:receivers}] == 0 }
             }
 
             :public method verify_all {} {
-                foreach mock ${:mocks} {
-                    $mock spec_verify
-                }
-            }
-
-            :public method reset {} {
-                foreach mock ${:mocks} {
-                    $mock spec_reset
+                foreach receiver ${:receivers} {
+                    $receiver spec_verify
                 }
             }
 
             :public method reset_all {} {
-                :reset
-                set :mocks [list]
+                foreach receiver ${:receivers} {
+                    $receiver spec_reset
+                }
+
+                set :receivers [list]
             }
         }
     }
