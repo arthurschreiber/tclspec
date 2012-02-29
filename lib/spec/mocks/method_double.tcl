@@ -20,8 +20,7 @@ namespace eval Spec {
                     set expectation [MessageExpectation new -error_generator $error_generator -method_name ${:method_name} -method_block $block]
                 }
 
-                # TODO: unshift
-                lappend :expectations $expectation
+                set :expectations [concat [list $expectation] ${:expectations}]
                 return $expectation
             }
 
@@ -29,8 +28,7 @@ namespace eval Spec {
                 :configure_method
 
                 set expectation [NegativeMessageExpectation new -error_generator $error_generator -method_name ${:method_name}]
-                # TODO: unshift
-                lappend :expectations $expectation
+                set :expectations [concat [list $expectation] ${:expectations}]
                 return $expectation
             }
 
