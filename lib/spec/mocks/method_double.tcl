@@ -147,6 +147,7 @@ namespace eval Spec {
                 if { ${:stashed} } {
                     :undefine_proxy_method
                     eval ${:stashed_definition}
+                    set :stashed false
                 }
             }
         }
