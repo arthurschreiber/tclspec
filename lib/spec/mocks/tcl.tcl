@@ -226,11 +226,15 @@ nx::Class create ::Spec::Mocks::TclDoubler {
         return ${:instance}
     }
 
-    :public class method stub_call { proc_name -with -and_return } {
+    :public class method stub_call { proc_name -with -and_return {-any_number_of_times:switch false} } {
         set expectation [[:new] add_stub $proc_name]
 
         if { [info exists with] } {
             $expectation with $with
+        }
+
+        if { $any_number_of_times } {
+            $expectation any_number_of_times
         }
 
         if { [info exists and_return] } {
@@ -240,11 +244,15 @@ nx::Class create ::Spec::Mocks::TclDoubler {
         return $expectation
     }
 
-    :public class method mock_call { proc_name -with -and_return } {
+    :public class method mock_call { proc_name -with -and_return {-any_number_of_times:switch false} } {
         set expectation [[:new] add_message_expectation $proc_name]
 
         if { [info exists with] } {
             $expectation with $with
+        }
+
+        if { $any_number_of_times } {
+            $expectation any_number_of_times
         }
 
         if { [info exists and_return] } {
