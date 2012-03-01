@@ -126,6 +126,18 @@ namespace eval Spec {
             :before each $name
         }
 
+        :public method setup_mocks { example_group_instance } {
+            ::Spec::Mocks setup $example_group_instance
+        }
+
+        :public method verify_mocks {} {
+            ::Spec::Mocks verify
+        }
+
+        :public method teardown_mocks {} {
+            ::Spec::Mocks teardown
+        }
+
         :public method run_before_each { example_group_instance } {
             foreach ancestor [lreverse [:ancestors]] {
                 foreach hook [dict get [$ancestor hooks] before each] {
@@ -226,7 +238,6 @@ namespace eval Spec {
 
             :instance_eval {
                 namespace path [concat [[:info class] ancestors] ::Spec::Matchers]
-                ::Spec::Mocks setup [namespace current]
             }
 
             if { [::nx::var exists [:info class] enclosing_namespace] } {

@@ -35,11 +35,17 @@ namespace eval Spec {
         }
 
         :public method run_before_each { } {
+            ${:example_group} setup_mocks ${:example_group_instance}
             ${:example_group} run_before_each ${:example_group_instance}
         }
 
         :public method run_after_each { } {
-            ${:example_group} run_after_each ${:example_group_instance}
+            try {
+                ${:example_group} run_after_each ${:example_group_instance}
+                ${:example_group} verify_mocks
+            } finally {
+                ${:example_group} teardown_mocks
+            }
         }
 
         :public method start { reporter } {
