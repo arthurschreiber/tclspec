@@ -279,7 +279,7 @@ nx::Class create ::Spec::Mocks::TclDoubler {
         set stub [:find_matching_method_stub $proc_name {*}$args]
 
         if { $stub != false && ($expectation == false || [$expectation called_max_times?]) } {
-            if { $expectation != false } {
+            if { $expectation != false && [$expectation actual_received_count_matters?] } {
                 $expectation increase_actual_receive_count
             }
 
