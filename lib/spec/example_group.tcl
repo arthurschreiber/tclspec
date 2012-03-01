@@ -1,5 +1,5 @@
 namespace eval Spec {
-    namespace eval NamespaceMethods {
+    namespace eval ExampleGroupProcs {
         proc describe { args } {
             uplevel [list :describe {*}$args]
         }
@@ -75,7 +75,7 @@ namespace eval Spec {
             }
 
             $child instance_eval {
-                namespace path [concat [[:info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers ::Spec::NamespaceMethods]
+                namespace path [concat [[:info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers ::Spec::ExampleGroupProcs]
             }
 
             $child instance_eval $block
