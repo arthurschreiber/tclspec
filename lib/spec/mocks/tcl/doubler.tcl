@@ -12,8 +12,8 @@ namespace eval ::Spec::Mocks::Tcl {
             return ${:instance}
         }
 
-        :public class method stub_call { proc_name -with -and_return {-any_number_of_times:switch false} } {
-            set expectation [[:new] add_stub $proc_name]
+        :public class method stub_call { proc_name -with -and_return {-any_number_of_times:switch false} {block {}} } {
+            set expectation [[:new] add_stub $proc_name $block]
 
             if { [info exists with] } {
                 $expectation with $with
@@ -30,8 +30,8 @@ namespace eval ::Spec::Mocks::Tcl {
             return $expectation
         }
 
-        :public class method mock_call { proc_name -with -and_return {-any_number_of_times:switch false} } {
-            set expectation [[:new] add_message_expectation $proc_name]
+        :public class method mock_call { proc_name -with -and_return {-any_number_of_times:switch false} {block {}} } {
+            set expectation [[:new] add_message_expectation $proc_name $block]
 
             if { [info exists with] } {
                 $expectation with $with
