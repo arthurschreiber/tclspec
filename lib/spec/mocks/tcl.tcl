@@ -188,8 +188,15 @@ nx::Class create ::Spec::Mocks::ProcDouble {
         }
     }
 
+    :public method clear {} {
+        # TODO destroy all message expectations
+        set :expectations [list]
+        set :stubs [list]
+    }
+
     :public method reset {} {
         :restore_original_method
+        :clear
     }
 }
 

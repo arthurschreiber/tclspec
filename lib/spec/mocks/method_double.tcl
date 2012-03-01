@@ -104,9 +104,15 @@ namespace eval Spec {
                 }
             }
 
+            :public method clear {} {
+                # TODO destroy all message expectations
+                set :expectations [list]
+                set :stubs [list]
+            }
+
             :public method reset {} {
                 :restore_original_method
-                # TODO destroy all message expectations
+                :clear
             }
 
             :public method original_method_definition {} {
