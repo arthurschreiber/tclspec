@@ -8,6 +8,7 @@ source [file join [file dirname [info script]] "mocks/example_methods.tcl"]
 source [file join [file dirname [info script]] "mocks/arguments_matchers.tcl"]
 source [file join [file dirname [info script]] "mocks/error_generator.tcl"]
 source [file join [file dirname [info script]] "mocks/space.tcl"]
+source [file join [file dirname [info script]] "mocks/tcl.tcl"]
 
 namespace eval Spec {
     namespace eval Mocks {
