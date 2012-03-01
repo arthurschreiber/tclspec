@@ -1,0 +1,1 @@
+source [file join [file dirname [info script]] "abstract" "error_generator.tcl"]

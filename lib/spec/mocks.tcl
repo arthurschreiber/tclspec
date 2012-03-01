@@ -3,6 +3,7 @@ source [file join [file dirname [info script]] "mocks/message_expectation.tcl"]
 source [file join [file dirname [info script]] "mocks/example_methods.tcl"]
 source [file join [file dirname [info script]] "mocks/arguments_matchers.tcl"]
 source [file join [file dirname [info script]] "mocks/space.tcl"]
+source [file join [file dirname [info script]] "mocks/abstract.tcl"]
 source [file join [file dirname [info script]] "mocks/tcl.tcl"]
 source [file join [file dirname [info script]] "mocks/nx.tcl"]
 
