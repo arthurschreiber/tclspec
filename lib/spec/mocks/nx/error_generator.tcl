@@ -31,7 +31,7 @@ namespace eval Spec {
                 if { "expected_args" in [$expectation info vars] } {
                     set expected_args [:format_args {*}[$expectation expected_args]]
                 } else {
-                    set expected_args "(no args)"                    
+                    set expected_args "(no args)"
                 }
                 set actual_args [:format_args {*}$args]
 
