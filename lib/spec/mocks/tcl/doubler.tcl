@@ -120,7 +120,7 @@ nx::Class create ::Spec::Mocks::TclDoubler {
 
     :public method proc_double_for { proc_name } {
         if { ![dict exists ${:proc_doubles} $proc_name] } {
-            set pd [ProcDouble new -proc_name $proc_name]
+            set pd [ProcDouble new -message_name $proc_name]
             dict set :proc_doubles $proc_name $pd
         }
 

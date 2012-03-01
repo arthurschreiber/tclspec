@@ -91,7 +91,7 @@ namespace eval Spec {
                 if { ![dict exists ${:method_doubles} $message] } {
                     dict set :method_doubles $message [MethodDouble new \
                         -object ${:object} \
-                        -method_name $message \
+                        -message_name $message \
                         -proxy [:]
                     ]
                 }
