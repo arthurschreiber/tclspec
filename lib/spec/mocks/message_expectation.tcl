@@ -80,7 +80,7 @@ namespace eval Spec {
             }
 
             :public method and_return { values } {
-                if { ${:method_block} != {} } {
+                if { [:has_method_block?] && ${:method_block} != {} } {
                     error "AmbigousReturnError"
                 }
 

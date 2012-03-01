@@ -75,7 +75,7 @@ nx::Class create ::Spec::Mocks::ProcDouble {
         :configure_method
 
         if { [llength ${:stubs}] > 0 } {
-            set expectation [MessageExpectation new -error_generator $error_generator -method_name ${:proc_name} -method_block [[lindex ${:stubs} 0] method_block]]
+            set expectation [MessageExpectation new -error_generator $error_generator -method_name ${:proc_name} -method_block $block -return_block [[lindex ${:stubs} 0] return_block]]
         } else {
             set expectation [MessageExpectation new -error_generator $error_generator -method_name ${:proc_name} -method_block $block]
         }
@@ -95,7 +95,7 @@ nx::Class create ::Spec::Mocks::ProcDouble {
     :public method add_stub { error_generator {implementation {}} } {
         :configure_method
 
-        set stub [MessageExpectation new -error_generator $error_generator -method_name ${:proc_name} -method_block $implementation]
+        set stub [MessageExpectation new -error_generator $error_generator -method_name ${:proc_name} -return_block $implementation]
         set :stubs [concat [list $stub] ${:stubs}]
         return $stub
     }
