@@ -1,5 +1,5 @@
-namespace eval ::Spec::Mocks {
-    nx::Class create TclErrorGenerator -superclass Abstract::ErrorGenerator {
+namespace eval ::Spec::Mocks::Tcl {
+    nx::Class create ErrorGenerator -superclass Abstract::ErrorGenerator {
         :property {options {}}
 
         :public method raise_expectation_error { method expected_received_count actual_received_count args } {

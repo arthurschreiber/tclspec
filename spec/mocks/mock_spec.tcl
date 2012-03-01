@@ -3,9 +3,9 @@ package require spec/autorun
 
 source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
 
-describe "::Spec::Mocks::Mock" {
+describe "::Spec::Mocks::nx::Mock" {
     before each {
-        set mock [::Spec::Mocks::Mock new -name "test double"]
+        set mock [::Spec::Mocks::nx::Mock new -name "test double"]
     }
 
     after each {

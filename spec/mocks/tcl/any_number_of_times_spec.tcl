@@ -1,6 +1,6 @@
 describe "A Tcl Mock expectation with -any_number_of_times" {
     before each {
-        set doubler [::Spec::Mocks::TclDoubler]
+        set doubler [::Spec::Mocks::Tcl::Doubler]
         $doubler mock_call "::random_call" -any_number_of_times
     }
 

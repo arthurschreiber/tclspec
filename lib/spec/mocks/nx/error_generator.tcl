@@ -1,4 +1,4 @@
-namespace eval Spec::Mocks {
+namespace eval Spec::Mocks::nx {
     nx::Class create ErrorGenerator -superclass Abstract::ErrorGenerator {
         :property object:required
         :property {name ""}
@@ -44,7 +44,7 @@ namespace eval Spec::Mocks {
         :protected method intro {} {
             if { ${:name} != "" } {
                 return "${:declared_as} \"${:name}\""
-            } elseif { [${:object} info class] == "::Spec::Mocks::Mock" } {
+            } elseif { [${:object} info class] == "::Spec::Mocks::nx::Mock" } {
                 return ${:declared_as}
             } else {
                 return ${:object}

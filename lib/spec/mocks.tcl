@@ -20,7 +20,7 @@ namespace eval Spec {
                 namespace import ::Spec::Mocks::ExampleMethods::*
             }
 
-            nx::Object require trait ::Spec::Mocks::Methods
+            nx::Object require trait ::Spec::Mocks::nx::Methods
         }
 
         :public class method verify {} {

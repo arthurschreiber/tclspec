@@ -2,7 +2,7 @@ source [file join [file dirname [info script]] ".." ".." "spec_helper.tcl"]
 
 describe "A Tcl mock expectation with multiple return values and no specified count" {
     before each {
-        set doubler [::Spec::Mocks::TclDoubler]
+        set doubler [::Spec::Mocks::Tcl::Doubler]
         set return_values [list 1 "2" [nx::Object new]]
 
         $doubler mock_call "::message" -and_return $return_values
@@ -16,7 +16,7 @@ describe "A Tcl mock expectation with multiple return values and no specified co
         expect [::message] to equal [lindex $return_values 0]
         expect [::message] to equal [lindex $return_values 1]
         expect [::message] to equal [lindex $return_values 2]
-        [::Spec::Mocks::TclDoubler new] spec_verify
+        [::Spec::Mocks::Tcl::Doubler new] spec_verify
     }
 
     it "complains when there are too few calls" {
@@ -24,7 +24,7 @@ describe "A Tcl mock expectation with multiple return values and no specified co
         expect [::message] to equal [lindex $return_values 1]
 
         expect {
-            [::Spec::Mocks::TclDoubler new] spec_verify
+            [::Spec::Mocks::Tcl::Doubler new] spec_verify
         } to raise_error -code ::Spec::Mocks::ExpectationError \
           -message "::message(any args)\n    expected: 3 times\n    received: 2 times"
     }
@@ -36,7 +36,7 @@ describe "A Tcl mock expectation with multiple return values and no specified co
         expect [::message] to equal [lindex $return_values 2]
 
         expect {
-            [::Spec::Mocks::TclDoubler new] spec_verify
+            [::Spec::Mocks::Tcl::Doubler new] spec_verify
         } to raise_error -code ::Spec::Mocks::ExpectationError \
             -message "::message(any args)\n    expected: 3 times\n    received: 4 times"
     }
@@ -50,7 +50,7 @@ describe "A Tcl mock expectation with multiple return values and no specified co
         expect [::message] to equal "stub_result"
 
         expect {
-            [::Spec::Mocks::TclDoubler new] spec_verify
+            [::Spec::Mocks::Tcl::Doubler new] spec_verify
         } to not raise_error -code ::Spec::Mocks::ExpectationError
     }
 }

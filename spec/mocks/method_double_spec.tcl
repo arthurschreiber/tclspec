@@ -3,7 +3,7 @@ package require spec/autorun
 
 source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
 
-describe "Spec::Mocks::MethodDouble" {
+describe "::Spec::Mocks::nx::MethodDouble" {
     before each {
         set object [nx::Object new {
             :public method example_method {} {
@@ -19,24 +19,24 @@ describe "Spec::Mocks::MethodDouble" {
             }
         }]
 
-        set proxy [::Spec::Mocks::Proxy new -object $object]
+        set proxy [::Spec::Mocks::nx::Proxy new -object $object]
 
-        set method_double [Spec::Mocks::MethodDouble new -object $object -message_name "example_method" -proxy $proxy]
+        set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "example_method" -proxy $proxy]
     }
 
     describe "#visibility" {
         it "returns 'public' for a public method" {
-            set method_double [Spec::Mocks::MethodDouble new -object $object -message_name "public_example_method" -proxy $proxy]
+            set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "public_example_method" -proxy $proxy]
             expect [$method_double visibility] to equal "public"
         }
 
         it "returns 'private' for a private method" {
-            set method_double [Spec::Mocks::MethodDouble new -object $object -message_name "private_example_method" -proxy $proxy]
+            set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "private_example_method" -proxy $proxy]
             expect [$method_double visibility] to equal "private"
         }
 
         it "returns 'protected' for a protected method" {
-            set method_double [Spec::Mocks::MethodDouble new -object $object -message_name "protected_example_method" -proxy $proxy]
+            set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "protected_example_method" -proxy $proxy]
             expect [$method_double visibility] to equal "protected"
         }
     }
