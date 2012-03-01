@@ -3,6 +3,7 @@ lappend auto_path [file join [file dirname [info script]] ".."]
 
 package require spec/autorun
 
+set example_paths [list]
 set example_files [list]
 
 if { [llength $argv] > 0 } {
@@ -13,13 +14,32 @@ if { [llength $argv] > 0 } {
             incr i
             [Spec configuration] add_formatter [lindex $argv $i]
         } else {
-            lappend example_files {*}[glob -nocomplain $pattern]
+            lappend example_paths {*}[glob -nocomplain $pattern]
         }
     }
 }
 
-if { [llength $example_files] == 0 } {
-    lappend example_files {*}[glob -nocomplain "spec/{**,.}/*_spec.tcl"]
+if { [llength $example_paths] == 0 } {
+    lappend example_paths "spec"
+}
+
+proc gather_files { path pattern } {
+    set result [list]
+
+    foreach dir [glob -nocomplain -directory $path -types d -- *] {
+        lappend result {*}[gather_files $dir $pattern]
+    }
+
+    lappend result {*}[glob -nocomplain -directory $path -types f $pattern]
+    return $result
+}
+
+foreach path $example_paths {
+    if { [file isdirectory $path] } {
+        lappend example_files {*}[gather_files $path "*_spec.tcl"]
+    } else {
+        lappend example_files $path
+    }
 }
 
 foreach example_file $example_files {
