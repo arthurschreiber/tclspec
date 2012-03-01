@@ -80,8 +80,7 @@ nx::Class create ::Spec::Mocks::ProcDouble {
             set expectation [MessageExpectation new -error_generator $error_generator -method_name ${:proc_name} -method_block $block]
         }
 
-        # TODO: unshift
-        lappend :expectations $expectation
+        set :expectations [concat [list $expectation] ${:expectations}]
         return $expectation
     }
 
@@ -89,8 +88,7 @@ nx::Class create ::Spec::Mocks::ProcDouble {
         :configure_method
 
         set expectation [NegativeMessageExpectation new -error_generator $error_generator -method_name ${:proc_name}]
-        # TODO: unshift
-        lappend :expectations $expectation
+        set :expectations [concat [list $expectation] ${:expectations}]
         return $expectation
     }
 
