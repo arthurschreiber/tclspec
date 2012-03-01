@@ -218,7 +218,12 @@ nx::Class create ::Spec::Mocks::TclDoubler {
 
     # Make this a singleton
     :public class method create {args} {
-        return [expr {[info exists :instance] ? ${:instance} : [set :instance [next]]}]
+        if { ![info exists :instance] } {
+            set :instance [next]
+            [::Spec::Mocks space] add [:]
+        }
+
+        return ${:instance}
     }
 
     :public class method stub_call { proc_name -with -and_return } {
