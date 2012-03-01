@@ -8,6 +8,10 @@ describe "a double acting as a null object" {
         set double [[double "null object"] as_null_object]
     }
 
+    after each {
+        $double spec_reset
+    }
+
     it "should say so" {
         expect [$double null_object?] to be true
     }

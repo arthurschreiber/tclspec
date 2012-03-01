@@ -10,6 +10,10 @@ describe "a mock expectation with multiple return values and no specified count"
         $mock should_receive "message" -and_return $return_values
     }
 
+    after each {
+        $mock spec_reset
+    }
+
     it "returns values in order to consecutive calls" {
         expect [$mock message] to equal [lindex $return_values 0]
         expect [$mock message] to equal [lindex $return_values 1]

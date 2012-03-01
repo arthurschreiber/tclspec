@@ -23,9 +23,11 @@ describe Spec::Mocks {
             set foo [double]
             $foo should_receive "bar"
 
-           expect {
+            expect {
                 ::Spec::Mocks verify
-           } to raise_error
+            } to raise_error
+
+            $foo spec_reset
         }
     }
 
