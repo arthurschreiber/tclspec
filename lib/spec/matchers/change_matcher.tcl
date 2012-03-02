@@ -1,5 +1,48 @@
 namespace eval Spec {
     namespace eval Matchers {
+        # This Matcher matches checks if the return value of a block changed
+        # based on the execution of another block.
+        #
+        # @example
+        #   expect {
+        #       $team add_player $player
+        #   } to change {
+        #       $roster count
+        #   }
+        #
+        #   expect {
+        #       $team add_player $player
+        #   } to change {
+        #       $roster count
+        #   } -by 1
+        #
+        #   expect {
+        #       $team add_player $player
+        #   } to change {
+        #       $roster count
+        #   } -by_at_least 1
+        #
+        #   expect {
+        #       $team add_player $player
+        #   } to change {
+        #       $roster count
+        #   } -by_at_most 1
+        #
+        #   set string "string"
+        #   expect {
+        #       set string [string reverse $string]
+        #   } to change {
+        #       return $string
+        #   } -from "string" -to "gnirts"
+        #
+        #   expect {
+        #       $person happy_birthday
+        #   } to change {
+        #       $person age
+        #   } -to 33 -from 32
+        #
+        # @note The negative form of this matcher does not support any options
+        #   like +-from+, +-to+, +-by+, +-by_at_most+ or +-by_at_least+.
         ::Spec::Matchers public class method change { args } {
             ::Spec::Matchers::ChangeMatcher new -expected [lindex $args 0] {*}[lrange $args 1 end]
         }

@@ -1,6 +1,22 @@
 namespace eval Spec {
     namespace eval Matchers {
-
+        # Given true, false, or a comparison operator and value, this matcher
+        # will pass if the actual value is true, false, or satisfies the given
+        # comparison operation.
+        #
+        # For boolean values, this matcher matches on the passed value using
+        # the +string is true+ or +string is false+ commands.
+        #
+        # For comparison operations, this matcher matches the passed value using
+        # the +expr+ using the actual value, the passed operator, and the passed
+        # operand.
+        #
+        # @example
+        #   expect $some_value to be true; # Matches if $some_value is 1, true, yes, t, ...
+        #   expect $other_value to be false; # Matche if $other_value is 0, false, no, f, ...
+        #
+        #   expect 20 to be <= 30
+        #   expect 50 not to be > 51
         ::Spec::Matchers public class method be { args } {
             switch [lindex $args 0] {
                 true { ::Spec::Matchers::BeTrueMatcher new }
