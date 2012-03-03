@@ -6,10 +6,6 @@ describe ArgumentMatchers {
             set double [double "double"]
         }
 
-        after each {
-            $double spec_verify
-        }
-
         it "accepts true as boolean" {
             $double should_receive "random_call" -with [boolean]
             $double random_call true
@@ -47,6 +43,8 @@ describe ArgumentMatchers {
         }
 
         after each {
+            # We have to reset the expectations here, else we'll get a failure
+            # as soon as tclspec verifies the expectations.
             $double spec_reset
         }
 
