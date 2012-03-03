@@ -1,5 +1,3 @@
-package require spec/autorun
-
 describe ArgumentMatchers {
     describe "passing argument matchers" {
         before each {

@@ -1,7 +1,4 @@
-lappend auto_path [file join [file dirname [info script]] ".." ".."]
-package require spec/autorun
-
-source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
+source [file join [file dirname [info script]] ".." ".." "spec_helper.tcl"]
 
 describe "::Spec::Mocks::nx::Mock" {
     before each {
