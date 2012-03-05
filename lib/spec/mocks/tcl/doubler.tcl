@@ -79,9 +79,13 @@ namespace eval ::Spec::Mocks::Tcl {
                 $expectation invoke {*}$args
             } elseif { [set expectation [:find_almost_matching_expectation $proc_name {*}$args]] != false } {
                 if { ![:has_negative_expectation? $proc_name] } {
-                    return -code error -errorcode ::Spec::Mocks::ExpectationError "Received unexpected call to $proc_name"
+                    [:raise_unexpected_message_args_error $expectation {*}$args]
                 }
             }
+        }
+
+        :public method raise_unexpected_message_args_error { expectation args } {
+            ${:error_generator} raise_unexpected_message_args_error $expectation {*}$args
         }
 
         :public method has_negative_expectation? { proc_name } {

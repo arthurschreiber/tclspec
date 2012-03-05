@@ -24,7 +24,7 @@ namespace eval ::Spec::Mocks::Tcl {
             }
             set actual_args [:format_args {*}$args]
 
-            set message "received [$expectation method_name] with unexpected arguments"
+            set message "Received call to [$expectation method_name] with unexpected arguments"
             append message "\n  expected: $expected_args"
             append message "\n       got: $actual_args"
 
