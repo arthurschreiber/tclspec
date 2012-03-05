@@ -19,6 +19,10 @@ namespace eval Spec {
                 }
             }
 
+            :public method includes? { receiver } {
+                expr { $receiver in ${:receivers} }
+            }
+
             :public method reset_all {} {
                 foreach receiver ${:receivers} {
                     $receiver spec_reset

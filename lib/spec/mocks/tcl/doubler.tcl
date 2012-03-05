@@ -6,6 +6,9 @@ namespace eval ::Spec::Mocks::Tcl {
         :public class method create {args} {
             if { ![info exists :instance] } {
                 set :instance [next]
+            }
+
+            if { ![[::Spec::Mocks space] includes? ${:instance}] } {
                 [::Spec::Mocks space] add ${:instance}
             }
 
