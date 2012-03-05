@@ -56,18 +56,18 @@ describe Order {
 }
 ```
 
-### Matchers
+## Matchers
 
 TclSpec comes with a list of built in matchers that you can use to express
 expected outcomes inside your specifications.
 
-#### Equivalence
+### Equivalence
 
 ```tcl
 expect $actual to equal $expected
 ```
 
-#### Comparisons
+### Comparisons
 
 ```tcl
 expect $actual to be >  $expected
@@ -77,14 +77,14 @@ expect $actual to be <  $expected
 expect $actual to be_within $delta of $expected
 ```
 
-#### Truthiness
+### Truthiness
 
 ```tcl
 expect $actual to be true
 expect $actual to be false
 ```
 
-#### Expecting Errors
+### Expecting Errors
 
 ```tcl
 expect { ... } to raise_error
@@ -93,7 +93,7 @@ expect { ... } to raise_error -message "Some error message"
 expect { ... } to raise_error -code SomeErrorCode -message "Some error message
 ```
 
-### The `tclspec` Command
+## The `tclspec` Command
 
 In the `bin` folder, you can find the `tclspec` executable, which is used to
 run tclspec. Calling `tclspec` without any arguments will execute all spec files
