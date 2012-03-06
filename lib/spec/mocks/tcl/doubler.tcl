@@ -81,11 +81,17 @@ namespace eval ::Spec::Mocks::Tcl {
                 if { ![:has_negative_expectation? $proc_name] } {
                     [:raise_unexpected_message_args_error $expectation {*}$args]
                 }
+            } else {
+                [:raise_unexpected_message_error $expectation {*}$args]
             }
         }
 
         :public method raise_unexpected_message_args_error { expectation args } {
             ${:error_generator} raise_unexpected_message_args_error $expectation {*}$args
+        }
+
+        :public method raise_unexpected_message_error { expectation args } {
+            ${:error_generator} raise_unexpected_message_error $expectation {*}$args
         }
 
         :public method has_negative_expectation? { proc_name } {

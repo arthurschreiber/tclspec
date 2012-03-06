@@ -11,7 +11,7 @@ namespace eval ::Spec::Mocks::Tcl {
         }
 
         :public method raise_unexpected_message_error { method_name args } {
-            set message "received unexpected message: $method_name with [:format_args {*}$args]"
+            set message "Received unexpected call to: $method_name with [:format_args {*}$args]"
 
             :__raise $message
         }

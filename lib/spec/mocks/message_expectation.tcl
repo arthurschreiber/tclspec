@@ -128,7 +128,7 @@ namespace eval Spec {
             :public method invoke { args } {
                 if { ${:expected_receive_count} == 0 } {
                     :increase_actual_receive_count
-                    return -code error -errorcode ::Spec::Mocks::ExpectationError "Expected ${:method_name} not to be called"
+                    ${:error_generator} raise_expectation_error ${:method_name} ${:expected_receive_count} ${:actual_receive_count} {*}$args
                 }
 
                 set result ""
