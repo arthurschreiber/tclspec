@@ -16,8 +16,13 @@ namespace eval Spec {
 
             set reporter [[::Spec configuration] reporter]
             $reporter report [[Spec world] example_count] {
-                foreach example_group [[Spec world] example_groups] {
-                    set success [expr { [$example_group execute $reporter] && $success }]
+                try {
+                    [Spec configuration] run_hooks "before" "suite"
+                    foreach example_group [[Spec world] example_groups] {
+                        set success [expr { [$example_group execute $reporter] && $success }]
+                    }
+                } finally {
+                    [Spec configuration] run_hooks "after" "suite"
                 }
             }
 

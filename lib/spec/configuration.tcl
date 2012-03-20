@@ -77,7 +77,11 @@ namespace eval Spec {
             return ${:hooks}
         }
 
-        :public method run_hooks { hook context example_group_instance } {
+        :public method run_hooks { hook context example_group_instance:optional } {
+            if { ![info exists example_group_instance] } {
+                set example_group_instance [ExampleGroup new]
+            }
+
             [dict get [:hooks] $hook $context] run_all $example_group_instance
         }
 
