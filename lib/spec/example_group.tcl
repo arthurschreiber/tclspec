@@ -171,14 +171,22 @@ namespace eval Spec {
         }
 
         :public method run_after_all { example_group_instance } {
-            dict for { name value } ${:before_all_ivars} {
-                $example_group_instance instance_eval [list set $name $value]
-            }
-
-            foreach ancestor [:ancestors] {
-                foreach hook [lreverse [dict get [$ancestor hooks] after all]] {
-                    $example_group_instance instance_eval $hook
+            try {
+                dict for { name value } ${:before_all_ivars} {
+                    $example_group_instance instance_eval [list set $name $value]
                 }
+
+                foreach ancestor [:ancestors] {
+                    foreach hook [lreverse [dict get [$ancestor hooks] after all]] {
+                        $example_group_instance instance_eval $hook
+                    }
+                }
+            } on error { message error_options } {
+
+                puts "
+An error occurred in an after all hook.
+  [:]: $message
+[dict get $error_options -errorinfo]"
             }
         }
 
@@ -197,20 +205,29 @@ namespace eval Spec {
         :public method run { reporter } {
             $reporter example_group_started [:]
 
-            :run_before_all [:new]
+            try {
+                :run_before_all [:new]
 
-            set result [:run_examples $reporter]
+                set result [:run_examples $reporter]
+                foreach child ${:children} {
+                    set result [expr { [$child run $reporter] && $result }]
+                }
+                return $result
+            } on error { message error_options } {
+                :fail_all_examples $message $error_options $reporter
+                return false
+            } finally {
+                :run_after_all [:new]
+                set :before_all_ivars { }
 
-            foreach child ${:children} {
-                set result [expr { [$child run $reporter] && $result }]
+                $reporter example_group_finished [:]
             }
+        }
 
-            :run_after_all [:new]
-            set :before_all_ivars { }
-
-            $reporter example_group_finished [:]
-
-            return $result
+        :protected method fail_all_examples { error_message error_options reporter } {
+            foreach example ${:examples} {
+                $example fail_with_error $error_message $error_options $reporter
+            }
         }
 
         :public method execute { reporter } {
@@ -232,6 +249,20 @@ namespace eval Spec {
 
     ExampleGroupClass create ExampleGroup {
         :public alias instance_eval -frame object ::eval
+
+        :property example
+
+        :public method instance_eval_with_rescue { block } {
+            try {
+                :instance_eval $block
+            } on error { message error_options } {
+                if { ![info exists :example] } {
+                    return {*}$error_options $message
+                }
+
+                ${:example} set_error $message $error_options
+            }
+        }
 
         :method init {} {
             :require namespace
