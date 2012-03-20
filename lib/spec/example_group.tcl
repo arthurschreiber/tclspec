@@ -139,6 +139,8 @@ namespace eval Spec {
         }
 
         :public method run_before_each { example } {
+            [Spec world] run_hooks "before" "each" [$example example_group_instance]
+
             foreach ancestor [lreverse [:ancestors]] {
                 foreach hook [dict get [$ancestor hooks] before each] {
                     [$example example_group_instance] instance_eval $hook
@@ -147,6 +149,8 @@ namespace eval Spec {
         }
 
         :public method run_after_each { example } {
+            [Spec world] run_hooks "after" "each" [$example example_group_instance]
+
             foreach ancestor [:ancestors] {
                 foreach hook [lreverse [dict get [$ancestor hooks] after each]] {
                     [$example example_group_instance] instance_eval $hook
@@ -165,6 +169,8 @@ namespace eval Spec {
                 }
             }
 
+            [Spec world] run_hooks "before" "all" $example_group_instance
+
             foreach name [$example_group_instance info vars] {
                 dict set :before_all_ivars $name [$example_group_instance instance_eval [list set $name]]
             }
@@ -181,6 +187,8 @@ namespace eval Spec {
                         $example_group_instance instance_eval $hook
                     }
                 }
+
+                [Spec world] run_hooks "after" "all" $example_group_instance
             } on error { message error_options } {
 
                 puts "

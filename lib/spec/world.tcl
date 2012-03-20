@@ -22,5 +22,9 @@ namespace eval Spec {
 
             return $count
         }
+
+        :public method run_hooks { hook context example_group_instance } {
+            [Spec configuration] run_hooks $hook $context $example_group_instance
+        }
     }
 }
