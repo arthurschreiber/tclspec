@@ -138,18 +138,18 @@ namespace eval Spec {
             ::Spec::Mocks teardown
         }
 
-        :public method run_before_each { example_group_instance } {
+        :public method run_before_each { example } {
             foreach ancestor [lreverse [:ancestors]] {
                 foreach hook [dict get [$ancestor hooks] before each] {
-                    $example_group_instance instance_eval $hook
+                    [$example example_group_instance] instance_eval $hook
                 }
             }
         }
 
-        :public method run_after_each { example_group_instance } {
+        :public method run_after_each { example } {
             foreach ancestor [:ancestors] {
                 foreach hook [lreverse [dict get [$ancestor hooks] after each]] {
-                    $example_group_instance instance_eval $hook
+                    [$example example_group_instance] instance_eval $hook
                 }
             }
         }

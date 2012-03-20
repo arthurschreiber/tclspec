@@ -3,6 +3,7 @@ namespace eval Spec {
         :property example_group:required
         :property description:required
         :property block:require
+        :property example_group_instance
 
         :property error_info
 
@@ -20,12 +21,12 @@ namespace eval Spec {
             :start $reporter
             try {
                 try {
-                    :run_before_each
+                    :run_before_each_hooks
                     ${:example_group_instance} instance_eval ${:block}
                 } on error { message error_options } {
                     :set_error $message $::errorInfo $error_options
                 } finally {
-                    :run_after_each
+                    :run_after_each_hooks
                 }
             } on error { message error_options } {
                 :set_error $message $::errorInfo $error_options
@@ -34,14 +35,14 @@ namespace eval Spec {
             :finish $reporter
         }
 
-        :public method run_before_each { } {
+        :public method run_before_each_hooks { } {
             ${:example_group} setup_mocks ${:example_group_instance}
-            ${:example_group} run_before_each ${:example_group_instance}
+            ${:example_group} run_before_each [:]
         }
 
-        :public method run_after_each { } {
+        :public method run_after_each_hooks { } {
             try {
-                ${:example_group} run_after_each ${:example_group_instance}
+                ${:example_group} run_after_each [:]
                 ${:example_group} verify_mocks
             } finally {
                 ${:example_group} teardown_mocks
