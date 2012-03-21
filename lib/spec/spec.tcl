@@ -29,4 +29,15 @@ nx::Class create Spec {
     :public class method configure { block } {
         uplevel [list apply $block ${:configuration}]
     }
+
+    :public class method require { filename } {
+        if { ![info exists :sourced] } {
+            set :sourced [list]
+        }
+
+        if { !($filename in ${:sourced}) } {
+            uplevel [list source $filename]
+            lappend :sourced $filename
+        }
+    }
 }
