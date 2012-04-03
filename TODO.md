@@ -1,5 +1,8 @@
 ### TODO
 
+asdfasjdöflkja ösl
+
+
 * None of the nx objects that are created are ever destroyed.
   Might not be a good idea, as no memory used will ever be released.
 
