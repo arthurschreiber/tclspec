@@ -47,7 +47,7 @@ namespace eval Spec::Mocks::nx {
 
         # Set an expectation that this object should _not_ receive a call to
         # the given method.
-        :public method should_not_receive { method_name -with {block {}} } {
+        :public method should_not_receive { method_name -with } {
             set expectation [[:__mock_proxy] add_negative_message_expectation $method_name]
 
             if { [info exists with] } {
