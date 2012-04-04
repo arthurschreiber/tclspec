@@ -9,7 +9,15 @@ namespace eval Spec::Mocks::nx {
         #
         #   $logger should_receive "log"
         #   $thing_that_logs do_something_that_logs_a_message
-        :public method should_receive { method_name -with -and_return {-once:switch false} {-any_number_of_times:switch false} {-twice:switch false} {-never:switch false} {block {}} } {
+        :public method should_receive { method_name -with -and_return {-once:switch false} {-any_number_of_times:switch false} {-twice:switch false} {-never:switch false} block:optional } {
+            if { [info exists block] } {
+                if { [llength $block] < 3 } {
+                    lappend block [uplevel 1 [list namespace current]]
+                }
+            } else {
+                set block {}
+            }
+
             set expectation [[:__mock_proxy] add_message_expectation $method_name $block]
 
             if { [info exists with] } {
@@ -47,7 +55,15 @@ namespace eval Spec::Mocks::nx {
             }
         }
 
-        :public method stub { method_name -with -and_return {block {}} } {
+        :public method stub { method_name -with -and_return block:optional } {
+            if { [info exists block] } {
+                if { [llength $block] < 3 } {
+                    lappend block [uplevel 1 [list namespace current]]
+                }
+            } else {
+                set block {}
+            }
+
             set stub [[:__mock_proxy] add_stub $method_name $block]
 
             if { [info exists with] } {
