@@ -93,6 +93,31 @@ expect { ... } to raise_error -message "Some error message"
 expect { ... } to raise_error -code SomeErrorCode -message "Some error message
 ```
 
+## Stubbing and Mocking
+
+Tclspec includes stubbing and mocking functionality for plain Tcl procs and nx objects.
+
+
+### Stubbing
+
+Test stubs allow you to switch out the implementation of a proc during the runtime of an
+example. After the example has been executed, the test stub will be cleaned up and removed.
+
+Stubs should be used if you want to force specific code behaviour in your examples or if you
+want to prevent the call to the original implementation of a procedure in your test case.
+
+#### Tcl
+
+```tcl
+stub_call "::roll_die" -and_return 3
+```
+
+#### nx
+
+```tcl
+$die stub "roll" -and_return 3
+```
+
 ## The `tclspec` Command
 
 In the `bin` folder, you can find the `tclspec` executable, which is used to
