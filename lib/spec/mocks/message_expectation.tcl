@@ -125,7 +125,7 @@ namespace eval Spec {
                 incr :actual_receive_count
             }
 
-            :public method invoke { args } {
+            :public method invoke { level args } {
                 if { ${:expected_receive_count} == 0 } {
                     :increase_actual_receive_count
                     ${:error_generator} raise_expectation_error ${:method_name} ${:expected_receive_count} ${:actual_receive_count} {*}$args
@@ -134,28 +134,28 @@ namespace eval Spec {
                 set result ""
                 if { [:has_return_block?]} {
                     if {${:consecutive} } {
-                        set result [:invoke_consecutive_return_block {*}$args]
+                        set result [:invoke_consecutive_return_block $level {*}$args]
                     } else {
-                        set result [:invoke_return_block {*}$args]
+                        set result [:invoke_return_block $level {*}$args]
                     }
                 } elseif { [:has_method_block?] } {
-                    set result [:invoke_method_block {*}$args]
+                    set result [:invoke_method_block $level {*}$args]
                 }
 
                 :increase_actual_receive_count
                 return $result
             }
 
-            :protected method invoke_method_block { args } {
-                apply ${:method_block} {*}$args
+            :protected method invoke_method_block { level args } {
+                uplevel "#$level" [list apply ${:method_block} {*}$args]
             }
 
-            :protected method invoke_return_block { args } {
-                apply ${:return_block} {*}$args
+            :protected method invoke_return_block { level args } {
+                uplevel "#$level" [list apply ${:return_block} {*}$args]
             }
 
-            :protected method invoke_consecutive_return_block { args } {
-                set value [:invoke_return_block {*}$args]
+            :protected method invoke_consecutive_return_block { level args } {
+                set value [:invoke_return_block $level {*}$args]
                 set index [tcl::mathfunc::min ${:actual_receive_count} [expr { [llength $value] - 1 }]]
                 return [lindex $value $index]
             }

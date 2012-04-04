@@ -69,14 +69,16 @@ namespace eval ::Spec::Mocks::Tcl {
             set expectation [:find_matching_expectation $proc_name {*}$args]
             set stub [:find_matching_method_stub $proc_name {*}$args]
 
+            set level [expr { [info level] - 2 }]
+
             if { $stub != false && ($expectation == false || [$expectation called_max_times?]) } {
                 if { $expectation != false && [$expectation actual_received_count_matters?] } {
                     $expectation increase_actual_receive_count
                 }
 
-                $stub invoke {*}$args
+                $stub invoke $level {*}$args
             } elseif { $expectation != false } {
-                $expectation invoke {*}$args
+                $expectation invoke $level {*}$args
             } elseif { [set expectation [:find_almost_matching_expectation $proc_name {*}$args]] != false } {
                 if { ![:has_negative_expectation? $proc_name] } {
                     [:raise_unexpected_message_args_error $expectation {*}$args]

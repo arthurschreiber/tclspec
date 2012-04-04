@@ -13,7 +13,7 @@ describe "Spec::Mocks::MessageExpectation" {
         }
 
         it "it returns the result value of invoking the method block when invoked" {
-            expect [$message_expectation invoke 3 4] to equal 7
+            expect [$message_expectation invoke [info level] 3 4] to equal 7
         }
     }
 
@@ -26,7 +26,7 @@ describe "Spec::Mocks::MessageExpectation" {
         }
 
         it "returns an empty string when invoked" {
-            expect [$message_expectation invoke] to equal ""
+            expect [$message_expectation invoke [info level]] to equal ""
         }
     }
 
@@ -41,8 +41,8 @@ describe "Spec::Mocks::MessageExpectation" {
 
         describe "when the expected amount of invocations was reached" {
             before each {
-                $message_expectation invoke
-                $message_expectation invoke
+                $message_expectation invoke [info level]
+                $message_expectation invoke [info level]
             }
 
             it "raises no error on verification" {
@@ -54,7 +54,7 @@ describe "Spec::Mocks::MessageExpectation" {
 
         describe "when the expected amount of invocations was not reached" {
             before each {
-                $message_expectation invoke
+                $message_expectation invoke [info level]
             }
 
             it "raises an error on verification" {
@@ -66,10 +66,10 @@ describe "Spec::Mocks::MessageExpectation" {
 
         describe "when the expected amount of invocations was exceeded" {
             before each {
-                $message_expectation invoke
-                $message_expectation invoke
-                $message_expectation invoke
-                $message_expectation invoke
+                $message_expectation invoke [info level]
+                $message_expectation invoke [info level]
+                $message_expectation invoke [info level]
+                $message_expectation invoke [info level]
             }
 
             it "raises an error on verification" {
