@@ -67,6 +67,34 @@ namespace eval Spec {
                 set :expected_receive_count 0
             }
 
+            :public method exactly { times } {
+                :set_expected_received_count "exactly" $times
+            }
+
+            :public method at_least { times } {
+                :set_expected_received_count "at_least" $times
+            }
+
+            :public method at_most { times } {
+                :set_expected_received_count "at_most" $times
+            }
+
+            :protected method set_expected_received_count { relativity times } {
+                set :at_least [expr { $relativity == "at_least" }]
+                set :at_most [expr { $relativity == "at_most" }]
+                set :exactly [expr { $relativity == "exactly" }]
+
+                set :at_most true
+                if { $times == "once" } {
+                    set times 1
+                } elseif { $times == "twice" } {
+                    set times 2
+                } elseif { ![regexp {^(\d+)(\.time(s)?)?$} $times -> times] } {
+                    error "wtf $times"
+                }
+                set :expected_receive_count $times
+            }
+
             :public method any_number_of_times {} {
                 set :expected_receive_count any
             }
@@ -110,11 +138,19 @@ namespace eval Spec {
             }
 
             :public method expected_messages_received? {} {
-                expr { [:ignoring_receive_count?] || [:matches_exact_count?] }
+                expr { [:ignoring_receive_count?] || [:matches_exact_count?] || [:matches_at_least_count?] || [:matches_at_most_count?] }
             }
 
             :public method ignoring_receive_count? {} {
                 expr { ${:expected_receive_count} == "any" }
+            }
+
+            :public method matches_at_least_count? {} {
+                expr { ${:at_least} && ${:actual_receive_count} >= ${:expected_receive_count} }
+            }
+
+            :public method matches_at_most_count? {} {
+                expr { ${:at_most} && ${:actual_receive_count} <= ${:expected_receive_count} }
             }
 
             :public method matches_exact_count? {} {

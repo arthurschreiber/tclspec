@@ -9,7 +9,7 @@ namespace eval Spec::Mocks::nx {
         #
         #   $logger should_receive "log"
         #   $thing_that_logs do_something_that_logs_a_message
-        :public method should_receive { method_name -with -and_return {-once:switch false} {-any_number_of_times:switch false} {-twice:switch false} {-never:switch false} block:optional } {
+        :public method should_receive { method_name -with -and_return {-once:switch false} {-twice:switch false} {-never:switch false} {-any_number_of_times:switch false} -exactly:optional -at_least:optional -at_most:optional block:optional } {
             if { [info exists block] } {
                 if { [llength $block] < 3 } {
                     lappend block [uplevel 1 [list namespace current]]
@@ -38,6 +38,18 @@ namespace eval Spec::Mocks::nx {
 
             if { $any_number_of_times } {
                 $expectation any_number_of_times
+            }
+
+            if { [info exists exactly] } {
+                $expectation exactly $exactly
+            }
+
+            if { [info exists at_least] } {
+                $expectation at_least $at_least
+            }
+
+            if { [info exists at_most] } {
+                $expectation at_most $at_most
             }
 
             if { [info exists and_return] } {
