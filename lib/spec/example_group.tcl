@@ -172,7 +172,13 @@ namespace eval Spec {
             [Spec world] run_hooks "before" "all" $example_group_instance
 
             foreach name [$example_group_instance info vars] {
-                dict set :before_all_ivars $name [$example_group_instance instance_eval [list set $name]]
+                if { [$example_group_instance instance_eval [list array exists $name]] } {
+                    foreach {key value} [$example_group_instance instance_eval [list array get $name "*"]] {
+                        dict set :before_all_ivars "${name}($key)" [$example_group_instance instance_eval [list set "${name}($key)"]]
+                    }
+                } else {
+                    dict set :before_all_ivars $name [$example_group_instance instance_eval [list set $name]]
+                }
             }
         }
 

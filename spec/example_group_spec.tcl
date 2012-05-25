@@ -191,6 +191,20 @@ describe "how instance variables are inherited" {
     }
 }
 
+describe "arrays defined in before all hooks" {
+    before all {
+        array set some_array {
+            first  1
+            second 2
+        }
+    }
+
+    it "are available inside the example blocks" {
+        expect $some_array(first) to equal 1
+        expect $some_array(second) to equal 2
+    }
+}
+
 describe "variables are not shared across examples" {
     it "(first example)" {
         set a 1
