@@ -6,7 +6,6 @@ package require at_exit
 package require try
 
 namespace eval Spec {
-    namespace import ::tcl::control::*
     namespace import ::at_exit::*
 }
 
