@@ -124,3 +124,12 @@ In the `bin` folder, you can find the `tclspec` executable, which is used to
 run tclspec. Calling `tclspec` without any arguments will execute all spec files
 located in the spec folder in the current working directory. Additionally, you
 can either pass individual files or folders to run.
+
+## Contributing
+
+If you want to contribute to TclSpec, please open a ticket in the
+[Github Issue Tracker](https://github.com/arthurschreiber/tclspec/issues) and
+let me know what you want to work on, so I can provide you with feedback upfront.
+
+If you have changes/patches, please open a Github Pull Request so that I can review
+your changes. I'll try to get back to you as soon as passible with my comments.
