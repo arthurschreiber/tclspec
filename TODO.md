@@ -35,46 +35,46 @@
   Something like:
 
   ```tcl
-  shared_examples "collections" {{collection_class} {
-    it "is empty when first created" {
-      expect [[$collection_class new] empty?] to be_true
-    }
-  }}
+    shared_examples "collections" {{collection_class} {
+        it "is empty when first created" {
+            expect [[$collection_class new] empty?] to be_true
+        }
+    }}
 
-  describe "List" {
-    include_examples "collections" List
-  }
-  
-  describe "Dict" {
-    include_examples "collections" Dict
-  }
+    describe "List" {
+        include_examples "collections" List
+    }
+
+    describe "Dict" {
+        include_examples "collections" Dict
+    }
   ```
 
 * TclSpec does currently not support "pending" specs:
 
   ```tcl
-  describe "Something" {
-    it "should be pending without a block"
-    it "should be pending if 'pending' is called in the block" {
-      pending; # Should abort here
-      ...
+    describe "Something" {
+        it "should be pending without a block"
+        it "should be pending if 'pending' is called in the block" {
+            pending; # Should abort here
+            ...
+        }
+        it "should be pending if 'pending' is called in the block" {
+            pending "with a message"; # Should abort here
+            ...
+        }
     }
-    it "should be pending if 'pending' is called in the block" {
-      pending "with a message"; # Should abort here
-      ...
-    }
-  }
   ```
 
 * It would be nice, if we could make describe and it blocks take additional
   informations, ala RSpec. Something along the lines of:
 
   ```tcl
-  describe "Something" { type ui } {
-      it "does something" { slow true } {
-          # ...
-      }
-  }
+    describe "Something" { type ui } {
+        it "does something" { slow true } {
+            # ...
+        }
+    }
   ```
 
   That way, users could "tag" their specs so only specs with special
