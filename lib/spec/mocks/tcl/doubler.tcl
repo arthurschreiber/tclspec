@@ -15,15 +15,39 @@ namespace eval ::Spec::Mocks::Tcl {
             return ${:instance}
         }
 
-        :public class method stub_call { proc_name -with -and_return {-any_number_of_times:switch false} {block {}} } {
+        :public class method stub_call { proc_name -with -and_return {-once:switch false} {-twice:switch false} {-never:switch false} {-any_number_of_times:switch false} -exactly:optional -at_least:optional -at_most:optional {block {}} } {
             set expectation [[:new] add_stub $proc_name $block]
 
             if { [info exists with] } {
                 $expectation with $with
             }
 
+            if { $once } {
+                $expectation once
+            }
+
+            if { $twice } {
+                $expectation twice
+            }
+
+            if { $never } {
+                $expectation never
+            }
+
             if { $any_number_of_times } {
                 $expectation any_number_of_times
+            }
+
+            if { [info exists exactly] } {
+                $expectation exactly $exactly
+            }
+
+            if { [info exists at_least] } {
+                $expectation at_least $at_least
+            }
+
+            if { [info exists at_most] } {
+                $expectation at_most $at_most
             }
 
             if { [info exists and_return] } {
@@ -33,15 +57,39 @@ namespace eval ::Spec::Mocks::Tcl {
             return $expectation
         }
 
-        :public class method mock_call { proc_name -with -and_return {-any_number_of_times:switch false} {block {}} } {
+        :public class method mock_call { proc_name -with -and_return {-once:switch false} {-twice:switch false} {-never:switch false} {-any_number_of_times:switch false} -exactly:optional -at_least:optional -at_most:optional {block {}} } {
             set expectation [[:new] add_message_expectation $proc_name $block]
 
             if { [info exists with] } {
                 $expectation with $with
             }
 
+            if { $once } {
+                $expectation once
+            }
+
+            if { $twice } {
+                $expectation twice
+            }
+
+            if { $never } {
+                $expectation never
+            }
+
             if { $any_number_of_times } {
                 $expectation any_number_of_times
+            }
+
+            if { [info exists exactly] } {
+                $expectation exactly $exactly
+            }
+
+            if { [info exists at_least] } {
+                $expectation at_least $at_least
+            }
+
+            if { [info exists at_most] } {
+                $expectation at_most $at_most
             }
 
             if { [info exists and_return] } {
