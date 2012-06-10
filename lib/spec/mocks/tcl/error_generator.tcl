@@ -17,11 +17,7 @@ namespace eval ::Spec::Mocks::Tcl {
         }
 
         :public method raise_unexpected_message_args_error { expectation args } {
-            if { "expected_args" in [$expectation info vars] } {
-                set expected_args [:format_args {*}[$expectation expected_args]]
-            } else {
-                set expected_args "(no args)"
-            }
+            set expected_args [:format_args {*}[$expectation expected_args]]
             set actual_args [:format_args {*}$args]
 
             set message "Received call to [$expectation method_name] with unexpected arguments"
