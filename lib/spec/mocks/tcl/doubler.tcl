@@ -132,7 +132,7 @@ namespace eval ::Spec::Mocks::Tcl {
                     [:raise_unexpected_message_args_error $expectation {*}$args]
                 }
             } else {
-                [:raise_unexpected_message_error $expectation {*}$args]
+                [:raise_unexpected_message_error $proc_name {*}$args]
             }
         }
 
