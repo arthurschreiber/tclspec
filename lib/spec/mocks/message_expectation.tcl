@@ -168,14 +168,14 @@ namespace eval Spec {
                 }
 
                 set result ""
-                if { [:has_return_block?]} {
-                    if {${:consecutive} } {
+                if { [:has_method_block?] } {
+                    set result [:invoke_method_block $level {*}$args]
+                } elseif { [:has_return_block?] } {
+                    if { ${:consecutive} } {
                         set result [:invoke_consecutive_return_block $level {*}$args]
                     } else {
                         set result [:invoke_return_block $level {*}$args]
                     }
-                } elseif { [:has_method_block?] } {
-                    set result [:invoke_method_block $level {*}$args]
                 }
 
                 :increase_actual_receive_count
