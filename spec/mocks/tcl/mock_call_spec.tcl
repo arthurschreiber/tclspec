@@ -13,6 +13,29 @@ describe "mock_call" {
         expect [::something "a" "b" "c"] to equal ""
         [::Spec::Mocks::Tcl::Doubler new] spec_verify    
     }
+
+    context "when receiving a block" {
+        before each {
+            set calls 0
+        }
+
+        it "calls the passed block" {
+            mock_call "::foo" [list {} { variable calls; incr calls } [namespace current]]
+
+            foo
+
+            expect $calls to equal 1
+        }
+
+        it "calls the passed block after a similar stub definition" {
+            stub_call "::foo" -and_return [list "bar"]
+            mock_call "::foo" [list {} { variable calls; incr calls } [namespace current]]
+
+            foo
+
+            expect $calls to equal 1
+        }
+    }
 }
 
 describe "dont_call" {

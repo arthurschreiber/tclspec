@@ -133,4 +133,27 @@ describe "::Spec::Mocks::nx::Mock" {
         expect [$mock parent sub] to equal ""
         $mock spec_verify
     }
+
+    context "when receiving a block" {
+        before each {
+            set calls 0
+        }
+
+        it "calls the passed block" {
+            $mock should_receive "foo" [list {} { variable calls; incr calls } [namespace current]]
+
+            $mock foo
+
+            expect $calls to equal 1
+        }
+
+        it "calls the passed block after a similar stub definition" {
+            $mock stub "foo" -and_return [list "bar"]
+            $mock should_receive "foo" [list {} { variable calls; incr calls } [namespace current]]
+
+            $mock foo
+
+            expect $calls to equal 1
+        }
+    }
 }
