@@ -39,21 +39,21 @@ namespace eval Spec::Mocks::nx {
                 }
 
                 if { $definition != "" } {
-                    return [lindex $definition 1]
+                    return "[lindex $definition 1][expr {[${:object} info class] == "::nx::Class" ? " class" : ""}]"
                 } else {
-                    return "public"
+                    return "public[expr {[${:object} info class] == "::nx::Class" ? " class" : ""}]"
                 }
             }
         }
 
         :public method define_proxy_method {} {
-            ${:object} [:visibility] method ${:message_name} { args } "
+            ${:object} {*}[:visibility] method ${:message_name} { args } "
                 \[:__mock_proxy] message_received {${:message_name}} {*}\$args
             "
         }
 
         :public method undefine_proxy_method {} {
-            ${:object} public method ${:message_name} {} {}
+            ${:object} {*}[:visibility] method ${:message_name} {} {}
         }
 
         :public method restore_original_method {} {
