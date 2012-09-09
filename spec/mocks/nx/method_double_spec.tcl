@@ -2,7 +2,11 @@ source [file join [file dirname [info script]] ".." ".." "spec_helper.tcl"]
 
 describe "::Spec::Mocks::nx::MethodDouble" {
     before each {
-        set object [nx::Object new {
+        set class [nx::Class new {
+            :class method example_class_method {} {
+                return "original"
+            }
+
             :public method example_method {} {
                 return "original"
             }
@@ -16,6 +20,8 @@ describe "::Spec::Mocks::nx::MethodDouble" {
             }
         }]
 
+        set object [$class new]
+
         set proxy [::Spec::Mocks::nx::Proxy new -object $object]
 
         set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "example_method" -proxy $proxy]
@@ -23,7 +29,7 @@ describe "::Spec::Mocks::nx::MethodDouble" {
 
     describe "#visibility" {
         it "returns 'public' for a public method" {
-            set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "public_example_method" -proxy $proxy]
+            set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "example_method" -proxy $proxy]
             expect [$method_double visibility] to equal "public"
         }
 
@@ -35,6 +41,11 @@ describe "::Spec::Mocks::nx::MethodDouble" {
         it "returns 'protected' for a protected method" {
             set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "protected_example_method" -proxy $proxy]
             expect [$method_double visibility] to equal "protected"
+        }
+
+        it "returns 'public class' for a class method" {
+            set method_double [::Spec::Mocks::nx::MethodDouble new -object $class -message_name "example_class_method" -proxy $proxy]
+            expect [$method_double visibility] to equal [list "public" "class"]
         }
     }
 

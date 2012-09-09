@@ -33,16 +33,21 @@ namespace eval Spec::Mocks::nx {
                 return "public"
             } else {
                 set definition [${:object} info method definition ${:message_name}]
-
                 if { $definition == "" } {
                     set definition [[${:object} info class] info method definition ${:message_name}]
                 }
 
                 if { $definition != "" } {
-                    return "[lindex $definition 1][expr {[${:object} info class] == "::nx::Class" ? " class" : ""}]"
+                    set visibility [list [lindex $definition 1]]
                 } else {
-                    return "public[expr {[${:object} info class] == "::nx::Class" ? " class" : ""}]"
+                    set visibility [list "public"]
                 }
+
+                if { [${:object} info class] == "::nx::Class" } {
+                    lappend visibility "class"
+                }
+
+                return $visibility
             }
         }
 
