@@ -12,7 +12,7 @@ namespace eval Spec {
             }
 
             :public method failure_message {} {
-                return "Expected '${:actual}' to equal '${:expected}"
+                return "Expected '${:actual}' to equal '${:expected}'"
             }
 
             :public method negative_failure_message {} {
