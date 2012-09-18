@@ -227,6 +227,29 @@ describe "ancestors" {
     }
 }
 
+describe "full_description" {
+    it "returns the complete description string" {
+        set group [::Spec::ExampleGroup describe "SomeClass" {
+            describe "#some_method" { }
+
+            describe ".some_class_method" { }
+
+            describe "::NestedClass" {
+                describe "::DeeplyNestedClass" {}
+            }
+
+            describe "does something" { }
+        }]
+
+        expect [$group full_description] to equal "SomeClass"
+        expect [[lindex [$group children] 0] full_description] to equal "SomeClass#some_method"
+        expect [[lindex [$group children] 1] full_description] to equal "SomeClass.some_class_method"
+        expect [[lindex [$group children] 2] full_description] to equal "SomeClass::NestedClass"
+        expect [[lindex [[lindex [$group children] 2] children] 0] full_description] to equal "SomeClass::NestedClass::DeeplyNestedClass"
+        expect [[lindex [$group children] 3] full_description] to equal "SomeClass does something"
+    }
+}
+
 describe "running the examples" {
     it "returns true if all examples pass" {
         set group [::Spec::ExampleGroup describe "group" {

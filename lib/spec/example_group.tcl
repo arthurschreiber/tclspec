@@ -97,7 +97,18 @@ namespace eval Spec {
         }
 
         :public method full_description {} {
-            set :description
+            set full_description ""
+
+            foreach ancestor [lreverse [:ancestors]] {
+                set description [$ancestor description]
+                if { $full_description == "" || [regexp {^(#|::|\.)} $description] } {
+                    append full_description "$description"
+                } else {
+                    append full_description " $description"
+                }
+            }
+
+            return $full_description
         }
 
         :public method before { what block } {
