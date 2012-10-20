@@ -1,35 +1,35 @@
 namespace eval Spec {
     namespace eval ExampleGroupProcs {
         proc describe { args } {
-            uplevel [list :describe {*}$args]
+            uplevel 1 [list :describe {*}$args]
         }
 
         proc context { args } {
-            uplevel [list :describe {*}$args]
+            uplevel 1 [list :describe {*}$args]
         }
 
         proc before { args } {
-            uplevel [list :before {*}$args]
+            uplevel 1 [list :before {*}$args]
         }
 
         proc after { args } {
-            uplevel [list :after {*}$args]
+            uplevel 1 [list :after {*}$args]
         }
 
         proc it { args } {
-            uplevel [list :example {*}$args]
+            uplevel 1 [list :example {*}$args]
         }
 
         proc example { args } {
-            uplevel [list :example {*}$args]
+            uplevel 1 [list :example {*}$args]
         }
 
         proc let { args } {
-            uplevel [list :let {*}$args]
+            uplevel 1 [list :let {*}$args]
         }
 
         proc let! { args } {
-            uplevel [list :let! {*}$args]
+            uplevel 1 [list :let! {*}$args]
         }
     }
 
