@@ -20,6 +20,10 @@ namespace eval Spec {
             uplevel 1 [list :example {*}$args]
         }
 
+        proc specify { args } {
+            uplevel 1 [list :example {*}$args]
+        }
+
         proc example { args } {
             uplevel 1 [list :example {*}$args]
         }
