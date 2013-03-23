@@ -2,6 +2,7 @@ package provide spec 0.1
 
 package require nx
 package require nx::trait
+package require "TclOO" 1.0
 package require at_exit
 package require try
 
@@ -20,23 +21,42 @@ source [file join [file dirname [info script]] "reporter.tcl"]
 source [file join [file dirname [info script]] "runner.tcl"]
 source [file join [file dirname [info script]] "world.tcl"]
 
-nx::Class create Spec {
-    :require namespace
-    :class property [list world [::Spec::World new]]
-    :class property [list configuration [Spec::Configuration new]]
+oo::class create Spec {
+    self method world {} {
+        my variable world
 
-    :public class method configure { block } {
-        uplevel [list apply $block ${:configuration}]
+        if { [info exists world] } {
+            set world
+        } else {
+            set world [::Spec::World new]
+        }
     }
 
-    :public class method require { filename } {
-        if { ![info exists :sourced] } {
-            set :sourced [list]
+    self method configuration {} {
+        my variable configuration
+
+        if { [info exists configuration] } {
+            set configuration
+        } else {
+            set configuration [::Spec::Configuration new]
+        }
+    }
+
+    self method configure { block } {
+        my variable configuration
+        uplevel [list apply $block $configuration]
+    }
+
+    self method require { filename } {
+        my variable sourced
+
+        if { ![info exists sourced] } {
+            set sourced [list]
         }
 
-        if { !($filename in ${:sourced}) } {
-            uplevel [list source $filename]
-            lappend :sourced $filename
+        if { !($filename in $sourced) } {
+            uplevel 1 [list source $filename]
+            lappend sourced $filename
         }
     }
 }
