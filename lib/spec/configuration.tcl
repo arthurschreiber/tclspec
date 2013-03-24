@@ -1,108 +1,126 @@
 namespace eval Spec {
-    nx::Class create HookCollection {
-        :variable hooks [list]
-
-        :public method append { hook } {
-            lappend :hooks $hook
+    oo::class create HookCollection {
+        constructor {} {
+            set [self]::hooks [list]
         }
 
-        :public method prepend { hook } {
-            set :hooks [list $hook {*}${:hooks}]
+        method append { hook } {
+            lappend [self]::hooks $hook
         }
 
-        :public method run_all { example_group_instance } {
-            foreach hook ${:hooks} {
+        method prepend { hook } {
+            set [self]::hooks [list $hook {*}[set [self]::hooks]]
+        }
+
+        method run_all { example_group_instance } {
+            foreach hook [set [self]::hooks] {
                 $hook run_in $example_group_instance
             }
         }
     }
 
-    nx::Class create Hook {
-        :property block:required
-    }
-
-    nx::Class create BeforeHook -superclass Hook {
-        :public method run_in { example_group_instance } {
-            $example_group_instance instance_eval ${:block}
+    oo::class create Hook {
+        constructor { block } {
+            set [self]::block $block
         }
     }
 
-    nx::Class create AfterHook -superclass Hook {
-        :public method run_in { example_group_instance } {
-            $example_group_instance instance_eval_with_rescue ${:block}
+    oo::class create BeforeHook {
+        superclass Hook
+
+        method run_in { example_group_instance } {
+            $example_group_instance instance_eval [set [self]::block]
         }
     }
 
-    nx::Class create Configuration {
-        :property {formatters [list]}
+    oo::class create AfterHook {
+        superclass Hook
 
-        :variable reporter
+        method run_in { example_group_instance } {
+            $example_group_instance instance_eval_with_rescue [set [self]::block]
+        }
+    }
 
-        :public method add_formatter { name } {
-            if { $name == "doc" } {
-                lappend :formatters [::Spec::Formatters::DocumentationFormatter new]
-            } elseif { $name == "progress" } {
-                lappend :formatters [::Spec::Formatters::ProgressFormatter new]
-            }
+    oo::class create Configuration {
+        constructor { } {
+            set [self]::formatters [list]
         }
 
-        :public method reporter { } {
-            if { ![info exists :reporter] } {
-                if { [llength ${:formatters}] == 0 } {
-                    :add_formatter "progress"
+        method reporter { } {
+            my variable reporter formatters
+
+            if { ![info exists reporter] } {
+                if { [llength $formatters] == 0 } {
+                    my add_formatter "progress"
                 }
 
-                set :reporter [::Spec::Reporter new -formatters ${:formatters}]
+                set reporter [::Spec::Reporter new -formatters $formatters]
             }
 
-            return ${:reporter}
+            return $reporter
         }
 
-        :public method hooks { } {
-            if { ![info exists :hooks] } {
-                set :hooks [dict create \
+        method formatters { } {
+            set [self]::formatters
+        }
+
+        method add_formatter { name } {
+            my variable formatters
+
+            if { $name == "doc" } {
+                lappend formatters [::Spec::Formatters::DocumentationFormatter new]
+            } elseif { $name == "progress" } {
+                lappend formatters [::Spec::Formatters::ProgressFormatter new]
+            }
+        }
+
+        method hooks { } {
+            my variable hooks
+
+            if { ![info exists hooks] } {
+                set hooks [dict create \
                     before [dict create \
-                        each    [HookCollection new] \
-                        all     [HookCollection new] \
-                        suite   [HookCollection new] \
+                        each    [Spec::HookCollection new] \
+                        all     [Spec::HookCollection new] \
+                        suite   [Spec::HookCollection new] \
                     ] \
                     after [dict create \
-                        each    [HookCollection new] \
-                        all     [HookCollection new] \
-                        suite   [HookCollection new] \
+                        each    [Spec::HookCollection new] \
+                        all     [Spec::HookCollection new] \
+                        suite   [Spec::HookCollection new] \
                     ]
                 ]
             }
 
-            return ${:hooks}
+            return $hooks
         }
 
-        :public method run_hooks { hook context example_group_instance:optional } {
-            if { ![info exists example_group_instance] } {
-                set example_group_instance [ExampleGroup new]
+        method run_hooks { hook context {example_group_instance {}} } {
+            if { $example_group_instance == {} } {
+                set example_group_instance [Spec::ExampleGroup new]
             }
 
-            [dict get [:hooks] $hook $context] run_all $example_group_instance
+            [dict get [my hooks] $hook $context] run_all $example_group_instance
         }
 
-        :public method append_before { context block } {
-            [dict get [:hooks] before $context] append [BeforeHook new -block $block]
+        method append_before { context block } {
+            [dict get [my hooks] before $context] append [BeforeHook new $block]
         }
 
-        :public alias before [:info method handle append_before]
+        forward before my append_before
 
-        :public method prepend_before { context block } {
-            [dict get [:hooks] before $context] prepend [BeforeHook new -block $block]
+        method prepend_before { context block } {
+            [dict get [my hooks] before $context] prepend [BeforeHook new $block]
         }
 
-        :public method append_after { context block } {
-            [dict get [:hooks] after $context] append [AfterHook new -block $block]
+        method append_after { context block } {
+            [dict get [my hooks] after $context] append [AfterHook new $block]
         }
 
-        :public alias after [:info method handle append_after]
+        forward after my append_after
 
-        :public method prepend_after { context block } {
-            [dict get [:hooks] after $context] prepend [AfterHook new -block $block]
+        method prepend_after { context block } {
+            [dict get [my hooks] after $context] prepend [AfterHook new $block]
         }
     }
 }

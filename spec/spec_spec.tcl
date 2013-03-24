@@ -7,7 +7,7 @@ describe "::Spec.configure" {
         Spec configure { c {
             upvar called called
             set called true
-            uplevel [list expect [$c info class] to equal "::Spec::Configuration"]
+            uplevel [list expect [info object class $c] to equal "::Spec::Configuration"]
         } }
 
         expect $called to be true
@@ -28,7 +28,7 @@ describe "::Spec.configure" {
 
 describe "::Spec.configuration" {
     it "returns a configuration instance" {
-        expect [[Spec configuration] info class] to equal "::Spec::Configuration"
+        expect [info object class [Spec configuration]] to equal "::Spec::Configuration"
     }
 
     it "always returns the same configuration instance" {
