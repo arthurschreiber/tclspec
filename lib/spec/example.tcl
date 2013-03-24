@@ -1,67 +1,80 @@
 namespace eval Spec {
-    nx::Class create Example {
-        :property example_group:required
-        :property description:required
-        :property block:require
-        :property example_group_instance
-
-        :property error_info
-
-        :public method full_description { } {
-            return "[${:example_group} full_description] ${:description}"
+    oo::class create Example {
+        constructor { example_group description block } {
+            set [self]::example_group $example_group
+            set [self]::description $description
+            set [self]::block $block
         }
 
-        :public method description { } {
-            set :description
+        method error_info {} {
+            set [self]::error_info
         }
 
-        :public method run { example_group_instance reporter } {
-            set :example_group_instance $example_group_instance
-            $example_group_instance example [:]
+        method example_group_instance {} {
+            set [self]::example_group_instance
+        }
 
-            :start $reporter
+        method full_description {} {
+            my variable example_group description
+
+            return [$example_group full_description] $description
+        }
+
+        method description {} {
+            set [self]::description
+        }
+
+        method run { example_group_instance reporter } {
+            set [self]::example_group_instance $example_group_instance
+            $example_group_instance example [self]
+
+            my start $reporter
             try {
                 try {
-                    :run_before_each_hooks
-                    ${:example_group_instance} instance_eval ${:block}
+                    my run_before_each_hooks
+                    $example_group_instance instance_eval [set [self]::block]
                 } on error { message error_options } {
-                    :set_error $message $error_options
+                    my set_error $message $error_options
                 } finally {
-                    :run_after_each_hooks
+                    my run_after_each_hooks
                 }
             } on error { message error_options } {
-                :set_error $message $error_options
+                my set_error $message $error_options
             }
 
-            :finish $reporter
+            my finish $reporter
         }
 
-        :public method run_before_each_hooks { } {
-            ${:example_group} setup_mocks ${:example_group_instance}
-            ${:example_group} run_before_each [:]
+        method run_before_each_hooks { } {
+            my variable example_group example_group_instance
+
+            ${example_group} setup_mocks ${example_group_instance}
+            ${example_group} run_before_each [self]
         }
 
-        :public method run_after_each_hooks { } {
+        method run_after_each_hooks { } {
+            my variable example_group
+
             try {
-                ${:example_group} run_after_each [:]
-                ${:example_group} verify_mocks
+                ${example_group} run_after_each [self]
+                ${example_group} verify_mocks
             } finally {
-                ${:example_group} teardown_mocks
+                ${example_group} teardown_mocks
             }
         }
 
-        :public method fail_with_error { error_message error_options reporter } {
-            :start $reporter
-            :set_error $error_message $error_options
-            :finish $reporter
+        method fail_with_error { error_message error_options reporter } {
+            my start $reporter
+            my set_error $error_message $error_options
+            my finish $reporter
         }
 
-        :public method start { reporter } {
+        method start { reporter } {
             $reporter example_started [self]
         }
 
-        :public method finish { reporter } {
-            if { [info exists :error_message] } {
+        method finish { reporter } {
+            if { [info exists [self]::error_message] } {
                 $reporter example_failed [self]
                 return false
             } else {
@@ -70,11 +83,11 @@ namespace eval Spec {
             }
         }
 
-        :public method set_error { error_message error_options } {
-            if { ![info exists :error_message] } {
-                set :error_message $error_message
-                set :error_info [dict get $error_options -errorinfo]
-                set :error_options $error_options
+        method set_error { error_message error_options } {
+            if { ![info exists [self]::error_message] } {
+                set [self]::error_message $error_message
+                set [self]::error_info [dict get $error_options -errorinfo]
+                set [self]::error_options $error_options
             }
         }
     }

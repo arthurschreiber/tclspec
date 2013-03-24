@@ -93,7 +93,7 @@ namespace eval Spec {
         }
 
         :public method example { description block } {
-            lappend :examples [::Spec::Example new -example_group [:] -description $description -block $block ]
+            lappend :examples [::Spec::Example new [:] $description $block]
         }
 
         :public method register { } {
