@@ -104,23 +104,23 @@ namespace eval Spec {
         }
 
         method append_before { context block } {
-            [dict get [my hooks] before $context] append [BeforeHook new $block]
+            [dict get [my hooks] before $context] append [Spec::BeforeHook new $block]
         }
 
         forward before my append_before
 
         method prepend_before { context block } {
-            [dict get [my hooks] before $context] prepend [BeforeHook new $block]
+            [dict get [my hooks] before $context] prepend [Spec::BeforeHook new $block]
         }
 
         method append_after { context block } {
-            [dict get [my hooks] after $context] append [AfterHook new $block]
+            [dict get [my hooks] after $context] append [Spec::AfterHook new $block]
         }
 
         forward after my append_after
 
         method prepend_after { context block } {
-            [dict get [my hooks] after $context] prepend [AfterHook new $block]
+            [dict get [my hooks] after $context] prepend [Spec::AfterHook new $block]
         }
     }
 }

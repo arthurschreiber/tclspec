@@ -36,15 +36,14 @@ oo::class create Spec {
         my variable configuration
 
         if { [info exists configuration] } {
-            set configuration
+            return $configuration
         } else {
             set configuration [::Spec::Configuration new]
         }
     }
 
     self method configure { block } {
-        my variable configuration
-        uplevel [list apply $block $configuration]
+        uplevel [list apply $block [my configuration]]
     }
 
     self method require { filename } {
