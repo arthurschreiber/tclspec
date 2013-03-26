@@ -6,7 +6,15 @@ namespace eval Spec {
             }
 
             set :installed_at_exit true
-            at_exit { exit [::Spec::Runner run] }
+            at_exit {
+                # Don't even bother with doing any work when we reached this
+                # point due to an error
+                if { [info exists ::errorInfo] } {
+                    exit 1
+                } else {
+                    exit [::Spec::Runner run]
+                }
+            }
         }
 
         :public class method run {} {

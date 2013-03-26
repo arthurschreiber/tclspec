@@ -45,6 +45,11 @@ namespace eval ::at_exit {
             uplevel [list ::exit! $returnCode]
         }
 
+        if { $returnCode == 0 } {
+            # if we have a "successful" exit, we should clean the errorInfo var
+            unset ::errorInfo
+        }
+
         if { [info exists ::at_exit::handlers] } {
             # Run each of the at_exit handlers, but in reverse order.
             # This makes sure that exit handlers that were registered later
