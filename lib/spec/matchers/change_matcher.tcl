@@ -43,7 +43,7 @@ namespace eval Spec {
         #
         # @note The negative form of this matcher does not support any options
         #   like +-from+, +-to+, +-by+, +-by_at_most+ or +-by_at_least+.
-        ::Spec::Matchers public class method change { args } {
+        oo::objdefine ::Spec::Matchers method change { args } {
             ::Spec::Matchers::ChangeMatcher new -expected [lindex $args 0] {*}[lrange $args 1 end]
         }
 

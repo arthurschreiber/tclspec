@@ -17,7 +17,7 @@ namespace eval Spec {
         #
         #   expect 20 to be <= 30
         #   expect 50 not to be > 51
-        ::Spec::Matchers public class method be { args } {
+        oo::objdefine ::Spec::Matchers method be { args } {
             switch [lindex $args 0] {
                 true { ::Spec::Matchers::BeTrueMatcher new }
                 false { ::Spec::Matchers::BeFalseMatcher new }

@@ -1,6 +1,6 @@
 namespace eval Spec {
     namespace eval Matchers {
-        ::Spec::Matchers public class method raise_error { args } {
+        oo::objdefine ::Spec::Matchers method raise_error { args } {
             ::Spec::Matchers::RaiseErrorMatcher new {*}$args
         }
 

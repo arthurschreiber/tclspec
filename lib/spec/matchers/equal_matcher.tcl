@@ -1,6 +1,6 @@
 namespace eval Spec {
     namespace eval Matchers {
-        ::Spec::Matchers public class method equal { expected } {
+        oo::objdefine ::Spec::Matchers method equal { expected } {
             ::Spec::Matchers::EqualMatcher new -expected $expected
         }
 

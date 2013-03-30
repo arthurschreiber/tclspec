@@ -1,10 +1,10 @@
 nx::Class create NullObject
 NullObject method unknown { args } { }
 
-::Spec::Matchers public class method fail {} {
-    :raise_error -code EXPECTATION_NOT_MET
+oo::objdefine ::Spec::Matchers method fail {} {
+    my raise_error -code EXPECTATION_NOT_MET
 }
 
-::Spec::Matchers public class method fail_with { message } {
-    :raise_error -code EXPECTATION_NOT_MET -message $message
+oo::objdefine ::Spec::Matchers method fail_with { message } {
+    my raise_error -code EXPECTATION_NOT_MET -message $message
 }

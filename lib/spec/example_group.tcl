@@ -79,7 +79,11 @@ namespace eval Spec {
             }
 
             $child instance_eval {
-                namespace path [concat [[:info superclass] ancestors] ::Spec::ExampleGroup ::Spec::Matchers ::Spec::ExampleGroupProcs]
+                proc expect { args } {
+                    uplevel 1 [::Spec::Matchers expect {*}$args]
+                }
+
+                namespace path [concat [[:info superclass] ancestors] ::Spec::ExampleGroup ::Spec::ExampleGroupProcs]
             }
 
             $child instance_eval $block
@@ -297,7 +301,11 @@ An error occurred in an after all hook.
             :require namespace
 
             :instance_eval {
-                namespace path [concat [[:info class] ancestors] ::Spec::Matchers]
+                proc expect { args } {
+                    uplevel 1 [::Spec::Matchers expect {*}$args]
+                }
+
+                namespace path [concat [[:info class] ancestors]]
             }
 
             if { [::nx::var exists [:info class] enclosing_namespace] } {

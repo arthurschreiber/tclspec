@@ -1,7 +1,6 @@
 namespace eval Spec {
     namespace eval Matchers {
-
-        ::Spec::Matchers public class method be_within { delta of expected } {
+        oo::objdefine ::Spec::Matchers method be_within { delta of expected } {
             ::Spec::Matchers::BeWithinMatcher new -delta $delta -expected $expected
         }
 

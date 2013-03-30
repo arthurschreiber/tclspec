@@ -1,19 +1,25 @@
 namespace eval Spec {
-    namespace eval Matchers {
-        namespace path ::Spec
-    }
-
-    nx::Class create Matchers {
+    oo::class create Matchers {
         # Current evaluation level, used to determine the correct
         # level blocks passed to a matcher have to be executed at.
-        :class property {eval_level 1}
+        self method eval_level { {level {}} } {
+            my variable eval_level
 
-        :require namespace
+            if { ![info exists eval_level] } {
+                set eval_level 1
+            }
 
-        :public class method expect { actual to matcher args } {
+            if { $level == "" } {
+                return $eval_level
+            } else {
+                set eval_level $level
+            }
+        }
+
+        self method expect { actual to matcher args } {
             # Store the parent stack level, so that blocks passed to
             # matchers are executed in the correct scope.
-            ::Spec::Matchers eval_level "#[expr { [info level] - 1 }]"
+            ::Spec::Matchers eval_level "#[expr { [info level] - 2 }]"
 
             set positive true
 
@@ -24,16 +30,16 @@ namespace eval Spec {
                 set args [lrange $args 1 end]
             }
 
-            if { $matcher != "expect" && [::Spec::Matchers class info method exists $matcher] } {
+            if { $matcher != "expect" && $matcher in [info object methods ::Spec::Matchers] } {
                 set matcher [::Spec::Matchers $matcher {*}$args]
             } else {
                 error "Unknown Matcher: $matcher"
             }
 
             if { $positive } {
-                Spec::PositiveExpectationHandler handle_matcher $actual $matcher
+                ::Spec::PositiveExpectationHandler handle_matcher $actual $matcher
             } else {
-                Spec::NegativeExpectationHandler handle_matcher $actual $matcher
+                ::Spec::NegativeExpectationHandler handle_matcher $actual $matcher
             }
         }
     }
