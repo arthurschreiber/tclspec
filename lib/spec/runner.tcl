@@ -1,11 +1,13 @@
 namespace eval Spec {
-    nx::Class create Runner {
-        :public class method autorun {} {
-            if { [:installed_at_exit?] } {
+    oo::class create Runner {
+        self method autorun {} {
+            if { [my installed_at_exit?] } {
                 return
             }
 
-            set :installed_at_exit true
+            my variable installed_at_exit
+            set installed_at_exit true
+
             at_exit {
                 # Don't even bother with doing any work when we reached this
                 # point due to an error
@@ -17,7 +19,7 @@ namespace eval Spec {
             }
         }
 
-        :public class method run {} {
+        self method run {} {
             set failure_exit_code 1
 
             set success true
@@ -37,8 +39,15 @@ namespace eval Spec {
             expr { $success ? 0 : $failure_exit_code }
         }
 
-        :public class method installed_at_exit? {} {
-            expr { [info exists :installed_at_exit] && ${:installed_at_exit} }
+        self method installed_at_exit? {} {
+            my variable installed_at_exit
+
+            expr { [info exists installed_at_exit] && $installed_at_exit }
         }
+    }
+
+    # Make at_exit available inside the Runner class methods
+    namespace eval [info object namespace Runner] {
+        namespace path [list {*}[namespace path] ::at_exit]
     }
 }
