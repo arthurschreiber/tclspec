@@ -10,68 +10,74 @@ source [file join [file dirname [info script]] "formatters/documentation_formatt
 source [file join [file dirname [info script]] "formatters/progress_formatter.tcl"]
 
 namespace eval Spec {
-    nx::Class create Reporter {
-        :property formatters
-        :variable example_count 0
-        :variable failure_count 0
-        :variable start 0
-        :variable duration 0
+    oo::class create Reporter {
+        constructor { formatters } {
+            set [self]::formatters $formatters
+            set [self]::example_count 0
+            set [self]::failure_count 0
+            set [self]::start 0
+            set [self]::duration 0
+        }
 
-        :public method report { expected_example_count block } {
-            :start $expected_example_count
+        method formatters {} {
+            set [self]::formatters
+        }
+
+        method report { expected_example_count block } {
+            my start $expected_example_count
 
             # yield self?
             uplevel $block
 
-            :finish
+            my finish
         }
 
-        :public method start { expected_example_count } {
-            set :start [clock clicks -milliseconds]
-            :notify start $expected_example_count
+        method start { expected_example_count } {
+            set [self]::start [clock clicks -milliseconds]
+            my notify start $expected_example_count
         }
 
-        :public method message { message } {
-            :notify message $message
+        method message { message } {
+            my notify message $message
         }
 
-        :public method example_group_started { example_group } {
-            :notify example_group_started $example_group
+        method example_group_started { example_group } {
+            my notify example_group_started $example_group
         }
 
-        :public method example_group_finished { example_group } {
-            :notify example_group_finished $example_group
+        method example_group_finished { example_group } {
+            my notify example_group_finished $example_group
         }
 
-        :public method example_started { example } {
-            incr :example_count
-            :notify example_started $example
+        method example_started { example } {
+            incr [self]::example_count
+            my notify example_started $example
         }
 
-        :public method example_passed { example } {
-            :notify example_passed $example
+        method example_passed { example } {
+            my notify example_passed $example
         }
 
-        :public method example_failed { example } {
-            incr :failure_count
-            :notify example_failed $example
+        method example_failed { example } {
+            incr [self]::failure_count
+            my notify example_failed $example
         }
 
-        :public method finish {} {
-            :stop
+        method finish {} {
+            my stop
 
-            :notify start_dump
-            :notify dump_failures
-            :notify dump_summary ${:duration} ${:example_count} ${:failure_count}
+            my notify start_dump
+            my notify dump_failures
+            my notify dump_summary [set [self]::duration] [set [self]::example_count] [set [self]::failure_count]
         }
 
-        :public method stop {} {
-            set :duration [ expr { [clock clicks -milliseconds] - ${:start} } ]
-            :notify stop
+        method stop {} {
+            set [self]::duration [ expr { [clock clicks -milliseconds] - [set [self]::start] } ]
+            my notify stop
         }
 
-        :public method notify { method args } {
-            foreach formatter ${:formatters} {
+        method notify { method args } {
+            foreach formatter [set [self]::formatters] {
                 $formatter $method {*}$args
             }
         }

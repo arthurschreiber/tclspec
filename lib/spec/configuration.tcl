@@ -54,7 +54,7 @@ namespace eval Spec {
                     my add_formatter "progress"
                 }
 
-                set reporter [::Spec::Reporter new -formatters $formatters]
+                set reporter [::Spec::Reporter new $formatters]
             }
 
             return $reporter
