@@ -1,6 +1,6 @@
 namespace eval ::Spec {
-    nx::Class create Expectations {
-        :public class method fail_with { message } {
+    oo::class create Expectations {
+        self method fail_with { message } {
             # Setting the return level here allows us to tweak generated backtraces
             # for expectation failures a bit. Thanks to this, the backtrace will
             # state that an error occurred during execution of "expect ...",
@@ -16,17 +16,17 @@ namespace eval ::Spec {
         }
     }
 
-    nx::Class create PositiveExpectationHandler {
-        :public class method handle_matcher { actual matcher } {
+    oo::class create PositiveExpectationHandler {
+        self method handle_matcher { actual matcher } {
             if { [$matcher matches? $actual] } { return }
-            Expectations fail_with [$matcher failure_message]
+            ::Spec::Expectations fail_with [$matcher failure_message]
         }
     }
 
-    nx::Class create NegativeExpectationHandler {
-        :public class method handle_matcher { actual matcher } {
+    oo::class create NegativeExpectationHandler {
+        self method handle_matcher { actual matcher } {
             if { [$matcher does_not_match? $actual] } { return }
-            Expectations fail_with [$matcher negative_failure_message]
+            ::Spec::Expectations fail_with [$matcher negative_failure_message]
         }
     }
 }
