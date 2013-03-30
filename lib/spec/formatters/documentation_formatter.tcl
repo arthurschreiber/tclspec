@@ -1,52 +1,58 @@
 namespace eval Spec {
     namespace eval Formatters {
-        nx::Class create DocumentationFormatter -superclass BaseTextFormatter {
-            :property {group_level 0}
-            :property {failure_index 0}
+        oo::class create DocumentationFormatter {
+            superclass ::Spec::Formatters::BaseTextFormatter
 
-            :public method example_group_started { example_group } {
+            constructor {} {
+                set [self]::group_level 0
+                set [self]::failure_index 0
+
                 next
+            }
 
-                if { ${:group_level} == 0 } {
+            method example_group_started { example_group } {
+                next $example_group
+
+                if { [set [self]::group_level] == 0 } {
                     puts ""
                 }
-                puts "[:current_indentation][$example_group description]"
+                puts "[my current_indentation][$example_group description]"
 
-                incr :group_level
+                incr [self]::group_level
             }
 
-            :public method example_group_finished { example_group } {
-                next
+            method example_group_finished { example_group } {
+                next $example_group
 
-                incr :group_level -1
+                incr [self]::group_level -1
             }
 
-            :public method example_passed { example } {
-                next
+            method example_passed { example } {
+                next $example
 
-                puts [:passed_output $example]
+                puts [my passed_output $example]
             }
 
-            :public method example_failed { example } {
-                next
+            method example_failed { example } {
+                next $example
 
-                puts [:failure_output $example]
+                puts [my failure_output $example]
             }
 
-            :public method passed_output { example } {
-                return "[:current_indentation][$example description]"
+            method passed_output { example } {
+                return "[my current_indentation][$example description]"
             }
 
-            :public method failure_output { example } {
-                return "[:current_indentation][$example description] (FAILED - [:next_failure_index])"
+            method failure_output { example } {
+                return "[my current_indentation][$example description] (FAILED - [my next_failure_index])"
             }
 
-            :public method next_failure_index {} {
-                incr :failure_index
+            method next_failure_index {} {
+                incr [self]::failure_index
             }
 
-            :public method current_indentation {} {
-                string repeat "  " ${:group_level}
+            method current_indentation {} {
+                string repeat "  " [set [self]::group_level]
             }
         }
 

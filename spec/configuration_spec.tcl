@@ -15,7 +15,7 @@ describe "::Spec::Configuration" {
         set formatters [$configuration formatters]
 
         expect [llength $formatters] to equal 1
-        expect [[lindex $formatters 0] info class] to equal ::Spec::Formatters::DocumentationFormatter
+        expect [info object class [lindex $formatters 0]] to equal ::Spec::Formatters::DocumentationFormatter
     }
 
     it "allows adding the progress formatter using add_formatter" {
@@ -24,7 +24,7 @@ describe "::Spec::Configuration" {
         set formatters [$configuration formatters]
 
         expect [llength $formatters] to equal 1
-        expect [[lindex $formatters 0] info class] to equal ::Spec::Formatters::ProgressFormatter
+        expect [info object class [lindex $formatters 0]] to equal ::Spec::Formatters::ProgressFormatter
     }
 
     describe ".reporter" {
@@ -38,7 +38,7 @@ describe "::Spec::Configuration" {
             it "initializes a new Reporter with a progress formatter if no formatter is registered" {
                 set reporter [$configuration reporter]
                 set formatter [lindex [$reporter formatters] 0]
-                expect [$formatter info class] to equal ::Spec::Formatters::ProgressFormatter
+                expect [info object class $formatter] to equal ::Spec::Formatters::ProgressFormatter
             }
         }
     }

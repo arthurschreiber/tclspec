@@ -1,17 +1,19 @@
 namespace eval Spec {
     namespace eval Formatters {
-        nx::Class create ProgressFormatter -superclass BaseTextFormatter {
-            :public method example_passed { example } {
-                next
+        oo::class create ProgressFormatter {
+            superclass ::Spec::Formatters::BaseTextFormatter
+
+            method example_passed { example } {
+                next $example
                 puts -nonewline "."
             }
     
-            :public method example_failed { example } {
-                next
+            method example_failed { example } {
+                next $example
                 puts -nonewline "F"
             }
     
-            :public method start_dump {} {
+            method start_dump {} {
                 next
                 puts ""
             }

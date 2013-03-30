@@ -1,51 +1,53 @@
 namespace eval Spec {
     namespace eval Formatters {
-        nx::Class create BaseTextFormatter -superclass BaseFormatter {
-            :public method message { message } {
+        oo::class create BaseTextFormatter {
+            superclass ::Spec::Formatters::BaseFormatter
+
+            method message { message } {
                 puts $message
             }
 
-           :public method dump_failures { } {
-                if { [llength ${:failed_examples}] > 0 } {
+           method dump_failures { } {
+                if { [llength [set [self]::failed_examples]] > 0 } {
                     puts ""
                     puts "Failures:"
 
                     set index 0
-                    foreach example ${:failed_examples} {
+                    foreach example [set [self]::failed_examples] {
                         puts ""
-                        :dump_failure $example $index
-                        :dump_backtrace $example
+                        my dump_failure $example $index
+                        my dump_backtrace $example
 
                         incr index
                     }
                 }
             }
 
-            :public method dump_failure { example index } {
+            method dump_failure { example index } {
                 puts "  [expr {$index + 1}]) [$example full_description]"
             }
 
-            :public method dump_backtrace { example } {
+            method dump_backtrace { example } {
                 foreach line [split [$example error_info] "\n"] {
                     puts "     $line"
                 }
             }
 
-            :public method dump_summary { duration example_count failure_count } {
-                next
+            method dump_summary { duration example_count failure_count } {
+                next $duration $example_count $failure_count
 
                 puts ""
                 puts "Finished in $duration milliseconds"
                 puts ""
-                puts [:summary_line $example_count $failure_count]
+                puts [my summary_line $example_count $failure_count]
             }
 
-            :public method summary_line { example_count failure_count } {
-                set summary [:pluralize $example_count "example"]
-                append summary ", [:pluralize $failure_count "failure"]"
+            method summary_line { example_count failure_count } {
+                set summary [my pluralize $example_count "example"]
+                append summary ", [my pluralize $failure_count "failure"]"
             }
 
-            :public method pluralize { count string } {
+            method pluralize { count string } {
                 return "$count $string[expr { $count != 1 ? "s" : "" }]"
             }
         }
