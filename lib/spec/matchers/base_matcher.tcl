@@ -1,21 +1,23 @@
 namespace eval Spec {
     namespace eval Matchers {
-        nx::Class create BaseMatcher {
-            :property expected
-
-            :public method matches? { actual } {
-                set :actual $actual
+        oo::class create BaseMatcher {
+            constructor { expected } {
+                set [self]::expected $expected
             }
 
-            :public method does_not_match? { actual } {
-                expr { ![:matches? $actual] }
+            method matches? { actual } {
+                set [self]::actual $actual
             }
 
-            :public method failure_message {} {
+            method does_not_match? { actual } {
+                expr { ![my matches? $actual] }
+            }
+
+            method failure_message {} {
                 
             }
 
-            :public method negative_failure_message {} {
+            method negative_failure_message {} {
                 
             }
         }

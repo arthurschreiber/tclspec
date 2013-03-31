@@ -4,15 +4,26 @@ namespace eval Spec {
             ::Spec::Matchers::RaiseErrorMatcher new {*}$args
         }
 
-        nx::Class create RaiseErrorMatcher -superclass BaseMatcher {
-            :property {code "NONE"}
-            :property message
+        oo::class create RaiseErrorMatcher {
+            superclass Spec::Matchers::BaseMatcher
 
-            :public method matches? { actual } {
-                next
+            constructor { args } {
+                if { [dict exists $args "-code"] } {
+                    set [self]::code [dict get $args "-code"]
+                } else {
+                    set [self]::code "NONE"
+                }
 
-                set :raised_expected_code false
-                set :with_expected_message false
+                if { [dict exists $args "-message"] } {
+                    set [self]::message [dict get $args "-message"]
+                }
+            }
+
+            method matches? { actual } {
+                my variable raised_expected_code with_expected_message code actual_code actual_message
+
+                set raised_expected_code false
+                set with_expected_message false
 
                 set rc [catch [list uplevel [::Spec::Matchers eval_level] $actual] message options]
 
@@ -20,49 +31,48 @@ namespace eval Spec {
                     return false
                 }
 
-                set :actual_code $::errorCode
-                set :actual_message $message
+                set actual_code $::errorCode
+                set actual_message $message
                 if { $rc == 2 } {
-                    set :actual_code [dict get $options -errorcode]
+                    set actual_code [dict get $options -errorcode]
                 }
 
+                set with_expected_message [my verify_message $message]
 
-                set :with_expected_message [:verify_message $message]
-
-                if { ${:code} == "NONE" || ${:code} == ${:actual_code} } {
-                    set :raised_expected_code true
+                if { ${code} == "NONE" || ${code} == ${actual_code} } {
+                    set raised_expected_code true
                 }
 
-                expr { ${:raised_expected_code} && ${:with_expected_message} }
+                expr { ${raised_expected_code} && ${with_expected_message} }
             }
 
-            :public method verify_message { message } {
-                if { [info exists :message ]} {
-                    expr { ${:message} == $message }
+            method verify_message { message } {
+                if { [info exists [self]::message ]} {
+                    expr { [set [self]::message] == $message }
                 } else {
                     return true
                 }
             }
 
-            :public method failure_message { } {
-                return "expected [:expected_error][:given_error]"
+            method failure_message { } {
+                return "expected [my expected_error][my given_error]"
             }
 
-            :public method negative_failure_message { } {
-                return "expected no [:expected_error][:given_error]"
+            method negative_failure_message { } {
+                return "expected no [my expected_error][my given_error]"
             }
 
-            :public method expected_error {} {
-                if { [info exists :message ]} {
-                    return "error with code '[set :code]' and message '[set :message]'"
+            method expected_error {} {
+                if { [info exists [self]::message] } {
+                    return "error with code '[set [self]::code]' and message '[set [self]::message]'"
                 } else {
-                    return "error with code '[set :code]'"
+                    return "error with code '[set [self]::code]'"
                 }
             }
 
-            :public method given_error {} {
-                if { [info exists :actual_code ]} {
-                    return ", got error with code '[set :actual_code]' and message '[set :actual_message]'"
+            method given_error {} {
+                if { [info exists [self]::actual_code] } {
+                    return ", got error with code '[set [self]::actual_code]' and message '[set [self]::actual_message]'"
                 } else {
                     return " but nothing was raised"
                 }

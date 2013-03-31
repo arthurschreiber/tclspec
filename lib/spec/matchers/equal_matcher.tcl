@@ -1,22 +1,28 @@
 namespace eval Spec {
     namespace eval Matchers {
         oo::objdefine ::Spec::Matchers method equal { expected } {
-            ::Spec::Matchers::EqualMatcher new -expected $expected
+            ::Spec::Matchers::EqualMatcher new $expected
         }
 
-        nx::Class create EqualMatcher -superclass BaseMatcher {
-            :property expected:required
+        oo::class create EqualMatcher {
+            superclass ::Spec::Matchers::BaseMatcher
 
-            :public method matches? { actual } {
-                expr { [next] == ${:expected} }
+            method matches? { actual } {
+                my variable expected
+
+                expr { [next $actual] == $expected }
             }
 
-            :public method failure_message {} {
-                return "Expected '${:actual}' to equal '${:expected}'"
+            method failure_message {} {
+                my variable actual expected
+
+                return "Expected '$actual' to equal '$expected'"
             }
 
-            :public method negative_failure_message {} {
-                return "Expected '${:actual}' to not equal '${:expected}'"
+            method negative_failure_message {} {
+                my variable actual expected
+
+                return "Expected '$actual' to not equal '$expected'"
             }
         }
     }
