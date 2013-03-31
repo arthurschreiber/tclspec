@@ -16,8 +16,7 @@ namespace eval Spec {
 
         method full_description {} {
             my variable example_group description
-
-            return [$example_group full_description] $description
+            return "[$example_group full_description] $description"
         }
 
         method description {} {
