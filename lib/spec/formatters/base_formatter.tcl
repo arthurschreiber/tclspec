@@ -1,8 +1,8 @@
 namespace eval Spec {
     namespace eval Formatters {
         oo::class create BaseFormatter {
-            constructor {} {
-                set [self]::output stdout
+            constructor { {output "stdout"} } {
+                set [self]::output $output
 
                 set [self]::example_count 0
                 set [self]::failure_count 0
@@ -15,6 +15,7 @@ namespace eval Spec {
 
 
             method start { example_count } {
+                my __start_sync_output
                 set [self]::example_count $example_count
             }
 
@@ -54,6 +55,10 @@ namespace eval Spec {
 
             }
 
+            method close { } {
+                my __restore_sync_output
+            }
+
             method dump_summary { duration example_count failure_count } {
                 set [self]::duration      $duration
                 set [self]::example_count $example_count
@@ -64,6 +69,17 @@ namespace eval Spec {
 
             }
 
+            method __start_sync_output {} {
+                my variable output
+
+                set [self]::old_buffering [chan configure $output -buffering]
+                chan configure $output -buffering "none"
+            }
+
+            method __restore_sync_output {} {
+                my variable output
+                chan configure $output -buffering [set [self]::old_buffering]
+            }
         }
     }
 }

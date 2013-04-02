@@ -69,6 +69,8 @@ namespace eval Spec {
             my notify start_dump
             my notify dump_failures
             my notify dump_summary [set [self]::duration] [set [self]::example_count] [set [self]::failure_count]
+
+            my notify close
         }
 
         method stop {} {
