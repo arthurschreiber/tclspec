@@ -1,7 +1,7 @@
 describe ArgumentMatchers {
     describe "passing argument matchers" {
         before each {
-            set double [double "double"]
+            variable double [double "double"]
         }
 
         it "accepts true as boolean" {
@@ -37,7 +37,7 @@ describe ArgumentMatchers {
 
     describe "failing argument expectations" {
         before each {
-            set double [double "double"]
+            variable double [double "double"]
         }
 
         after each {

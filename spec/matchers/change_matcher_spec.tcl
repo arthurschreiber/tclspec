@@ -2,7 +2,7 @@ source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
 
 describe "expect to change, with a numeric value" {
     before each {
-        set value 0
+        variable value 0
     }
 
     it "passes if the actual value is modified by the block" {
@@ -18,7 +18,7 @@ describe "expect to change, with a numeric value" {
 
 describe "expect to not change, with a numeric value" {
     before each {
-        set value 0
+        variable value 0
     }
 
     it "passes if the actual value is not modified by the block" {
@@ -34,7 +34,7 @@ describe "expect to not change, with a numeric value" {
 
 describe "expect to not change, with a list" {
     before each {
-        set value {}
+        variable value {}
     }
 
     it "passes if the actual value is modified by the block" {
@@ -50,7 +50,7 @@ describe "expect to not change, with a list" {
 
 describe "expect to not change, with a numeric value" {
     before each {
-        set value {}
+        variable value {}
     }
 
     it "passes if the actual value is not modified by the block" {
@@ -66,7 +66,7 @@ describe "expect to not change, with a numeric value" {
 
 describe "expect to change -by" {
     before each {
-        set value 0
+        variable value 0
     }
 
     it "passes if the actual value is changed by the expected amount" {
@@ -86,7 +86,7 @@ describe "expect to change -by" {
 
 describe "expect to change -by_at_most" {
     before each {
-        set value 0
+        variable value 0
     }
 
     it "passes if the actual value is changed by less than the expected amount" {
@@ -106,7 +106,7 @@ describe "expect to change -by_at_most" {
 
 describe "expect to change -by_at_least" {
     before each {
-        set value 0
+        variable value 0
     }
 
     it "passes if the actual value is changed by less than the expected amount" {
@@ -126,7 +126,7 @@ describe "expect to change -by_at_least" {
 
 describe "expect to change -from" {
     before each {
-        set value "string"
+        variable value "string"
     }
 
     it "passes when the actual value is equal to the expected value before executing the block" {

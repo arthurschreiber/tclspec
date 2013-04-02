@@ -2,7 +2,7 @@ source [file join [file dirname [info script]] ".." ".." "spec_helper.tcl"]
 
 describe "::Spec::Mocks::nx::MethodDouble" {
     before each {
-        set class [nx::Class new {
+        variable class [nx::Class new {
             :class method example_class_method {} {
                 return "original"
             }
@@ -20,11 +20,11 @@ describe "::Spec::Mocks::nx::MethodDouble" {
             }
         }]
 
-        set object [$class new]
+        variable object [$class new]
 
-        set proxy [::Spec::Mocks::nx::Proxy new -object $object]
+        variable proxy [::Spec::Mocks::nx::Proxy new -object $object]
 
-        set method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "example_method" -proxy $proxy]
+        variable method_double [::Spec::Mocks::nx::MethodDouble new -object $object -message_name "example_method" -proxy $proxy]
     }
 
     describe "#visibility" {

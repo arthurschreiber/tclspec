@@ -1,6 +1,6 @@
 describe "A Mock expectation with -any_number_of_times" {
     before each {
-        set mock [::Spec::Mocks::nx::Mock new -name "test mock"]
+        variable mock [::Spec::Mocks::nx::Mock new -name "test mock"]
         $mock should_receive "random_call" -any_number_of_times
     }
 

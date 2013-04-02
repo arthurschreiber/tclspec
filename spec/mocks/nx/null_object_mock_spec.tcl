@@ -2,7 +2,7 @@ source [file join [file dirname [info script]] ".." ".." "spec_helper.tcl"]
 
 describe "a double acting as a null object" {
     before each {
-        set double [[double "null object"] as_null_object]
+        variable double [[double "null object"] as_null_object]
     }
 
     after each {

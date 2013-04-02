@@ -2,9 +2,9 @@ source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
 
 describe "::Spec::Mocks::Space" {
     before each {
-        set space [Spec::Mocks::Space new]
+        variable space [Spec::Mocks::Space new]
 
-        set class [nx::Class new {
+        variable class [nx::Class new {
             :public method spec_verify {} {
                 incr :verified 1
             }
@@ -19,8 +19,8 @@ describe "::Spec::Mocks::Space" {
             }
         }]
 
-        set m1 [$class new]
-        set m2 [$class new]
+        variable m1 [$class new]
+        variable m2 [$class new]
     }
 
     it "verifies all mocks within" {

@@ -64,7 +64,7 @@ describe "a helper proc" {
 
     describe "can be accessed from a before all block" {
         before all {
-            set result [helper]
+            variable result [helper]
         }
 
         it "(works)" {
@@ -74,7 +74,7 @@ describe "a helper proc" {
 
     describe "can be accessed from a before each block" {
         before each {
-            set result [helper]
+            variable result [helper]
         }
 
         it "(works)" {

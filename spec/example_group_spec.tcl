@@ -155,11 +155,11 @@ describe "adding examples" {
 
 describe "how instance variables are inherited" {
     before all {
-        set before_all_top_level "before_all_top_level"
+        variable before_all_top_level "before_all_top_level"
     }
 
     before each {
-        set before_each_top_level "before_each_top_level"
+        variable before_each_top_level "before_each_top_level"
     }
 
     it "can access a before each instvar at the same level" {
@@ -193,6 +193,7 @@ describe "how instance variables are inherited" {
 
 describe "arrays defined in before all hooks" {
     before all {
+        variable some_array
         array set some_array {
             first  1
             second 2

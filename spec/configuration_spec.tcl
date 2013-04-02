@@ -2,7 +2,7 @@ source [file join [file dirname [info script]] "spec_helper.tcl"]
 
 describe "::Spec::Configuration" {
     before each {
-        set configuration [::Spec::Configuration new]
+        variable configuration [::Spec::Configuration new]
     }
 
     it "has an empty list of formatters" {

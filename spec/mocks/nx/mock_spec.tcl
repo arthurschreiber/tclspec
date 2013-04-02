@@ -2,7 +2,7 @@ source [file join [file dirname [info script]] ".." ".." "spec_helper.tcl"]
 
 describe "::Spec::Mocks::nx::Mock" {
     before each {
-        set mock [::Spec::Mocks::nx::Mock new -name "test double"]
+        variable mock [::Spec::Mocks::nx::Mock new -name "test double"]
     }
 
     after each {
@@ -136,7 +136,7 @@ describe "::Spec::Mocks::nx::Mock" {
 
     context "when receiving a block" {
         before each {
-            set calls 0
+            variable calls 0
         }
 
         it "calls the passed block" {

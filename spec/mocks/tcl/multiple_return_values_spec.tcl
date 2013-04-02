@@ -2,8 +2,8 @@ source [file join [file dirname [info script]] ".." ".." "spec_helper.tcl"]
 
 describe "A Tcl mock expectation with multiple return values and no specified count" {
     before each {
-        set doubler [::Spec::Mocks::Tcl::Doubler]
-        set return_values [list 1 "2" [nx::Object new]]
+        variable doubler [::Spec::Mocks::Tcl::Doubler]
+        variable return_values [list 1 "2" [nx::Object new]]
 
         $doubler mock_call "::message" -and_return $return_values
     }

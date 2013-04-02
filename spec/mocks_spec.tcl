@@ -1,7 +1,7 @@
 describe Spec::Mocks {
     describe ".setup" {
         before each {
-            set orig_space [Spec::Mocks space]
+            variable orig_space [Spec::Mocks space]
         }
 
         after each {

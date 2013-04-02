@@ -16,7 +16,7 @@ describe "mock_call" {
 
     context "when receiving a block" {
         before each {
-            set calls 0
+            variable calls 0
         }
 
         it "calls the passed block" {

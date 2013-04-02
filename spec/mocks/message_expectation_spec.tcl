@@ -3,7 +3,7 @@ source [file join [file dirname [info script]] ".." "spec_helper.tcl"]
 describe "Spec::Mocks::MessageExpectation" {
     describe "with a method block" {
         before each {
-            set message_expectation [::Spec::Mocks::MessageExpectation new \
+            variable message_expectation [::Spec::Mocks::MessageExpectation new \
                 -error_generator [double "ErrorGenerator"] \
                 -method_name "example_method" \
                 -method_block {{ a b } {
@@ -19,7 +19,7 @@ describe "Spec::Mocks::MessageExpectation" {
 
     describe "without a method block" {
         before each {
-            set message_expectation [::Spec::Mocks::MessageExpectation new \
+            variable message_expectation [::Spec::Mocks::MessageExpectation new \
                 -error_generator [double "ErrorGenerator"] \
                 -method_name "example_method" \
             ]
@@ -32,7 +32,7 @@ describe "Spec::Mocks::MessageExpectation" {
 
     describe "when expecting an exact count of invocations" {
         before each {
-            set message_expectation [::Spec::Mocks::MessageExpectation new \
+            variable message_expectation [::Spec::Mocks::MessageExpectation new \
                 -error_generator [double "ErrorGenerator"] \
                 -method_name "example_method"
             ]

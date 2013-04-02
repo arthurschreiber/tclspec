@@ -1,6 +1,6 @@
 describe "A Mock expectation with -any_number_of_times" {
     before each {
-        set obj [oo::object new]
+        variable obj [oo::object new]
         $obj should_receive "random_call" -any_number_of_times
     }
 
