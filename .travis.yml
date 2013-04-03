@@ -10,7 +10,7 @@ install:
   - ./configure
   - make
   - sudo make install
-  - ln -sf "/usr/local/bin/tclsh$(echo $TCL_VERSION | sed -e 's/\.[0-9]*$//')" /usr/local/bin/tclsh
+  - sudo ln -sf "/usr/local/bin/tclsh$(echo $TCL_VERSION | sed -e 's/\.[0-9]*$//')" /usr/local/bin/tclsh
   - cd ../..
 
   - curl -L http://sourceforge.net/projects/next-scripting/files/2.0b3/nsf2.0b3.tar.gz/download | tar xzfv -
