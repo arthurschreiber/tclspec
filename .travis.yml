@@ -6,10 +6,10 @@ env:
 
 install:
   - curl -L "http://prdownloads.sourceforge.net/tcl/tcl${TCL_VERSION}-src.tar.gz" | tar xzfv -
-  - cd "tcl${TCL_VERSION}"
+  - cd "tcl${TCL_VERSION}/unix"
   - ./configure && make && sudo make install
-  - cd ..
-  
+  - cd ../..
+
   - curl -L http://sourceforge.net/projects/next-scripting/files/2.0b3/nsf2.0b3.tar.gz/download | tar xzfv -
   - cd nsf2.0b3
   - ./configure && make && sudo make install
