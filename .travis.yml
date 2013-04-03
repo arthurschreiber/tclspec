@@ -2,5 +2,10 @@ language: generic
 
 install:
   - sudo apt-get install tcl tcl-dev
+  - curl -L http://sourceforge.net/projects/next-scripting/files/2.0b3/nsf2.0b3.tar.gz/download > nsf2.0b3.tar.gz
+  - tar -xzvf nsf2.0b3.tar.gz
+  - cd nsf2.0b3
+  - ./configure && make && sudo make install
+  - cd ..
 
 script: bin/tclspec
