@@ -1,3 +1,6 @@
 language: generic
 
+install:
+  - sudo apt-get install tcl
+
 script: bin/tclspec
