@@ -7,7 +7,7 @@ namespace eval Spec {
                 puts $message
             }
 
-           method dump_failures { } {
+            method dump_failures { } {
                 if { [llength [set [self]::failed_examples]] > 0 } {
                     puts ""
                     puts "Failures:"
@@ -39,7 +39,7 @@ namespace eval Spec {
                 puts ""
                 puts "Finished in $duration milliseconds"
                 puts ""
-                puts [my summary_line $example_count $failure_count]
+                puts [my colorize_summary [my summary_line $example_count $failure_count]]
             }
 
             method summary_line { example_count failure_count } {
@@ -49,6 +49,29 @@ namespace eval Spec {
 
             method pluralize { count string } {
                 return "$count $string[expr { $count != 1 ? "s" : "" }]"
+            }
+
+            method colorize_summary { summary } {
+                my variable failure_count
+
+                if { $failure_count > 0 } {
+                    my _failure_color $summary
+                } else {
+                    my _success_color $summary
+                }
+            }
+
+
+            method _success_color { text } {
+                my _color $text 32
+            }
+            
+            method _failure_color { text } {
+                my _color $text 31
+            }
+
+            method _color { text code } {
+                return "\x1B\[${code}m${text}\x1B\[0m"
             }
         }
     }
