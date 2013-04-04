@@ -1,4 +1,4 @@
-# TclSpec
+# TclSpec [![Build Status](https://travis-ci.org/arthurschreiber/tclspec.png?branch=master)](https://travis-ci.org/arthurschreiber/tclspec)
 
 Behaviour Driven Development for Tcl
 
