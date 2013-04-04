@@ -5,12 +5,12 @@ namespace eval Spec {
 
             method example_passed { example } {
                 next $example
-                puts -nonewline "."
+                puts -nonewline [my _success_color "."]
             }
     
             method example_failed { example } {
                 next $example
-                puts -nonewline "F"
+                puts -nonewline [my _failure_color "F"]
             }
     
             method start_dump {} {
