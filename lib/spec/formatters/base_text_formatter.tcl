@@ -1,5 +1,18 @@
 namespace eval Spec {
     namespace eval Formatters {
+        namespace eval BaseTextFormatter {
+            variable VT100_COLORS [dict create \
+                "black"     30 \
+                "red"       31 \
+                "green"     32 \
+                "yellow"    33 \
+                "blue"      34 \
+                "magenta"   35 \
+                "cyan"      36 \
+                "white"     37 \
+            ]
+        }
+
         oo::class create BaseTextFormatter {
             superclass ::Spec::Formatters::BaseFormatter
 
@@ -63,11 +76,11 @@ namespace eval Spec {
 
 
             method _success_color { text } {
-                my _color $text 32
+                my _color $text [dict get $::Spec::Formatters::BaseTextFormatter::VT100_COLORS "green"]
             }
             
             method _failure_color { text } {
-                my _color $text 31
+                my _color $text [dict get $::Spec::Formatters::BaseTextFormatter::VT100_COLORS "red"]
             }
 
             method _color { text code } {
