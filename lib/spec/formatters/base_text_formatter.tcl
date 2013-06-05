@@ -69,10 +69,12 @@ namespace eval Spec {
             }
 
             method colorize_summary { summary } {
-                my variable failure_count
+                my variable failure_count pending_count
 
                 if { $failure_count > 0 } {
                     my _failure_color $summary
+                } elseif { $pending_count > 0 } {
+                    my _pending_color $summary
                 } else {
                     my _success_color $summary
                 }
