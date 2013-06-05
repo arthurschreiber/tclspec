@@ -15,6 +15,7 @@ namespace eval Spec {
             set [self]::formatters $formatters
             set [self]::example_count 0
             set [self]::failure_count 0
+            set [self]::pending_count 0
             set [self]::start 0
             set [self]::duration 0
         }
@@ -58,6 +59,11 @@ namespace eval Spec {
             my notify example_passed $example
         }
 
+        method example_pending { example } {
+            incr [self]::pending_count
+            my notify example_pending $example
+        }
+
         method example_failed { example } {
             incr [self]::failure_count
             my notify example_failed $example
@@ -68,7 +74,7 @@ namespace eval Spec {
 
             my notify start_dump
             my notify dump_failures
-            my notify dump_summary [set [self]::duration] [set [self]::example_count] [set [self]::failure_count]
+            my notify dump_summary [set [self]::duration] [set [self]::example_count] [set [self]::failure_count] [set [self]::pending_count]
 
             my notify close
         }

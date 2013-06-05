@@ -46,18 +46,21 @@ namespace eval Spec {
                 }
             }
 
-            method dump_summary { duration example_count failure_count } {
-                next $duration $example_count $failure_count
+            method dump_summary { duration example_count failure_count pending_count } {
+                next $duration $example_count $failure_count $pending_count
 
                 puts ""
                 puts "Finished in $duration milliseconds"
                 puts ""
-                puts [my colorize_summary [my summary_line $example_count $failure_count]]
+                puts [my colorize_summary [my summary_line $example_count $failure_count $pending_count]]
             }
 
-            method summary_line { example_count failure_count } {
+            method summary_line { example_count failure_count pending_count } {
                 set summary [my pluralize $example_count "example"]
                 append summary ", [my pluralize $failure_count "failure"]"
+                if { $pending_count > 0 } {
+                    append summary ", $pending_count pending"
+                }
             }
 
             method pluralize { count string } {
@@ -81,6 +84,10 @@ namespace eval Spec {
             
             method _failure_color { text } {
                 my _color $text [dict get $::Spec::Formatters::BaseTextFormatter::VT100_COLORS "red"]
+            }
+
+            method _pending_color { text } {
+                my _color $text [dict get $::Spec::Formatters::BaseTextFormatter::VT100_COLORS "yellow"]
             }
 
             method _color { text code } {

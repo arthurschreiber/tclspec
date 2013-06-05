@@ -176,9 +176,9 @@ namespace eval Spec {
             lappend examples [::Spec::Example new [self] $description $block]
         }
 
-        classmethod example { description block } {
+        classmethod example { args } {
             my variable examples
-            lappend examples [::Spec::Example new [self] $description $block]
+            lappend examples [::Spec::Example new [self] {*}$args]
         }
 
         classmethod register { } {

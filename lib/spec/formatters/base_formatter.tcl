@@ -32,7 +32,11 @@ namespace eval Spec {
             }
 
             method example_passed { example } {
+                lappend [self]::passed_examples $example
+            }
 
+            method example_pending { example } {
+                lappend [self]::pending_examples $example
             }
 
             method example_failed { example } {
@@ -59,10 +63,11 @@ namespace eval Spec {
                 my __restore_sync_output
             }
 
-            method dump_summary { duration example_count failure_count } {
+            method dump_summary { duration example_count failure_count pending_count } {
                 set [self]::duration      $duration
                 set [self]::example_count $example_count
                 set [self]::failure_count $failure_count
+                set [self]::pending_count $pending_count
             }
 
             method format_backtrace { $error_info $example } {

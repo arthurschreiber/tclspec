@@ -12,6 +12,11 @@ namespace eval Spec {
                 next $example
                 puts -nonewline [my _failure_color "F"]
             }
+
+            method example_pending { example } {
+                next $example
+                puts -nonewline [my _pending_color "*"]
+            }
     
             method start_dump {} {
                 next

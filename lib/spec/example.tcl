@@ -1,9 +1,20 @@
 namespace eval Spec {
     oo::class create Example {
-        constructor { example_group description block } {
+        constructor { example_group description args } {
             set [self]::example_group $example_group
             set [self]::description $description
-            set [self]::block $block
+            set [self]::pending false
+
+            if { [llength $args] == 0 } {
+                set [self]::pending true
+            } else {
+                if { [lindex $args 0] == "-pending" } {
+                    set [self]::pending true
+                    set args [lrange $args 1 end]
+                } else {
+                    set [self]::block [lindex $args 0]
+                }
+            }
         }
 
         method error_info {} {
@@ -29,13 +40,15 @@ namespace eval Spec {
 
             my start $reporter
             try {
-                try {
-                    my run_before_each_hooks
-                    $example_group_instance instance_eval [set [self]::block]
-                } on error { message error_options } {
-                    my set_error $message $error_options
-                } finally {
-                    my run_after_each_hooks
+                if { ![my pending?] } {
+                    try {
+                        my run_before_each_hooks
+                        $example_group_instance instance_eval [set [self]::block]
+                    } on error { message error_options } {
+                        my set_error $message $error_options
+                    } finally {
+                        my run_after_each_hooks
+                    }
                 }
             } on error { message error_options } {
                 my set_error $message $error_options
@@ -72,10 +85,18 @@ namespace eval Spec {
             $reporter example_started [self]
         }
 
+        method pending? {} {
+            my variable pending
+            expr { $pending == true }
+        }
+
         method finish { reporter } {
             if { [info exists [self]::error_message] } {
                 $reporter example_failed [self]
                 return false
+            } elseif { [my pending?] } {
+                $reporter example_pending [self]
+                return true
             } else {
                 $reporter example_passed [self]
                 return true

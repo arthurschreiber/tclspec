@@ -33,6 +33,12 @@ namespace eval Spec {
                 puts [my passed_output $example]
             }
 
+            method example_pending { example } {
+                next $example
+
+                puts [my pending_output $example]
+            }
+
             method example_failed { example } {
                 next $example
 
@@ -41,6 +47,10 @@ namespace eval Spec {
 
             method passed_output { example } {
                 return "[my current_indentation][$example description]"
+            }
+
+            method pending_output { example } {
+                return "[my current_indentation][$example description] (PENDING)"
             }
 
             method failure_output { example } {
