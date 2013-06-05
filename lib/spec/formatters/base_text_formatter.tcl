@@ -61,6 +61,7 @@ namespace eval Spec {
                 if { $pending_count > 0 } {
                     append summary ", $pending_count pending"
                 }
+                return $summary
             }
 
             method pluralize { count string } {
