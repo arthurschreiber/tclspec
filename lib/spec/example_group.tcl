@@ -44,7 +44,7 @@ oo::class create oo::class.Delegate {
                 lappend superdelegates $d
             }
         }
-        oo::objdefine $cls mixin {*}$superdelegates
+        oo::objdefine $cls mixin -append {*}$superdelegates
         return $cls
     }
 }
