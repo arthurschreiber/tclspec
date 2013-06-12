@@ -44,6 +44,7 @@ namespace eval Spec {
     oo::class create Configuration {
         constructor { } {
             set [self]::formatters [list]
+            set [self]::seed [expr { int(rand() * 10000000) % 0xFFF }]
         }
 
         method reporter { } {
@@ -72,6 +73,14 @@ namespace eval Spec {
             } elseif { $name == "progress" } {
                 lappend formatters [::Spec::Formatters::ProgressFormatter new]
             }
+        }
+
+        method set_seed { seed } {
+            set [self]::seed $seed
+        }
+
+        method seed { args } {
+            set [self]::seed
         }
 
         method hooks { } {

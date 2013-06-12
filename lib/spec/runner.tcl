@@ -25,7 +25,7 @@ namespace eval Spec {
             set success true
 
             set reporter [[::Spec configuration] reporter]
-            $reporter report [[Spec world] example_count] {
+            $reporter report [[Spec world] example_count] [[::Spec configuration] seed] {
                 try {
                     [Spec configuration] run_hooks "before" "suite"
                     foreach example_group [[Spec world] example_groups] {

@@ -59,6 +59,10 @@ namespace eval Spec {
 
             }
 
+            method seed { seed } {
+
+            }
+
             method close { } {
                 my __restore_sync_output
             }

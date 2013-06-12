@@ -20,6 +20,12 @@ namespace eval Spec {
                 puts $message
             }
 
+            method seed { seed } {
+                puts ""
+                puts "Randomized with seed ${seed}"
+                puts ""
+            }
+
             method dump_failures { } {
                 if { [llength [set [self]::failed_examples]] > 0 } {
                     puts ""

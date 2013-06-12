@@ -13,6 +13,9 @@ if { [llength $argv] > 0 } {
         if { $pattern == "-f" } {
             incr i
             [Spec configuration] add_formatter [lindex $argv $i]
+        } elseif { $pattern == "--seed" } {
+            incr i
+            [Spec configuration] set_seed [lindex $argv $i]
         } else {
             lappend example_paths {*}[glob -nocomplain $pattern]
         }
@@ -42,6 +45,21 @@ foreach path $example_paths {
     }
 }
 
-foreach example_file $example_files {
+set example_files [lsort $example_files]
+
+proc shuffle { list } {
+    set n 1
+    set slist {}
+    foreach item $list {
+        set index [expr {int(rand()*$n)}]
+        set slist [linsert $slist $index $item]
+        incr n
+    }
+    return $slist
+}
+
+expr { srand([[Spec configuration] seed]) }
+
+foreach example_file [shuffle $example_files] {
     source $example_file
 }
