@@ -20,7 +20,7 @@ namespace eval Spec {
             }
 
             method example_group_started { example_group } {
-                
+
             }
 
             method example_group_finished { example_group } {
