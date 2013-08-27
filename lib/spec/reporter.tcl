@@ -27,7 +27,7 @@ namespace eval Spec {
         method report { expected_example_count seed block } {
             my start $expected_example_count
 
-            tcl::control::try {
+            try {
                 # yield self?
                 uplevel $block
             } finally {
@@ -72,7 +72,7 @@ namespace eval Spec {
         }
 
         method finish { seed } {
-            tcl::control::try {
+            try {
                 my stop
 
                 my notify start_dump
