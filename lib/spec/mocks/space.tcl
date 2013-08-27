@@ -28,15 +28,16 @@ namespace eval Spec {
             }
 
             :public method reset_all {} {
-                foreach receiver ${:receivers} {
-                    if { [info object isa object $receiver] && [info object class $receiver ReferenceCountable] } {
-                        $receiver release
+                try {
+                    foreach receiver ${:receivers} {
+                        $receiver spec_reset
+                        if { [info object isa object $receiver] && [info object class $receiver ReferenceCountable] } {
+                            $receiver release
+                        }
                     }
-
-                    $receiver spec_reset
+                } finally {
+                    set :receivers [list]
                 }
-
-                set :receivers [list]
             }
         }
     }
