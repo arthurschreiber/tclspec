@@ -6,6 +6,10 @@ namespace eval Spec {
             :variable receivers [list]
 
             :public method add { receiver } {
+                if { [info object isa object $receiver] && [info object class $receiver ReferenceCountable] } {
+                    $receiver retain
+                }
+
                 lappend :receivers $receiver
             }
 
@@ -25,6 +29,10 @@ namespace eval Spec {
 
             :public method reset_all {} {
                 foreach receiver ${:receivers} {
+                    if { [info object isa object $receiver] && [info object class $receiver ReferenceCountable] } {
+                        $receiver release
+                    }
+
                     $receiver spec_reset
                 }
 
