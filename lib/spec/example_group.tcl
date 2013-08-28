@@ -258,13 +258,13 @@ namespace eval Spec {
         }
 
         classmethod run_after_each { example } {
-            [Spec world] run_hooks "after" "each" [$example example_group_instance]
-
             foreach ancestor [my parent_groups] {
                 foreach hook [lreverse [dict get [$ancestor hooks] after each]] {
                     [$example example_group_instance] instance_eval $hook
                 }
             }
+
+            [Spec world] run_hooks "after" "each" [$example example_group_instance]
         }
 
         classmethod run_before_all { example_group_instance } {
