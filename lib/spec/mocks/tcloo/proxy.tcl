@@ -71,11 +71,13 @@ namespace eval Spec::Mocks::TclOO {
         }
 
         method raise_unexpected_message_args_error { expectation args } {
-            ${:error_generator} raise_unexpected_message_args_error $expectation {*}$args
+            my variable error_generator
+            $error_generator raise_unexpected_message_args_error $expectation {*}$args
         }
 
         method raise_unexpected_message_error { method_name args } {
-            ${:error_generator} raise_unexpected_message_error $method_name {*}$args
+            my variable error_generator
+            $error_generator raise_unexpected_message_error $method_name {*}$args
         }
 
         method find_matching_expectation { method_name args } {

@@ -9,7 +9,8 @@ namespace eval Spec::Mocks::TclOO {
 
         :public method configure_message { } {
             [::Spec::Mocks space] add ${:object}
-            if { !${:stashed} } {
+
+            if { !${:proxied} } {
                 :stash_original_method
                 :define_proxy_method
             }
@@ -49,9 +50,9 @@ namespace eval Spec::Mocks::TclOO {
                 } else {
                     oo::objdefine ${:object} deletemethod ${:message_name}
                 }
+
+                set :proxied false
             }
-            
-            set :proxied false
         }
     }
 }

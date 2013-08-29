@@ -1,5 +1,18 @@
 namespace eval Spec {
     namespace eval Formatters {
+        namespace eval BaseTextFormatter {
+            variable VT100_COLORS [dict create \
+                "black"     30 \
+                "red"       31 \
+                "green"     32 \
+                "yellow"    33 \
+                "blue"      34 \
+                "magenta"   35 \
+                "cyan"      36 \
+                "white"     37 \
+            ]
+        }
+
         oo::class create BaseTextFormatter {
             superclass ::Spec::Formatters::BaseFormatter
 
@@ -7,7 +20,13 @@ namespace eval Spec {
                 puts $message
             }
 
-           method dump_failures { } {
+            method seed { seed } {
+                puts ""
+                puts "Randomized with seed ${seed}"
+                puts ""
+            }
+
+            method dump_failures { } {
                 if { [llength [set [self]::failed_examples]] > 0 } {
                     puts ""
                     puts "Failures:"
@@ -33,22 +52,55 @@ namespace eval Spec {
                 }
             }
 
-            method dump_summary { duration example_count failure_count } {
-                next $duration $example_count $failure_count
+            method dump_summary { duration example_count failure_count pending_count } {
+                next $duration $example_count $failure_count $pending_count
 
                 puts ""
                 puts "Finished in $duration milliseconds"
                 puts ""
-                puts [my summary_line $example_count $failure_count]
+                puts [my colorize_summary [my summary_line $example_count $failure_count $pending_count]]
             }
 
-            method summary_line { example_count failure_count } {
+            method summary_line { example_count failure_count pending_count } {
                 set summary [my pluralize $example_count "example"]
                 append summary ", [my pluralize $failure_count "failure"]"
+                if { $pending_count > 0 } {
+                    append summary ", $pending_count pending"
+                }
+                return $summary
             }
 
             method pluralize { count string } {
                 return "$count $string[expr { $count != 1 ? "s" : "" }]"
+            }
+
+            method colorize_summary { summary } {
+                my variable failure_count pending_count
+
+                if { $failure_count > 0 } {
+                    my _failure_color $summary
+                } elseif { $pending_count > 0 } {
+                    my _pending_color $summary
+                } else {
+                    my _success_color $summary
+                }
+            }
+
+
+            method _success_color { text } {
+                my _color $text [dict get $::Spec::Formatters::BaseTextFormatter::VT100_COLORS "green"]
+            }
+            
+            method _failure_color { text } {
+                my _color $text [dict get $::Spec::Formatters::BaseTextFormatter::VT100_COLORS "red"]
+            }
+
+            method _pending_color { text } {
+                my _color $text [dict get $::Spec::Formatters::BaseTextFormatter::VT100_COLORS "yellow"]
+            }
+
+            method _color { text code } {
+                return "\x1B\[${code}m${text}\x1B\[0m"
             }
         }
     }

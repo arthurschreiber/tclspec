@@ -15,6 +15,7 @@ namespace eval Spec {
             set [self]::formatters $formatters
             set [self]::example_count 0
             set [self]::failure_count 0
+            set [self]::pending_count 0
             set [self]::start 0
             set [self]::duration 0
         }
@@ -23,13 +24,15 @@ namespace eval Spec {
             set [self]::formatters
         }
 
-        method report { expected_example_count block } {
+        method report { expected_example_count seed block } {
             my start $expected_example_count
 
-            # yield self?
-            uplevel $block
-
-            my finish
+            try {
+                # yield self?
+                uplevel $block
+            } finally {
+                my finish $seed
+            }
         }
 
         method start { expected_example_count } {
@@ -58,19 +61,28 @@ namespace eval Spec {
             my notify example_passed $example
         }
 
+        method example_pending { example } {
+            incr [self]::pending_count
+            my notify example_pending $example
+        }
+
         method example_failed { example } {
             incr [self]::failure_count
             my notify example_failed $example
         }
 
-        method finish {} {
-            my stop
+        method finish { seed } {
+            try {
+                my stop
 
-            my notify start_dump
-            my notify dump_failures
-            my notify dump_summary [set [self]::duration] [set [self]::example_count] [set [self]::failure_count]
+                my notify start_dump
+                my notify dump_failures
+                my notify dump_summary [set [self]::duration] [set [self]::example_count] [set [self]::failure_count] [set [self]::pending_count]
 
-            my notify close
+                my notify seed $seed
+            } finally {
+                my notify close
+            }
         }
 
         method stop {} {

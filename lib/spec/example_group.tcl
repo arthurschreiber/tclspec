@@ -131,7 +131,7 @@ namespace eval Spec {
 
         meta method example { description block } {
             my variable examples
-            lappend examples [::Spec::Example new [self] $description $block]
+            lappend examples [::Spec::Example new [self] {*}$args]
         }
 
         meta method register { } {
@@ -211,13 +211,13 @@ namespace eval Spec {
         }
 
         meta method run_after_each { example } {
-            [Spec world] run_hooks "after" "each" [$example example_group_instance]
-
             foreach ancestor [my parent_groups] {
                 foreach hook [lreverse [dict get [$ancestor hooks] after each]] {
                     [$example example_group_instance] instance_eval $hook
                 }
             }
+
+            [Spec world] run_hooks "after" "each" [$example example_group_instance]
         }
 
         meta method run_before_all { example_group_instance } {
