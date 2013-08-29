@@ -1,0 +1,35 @@
+language: generic
+
+env:
+  - TCL_VERSION=8.6.0
+  - TCL_VERSION=8.5.13
+
+install:
+  - curl -L "http://prdownloads.sourceforge.net/tcl/tcl${TCL_VERSION}-src.tar.gz" | tar xzfv -
+  - cd "tcl${TCL_VERSION}/unix"
+  - ./configure
+  - make
+  - sudo make install
+  - sudo ln -sf "/usr/local/bin/tclsh$(echo $TCL_VERSION | sed -e 's/\.[0-9]*$//')" /usr/local/bin/tclsh
+  - cd ../..
+
+  - if [ "$TCL_VERSION" \< "8.6.0" ]; then
+  -   curl -L http://sourceforge.net/projects/tcl/files/TclOO%20Package/1.0/TclOO1.0.tar.gz/download | tar xzfv -
+  -   cd TclOO1.0
+  -   ./configure
+  -   make
+  -   sudo make install
+  -   cd ..
+  - fi
+
+  - curl -L http://sourceforge.net/projects/next-scripting/files/2.0b3/nsf2.0b3.tar.gz/download | tar xzfv -
+  - cd nsf2.0b3
+  - ./configure
+  - make
+  - sudo make install
+  - cd ..
+
+  # Get tclspec so we can execute our tests
+  - git clone http://github.com/arthurschreiber/tclspec.git
+
+script: TCLLIBPATH="." tclspec/bin/tclspec
