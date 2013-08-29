@@ -2,6 +2,8 @@ package ifneeded "TclOO::ext" 1.0 {
     package require "TclOO::ext::reference_countable"
     package require "TclOO::ext::autorelease_pool"
     package require "TclOO::ext::class"
+
+    package provide "TclOO::ext" "1.0"
 }
 
 package ifneeded "TclOO::ext::reference_countable" 1.0 [list source [file join $dir "lib" "reference_countable.tcl"]]
