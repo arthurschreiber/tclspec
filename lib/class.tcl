@@ -1,3 +1,4 @@
+package require "TclOO"
 package require "TclOO::ext::reference_countable" "1.0"
 
 package provide "TclOO::ext::class" "1.0"
@@ -8,7 +9,7 @@ oo::class create ext::class {
     constructor { args } {
         # First, create the MetaClass.
         #
-        # This ensures that e.g. the ::oo::define::classmethod
+        # This ensures that e.g. the ::oo::define::meta
         # works correctly when called inside the definition
         # block of a class.
         oo::class create [self].Meta
@@ -22,13 +23,14 @@ oo::class create ext::class {
         # Now, collect a list of superclasses and get their MetaClasses
         # (if they exist). Take this list of MetaClasses and set them as
         # superclasses of our MetaClass.
-        set superclasses [list "::oo::class"]
+        set superclasses [list]
         foreach class [info class superclasses [self]] {
             if { [info object isa object "${class}.Meta"] && [info object isa class "${class}.Meta"] } {
                 lappend superclasses "${class}.Meta"
             }
         }
-        oo::define [self].Meta superclass {*}[lreverse $superclasses]
+
+        oo::define [self].Meta superclass {*}$superclasses "::oo::class"
 
         # Finally, change our new class to be an instance of our MetaClass.
         # This will set up the inheritance chain and make everything work
