@@ -129,7 +129,7 @@ namespace eval Spec {
             lappend examples [::Spec::Example new [self] $description $block]
         }
 
-        meta method example { description block } {
+        meta method example { args } {
             my variable examples
             lappend examples [::Spec::Example new [self] {*}$args]
         }
