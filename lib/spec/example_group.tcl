@@ -5,53 +5,6 @@ oo::define oo::object method instance_eval { args } {
     " [self namespace]]
 }
 
-proc ::oo::define::classmethod {name {args ""} {body ""}} {
-    # Create the method on the class if the caller gave arguments and body
-    set argc [llength [info level 0]]
-    if {$argc == 3} {
-        return -code error "wrong # args: should be \"[lindex [info level 0] 0] name ?args body?\""
-    }
-
-    # Get the name of the current class or class delegate
-    set cls [namespace which [lindex [info level -1] 1]]
-    set d $cls.Delegate
-    if {[info object isa object $d] && [info object isa class $d]} {
-        set cls $d
-    }
-
-    if {$argc == 4} {
-        oo::define $cls method $name $args $body
-    }
-
-    # Make the connection by forwarding
-    uplevel 1 [list forward $name [info object namespace $cls]::my $name]
-}
-
-# Build this *almost* like a class method, but with extra care to avoid nuking
-# the existing method.
-oo::class create oo::class.Delegate {
-    method create {name {script ""}} {
-        if {[string match *.Delegate $name]} {
-            return [next $name $script]
-        }
-        set cls [next $name]
-        set delegate [oo::class create $cls.Delegate]
-        oo::define $cls $script
-        set superdelegates [list $delegate]
-        foreach c [info class superclass $cls] {
-            set d $c.Delegate
-            if {[info object isa object $d] && [info object isa class $d]} {
-                lappend superdelegates $d
-            }
-        }
-        oo::objdefine $cls mixin {*}$superdelegates
-        return $cls
-    }
-}
-
-oo::define oo::class self mixin oo::class.Delegate
-
-
 namespace eval Spec {
     namespace eval ExampleGroupProcs {
         proc describe { args } {
@@ -95,12 +48,12 @@ namespace eval Spec {
         }
     }
 
-    oo::class create ExampleGroup {
-        classmethod subclass { name parent } {
-            oo::class create $name [list superclass $parent {*}[info class superclass $parent]]
+    ext::class create ExampleGroup {
+        meta method subclass { name parent } {
+            ext::class create $name [list superclass $parent {*}[info class superclass $parent]]
         }
 
-        classmethod describe { {description ""} {block {}} } {
+        meta method describe { {description ""} {block {}} } {
             my variable _subclass_count children
             incr _subclass_count 1
 
@@ -128,28 +81,28 @@ namespace eval Spec {
             return $child
         }
 
-        classmethod children {} {
+        meta method children {} {
             my variable children
             return $children
         }
 
-        classmethod description { args } {
+        meta method description { args } {
             my variable description
             set description {*}$args
         }
 
-        classmethod hooks {} {
+        meta method hooks {} {
             my variable hooks
             return $hooks
         }
 
-        classmethod examples {} {
+        meta method examples {} {
             my variable examples
 
             expr { [info exists examples] ? $examples : [list] }
         }
 
-        classmethod parent_groups { } {
+        meta method parent_groups { } {
             my variable parent_groups
 
             if { [info exists parent_groups] } {
@@ -167,25 +120,25 @@ namespace eval Spec {
             return $parent_groups
         }
 
-        classmethod ancestors { } {
+        meta method ancestors { } {
             my parent_groups
         }
 
-        classmethod it { description block } {
+        meta method it { description block } {
             my variable examples
             lappend examples [::Spec::Example new [self] $description $block]
         }
 
-        classmethod example { description block } {
+        meta method example { description block } {
             my variable examples
             lappend examples [::Spec::Example new [self] $description $block]
         }
 
-        classmethod register { } {
+        meta method register { } {
             [Spec world] register [self]
         }
 
-        classmethod full_description {} {
+        meta method full_description {} {
             set full_description ""
 
             foreach ancestor [lreverse [my parent_groups]] {
@@ -200,19 +153,19 @@ namespace eval Spec {
             return $full_description
         }
 
-        classmethod before { what block } {
+        meta method before { what block } {
             my variable hooks
 
             dict set hooks before $what [concat [dict get ${hooks} before $what] [list $block]]
         }
 
-        classmethod after { what block } {
+        meta method after { what block } {
             my variable hooks
 
             dict set hooks after $what [concat [dict get ${hooks} after $what] [list $block]]
         }
 
-        classmethod let { name block } {
+        meta method let { name block } {
             oo::define [self] method $name {} "
                 my variable __memoized
                 if { !\[info exists __memoized] } {
@@ -230,24 +183,24 @@ namespace eval Spec {
             }"
         }
 
-        classmethod let! { name block } {
+        meta method let! { name block } {
             my let $name $block
             my before each $name
         }
 
-        classmethod setup_mocks { example_group_instance } {
+        meta method setup_mocks { example_group_instance } {
             ::Spec::Mocks setup $example_group_instance
         }
 
-        classmethod verify_mocks {} {
+        meta method verify_mocks {} {
             ::Spec::Mocks verify
         }
 
-        classmethod teardown_mocks {} {
+        meta method teardown_mocks {} {
             ::Spec::Mocks teardown
         }
 
-        classmethod run_before_each { example } {
+        meta method run_before_each { example } {
             [Spec world] run_hooks "before" "each" [$example example_group_instance]
 
             foreach ancestor [lreverse [my parent_groups]] {
@@ -257,7 +210,7 @@ namespace eval Spec {
             }
         }
 
-        classmethod run_after_each { example } {
+        meta method run_after_each { example } {
             [Spec world] run_hooks "after" "each" [$example example_group_instance]
 
             foreach ancestor [my parent_groups] {
@@ -267,7 +220,7 @@ namespace eval Spec {
             }
         }
 
-        classmethod run_before_all { example_group_instance } {
+        meta method run_before_all { example_group_instance } {
             my variable before_all_ivars
 
             dict for { name value } ${before_all_ivars} {
@@ -295,7 +248,7 @@ namespace eval Spec {
             }
         }
 
-        classmethod run_after_all { example_group_instance } {
+        meta method run_after_all { example_group_instance } {
             my variable before_all_ivars
 
             try {
@@ -319,7 +272,7 @@ An error occurred in an after all hook.
             }
         }
 
-        classmethod run { reporter } {
+        meta method run { reporter } {
             my variable children before_all_ivars
 
             $reporter example_group_started [self]
@@ -343,7 +296,7 @@ An error occurred in an after all hook.
             }
         }
 
-        classmethod fail_all_examples { error_message error_options reporter } {
+        meta method fail_all_examples { error_message error_options reporter } {
             my variable examples
 
             foreach example ${examples} {
@@ -351,11 +304,11 @@ An error occurred in an after all hook.
             }
         }
 
-        classmethod execute { reporter } {
+        meta method execute { reporter } {
             my run $reporter
         }
 
-        classmethod run_examples { reporter } {
+        meta method run_examples { reporter } {
             my variable examples before_all_ivars
 
             set result true

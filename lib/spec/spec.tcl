@@ -3,6 +3,7 @@ package provide spec 0.1
 package require nx
 package require nx::trait
 package require "TclOO" 1.0
+package require "TclOO::ext"
 package require at_exit
 package require try
 
