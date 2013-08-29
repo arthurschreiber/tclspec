@@ -37,7 +37,9 @@ oo::class create ext::class {
 
         # Include ReferenceCountable as a superclass to make
         # reference counting available to all ext::class classes.
-        oo::define [self] superclass -append "ReferenceCountable"
+        if { "ReferenceCountable" ni [info class superclasses [self]] } {
+            oo::define [self] superclass -append "ReferenceCountable"
+        }
     }
 }
 
