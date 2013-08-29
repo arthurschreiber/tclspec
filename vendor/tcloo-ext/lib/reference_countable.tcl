@@ -1,3 +1,4 @@
+package require "TclOO"
 package require "TclOO::ext::autorelease_pool" "1.0"
 
 package provide "TclOO::ext::reference_countable" "1.0"

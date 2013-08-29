@@ -1,3 +1,4 @@
+package require "TclOO"
 package provide "TclOO::ext::autorelease_pool" "1.0"
 
 oo::class create AutoreleasePool {
