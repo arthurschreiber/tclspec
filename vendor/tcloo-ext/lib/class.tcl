@@ -22,7 +22,7 @@ oo::class create ext::class {
         # Now, collect a list of superclasses and get their MetaClasses
         # (if they exist). Take this list of MetaClasses and set them as
         # superclasses of our MetaClass.
-        set superclasses [list "oo::class"]
+        set superclasses [list "::oo::class"]
         foreach class [info class superclasses [self]] {
             if { [info object isa object "${class}.Meta"] && [info object isa class "${class}.Meta"] } {
                 lappend superclasses "${class}.Meta"
@@ -37,8 +37,8 @@ oo::class create ext::class {
 
         # Include ReferenceCountable as a superclass to make
         # reference counting available to all ext::class classes.
-        if { "ReferenceCountable" ni [info class superclasses [self]] } {
-            oo::define [self] superclass -append "ReferenceCountable"
+        if { "::ReferenceCountable" ni [info class superclasses [self]] } {
+            oo::define [self] superclass -append "::ReferenceCountable"
         }
     }
 }
